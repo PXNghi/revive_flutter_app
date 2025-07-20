@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+import 'package:revive_flutter_project/core/constants/strings.dart';
+import 'package:revive_flutter_project/core/constants/ui_values.dart';
+
+class MyAppbar extends StatelessWidget implements PreferredSize {
+  final String title;
+  final TextStyle? titleStyle;
+  final bool isCenter;
+  final List<Widget>? actions;
+  final bool isLeadingImplied;
+  const MyAppbar({
+    super.key,
+    required this.title,
+    this.isCenter = false,
+    this.actions,
+    this.isLeadingImplied = true,
+    this.titleStyle = headerStyle,
+  }) : preferredSize = const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(title, style: titleStyle),
+      centerTitle: isCenter,
+      actions: actions ?? [],
+      leading: isLeadingImplied
+          ? GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Image.asset(
+                arrowLeftIcon,
+                height: 30,
+                width: 30,
+              ),
+            )
+          : null,
+    );
+  }
+  
+  @override
+  // TODO: implement child
+  Widget get child => throw UnimplementedError();
+  
+  @override
+  final Size preferredSize;
+}
