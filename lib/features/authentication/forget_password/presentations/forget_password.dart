@@ -6,22 +6,21 @@ import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ForgetPasswordPage extends StatefulWidget {
+  const ForgetPasswordPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ForgetPasswordPage> createState() => _ForgetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar:  MyAppbar(
-        title: "ĐĂNG NHẬP",
+      appBar: MyAppbar(
+        title: "Quên mật khẩu".toUpperCase(),
         titleStyle: headerStyle.copyWith(color: Colors.black),
         isCenter: true,
         isLeadingImplied: false,
@@ -29,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
       body: Padding(
         padding: pageHorizontalPadding,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               margin: const EdgeInsets.only(top: 16.0),
@@ -48,12 +46,6 @@ class _LoginPageState extends State<LoginPage> {
               controller: emailController,
               label: "Email:",
             ),
-            const SizedBox(height: 24.0),
-            MyTextField(
-              controller: passwordController,
-              label: "Mật khẩu:",
-              isPassword: true,
-            ),
             const SizedBox(height: 16.0),
             Align(
               alignment: Alignment.centerRight,
@@ -62,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                   context.go('/forget-password');
                 },
                 child: const Text(
-                  "Quên mật khẩu",
+                  "Gửi OTP",
                   style: TextStyle(
                     fontSize: smallFontSize,
                     color: primaryColor,
@@ -72,27 +64,36 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 16.0),
+            MyTextField(
+              controller: otpController,
+              label: "OTP:",
+              isPassword: true,
+            ),
             const SizedBox(height: 45),
             MyButton(
-              onTap: () {},
-              label: "Đăng nhập",
+              onTap: () {
+                print("click");
+                context.go('/reset-password');
+              },
+              label: "Tiếp tục",
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Bạn chưa có tài khoản? ",
+                  "Bạn đã có tài khoản? ",
                   style: contentStyle.copyWith(
                     fontSize: smallFontSize,
                   ),
                 ),
                 GestureDetector(
                   onTap: () {
-                    context.go('/register');
+                    context.go('/login');
                   },
                   child: Text(
-                    "Đăng ký ngay!",
+                    "Đăng nhập ngay!",
                     style: contentStyle.copyWith(
                       color: primaryColor,
                       fontSize: smallFontSize,
