@@ -57,8 +57,12 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 }
                 if (state is LoginSuccess) {
-                  // context.go('/home');
                   Navigator.of(context).pop();
+                }
+                if (state is LoginError) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               child: BlocBuilder<LoginBloc, LoginState>(
@@ -68,14 +72,16 @@ class _LoginPageState extends State<LoginPage> {
                       MyTextField(
                         controller: emailController,
                         label: "Email:",
-                        errorText: (state is LoginLoaded) ? state.emailError : null,
+                        errorText:
+                            (state is LoginLoaded) ? state.emailError : null,
                       ),
                       const SizedBox(height: 24.0),
                       MyTextField(
                         controller: passwordController,
                         label: "Mật khẩu:",
                         isPassword: true,
-                        errorText: (state is LoginLoaded) ? state.passwordError : null,
+                        errorText:
+                            (state is LoginLoaded) ? state.passwordError : null,
                       ),
                       const SizedBox(height: 16.0),
                       Align(
@@ -124,6 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    print("register clicked");
                     context.pushNamed('register');
                   },
                   child: Text(

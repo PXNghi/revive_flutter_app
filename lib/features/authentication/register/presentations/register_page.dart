@@ -35,10 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
         child: SingleChildScrollView(
           child: BlocConsumer<RegisterBloc, RegisterState>(
             listener: (context, state) {
-              if (state is Loaded) {
-                context.go('/confirm-otp-register');
+              if (state is Success) {
+                context.pushNamed('confirm-otp-register', queryParameters: {
+                  'email': emailController.text,
+                });
               }
               if (state is Error) {
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
               }
@@ -70,36 +73,39 @@ class _RegisterPageState extends State<RegisterPage> {
                   MyTextField(
                     controller: fullNameController,
                     label: "Họ và tên:",
+                    errorText: state.nameError,
                   ),
                   const SizedBox(height: 24.0),
                   MyTextField(
                     controller: emailController,
                     label: "Email:",
+                    errorText: state.emailError,
                   ),
                   const SizedBox(height: 24.0),
                   MyTextField(
                     controller: passwordController,
                     label: "Mật khẩu:",
                     isPassword: true,
+                    errorText: state.passwordError,
                   ),
                   const SizedBox(height: 24.0),
                   MyTextField(
                     controller: confirmPasswordController,
                     label: "Xác nhận mật khẩu:",
                     isPassword: true,
+                    errorText: state.confirmedPasswordError,
                   ),
                   const SizedBox(height: 45),
                   MyButton(
                     onTap: () {
-                      // context.read<RegisterBloc>().add(
-                      //       RegisterEvent.register(
-                      //         name: fullNameController.text,
-                      //         email: emailController.text,
-                      //         password: passwordController.text,
-                      //         confirmedPassword: confirmPasswordController.text,
-                      //       ),
-                      //     );
-                      context.pushNamed('confirm-otp-register?email=${emailController.text}');
+                      context.read<RegisterBloc>().add(
+                            RegisterEvent.validateInformations(
+                              name: fullNameController.text,
+                              email: emailController.text,
+                              password: passwordController.text,
+                              confirmedPassword: confirmPasswordController.text,
+                            ),
+                          );
                     },
                     label: "Đăng ký",
                   ),

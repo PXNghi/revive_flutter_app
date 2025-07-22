@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/features/authentication/models/auth_response.dart';
 
 class AuthUsecases {
   static final AuthUsecases _singleton = AuthUsecases._internal();
@@ -27,7 +28,7 @@ class AuthUsecases {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<AuthResponse> login(String email, String password) async {
     final bodyRequest = {
       "email": email,
       "password": password,
@@ -41,18 +42,18 @@ class AuthUsecases {
       if (data["success"] == true) {
         ApiService.authorizeHeader(data["data"]["token"]);
         await SessionData.setToken(data["data"]["token"]);
-        return true;
+        return const AuthResponse(success: true, message: "Đăng nhập thành công");
       } else {
         print("error login: ${data["message"]}");
+        return AuthResponse(success: false, message: data["message"]);
       }
     } catch (e) {
       print("Error at login usecase: $e");
       rethrow;
     }
-    return false;
   }
 
-  Future<bool> register({
+  Future<AuthResponse> register({
     required String fullName,
     required String email,
     required String password,
@@ -70,14 +71,39 @@ class AuthUsecases {
         bodyRequest,
       );
       final Map<String, dynamic> data = json.decode(response.body);
-      if (data["success"] == true) {
-        return true;
-      } else {
-        return false;
-      }
+      return AuthResponse(success: data["success"], message: data["message"]);
     } catch (e) {
       print("Error at register usecase: $e");
       rethrow;
     }
+  }
+
+  Future<bool> logout() async {
+    await SessionData.logout();
+    return true;
+  }
+
+  Future<AuthResponse> verifyAccount(String email, String otp) async {
+    final Map<String, String> bodyRequest = {
+      "email": email.trim(),
+      "provided_code": otp,
+    };
+    try {
+      final Response response = await ApiService()
+          .post(ApiUrls().apiConfirmVerificationOtp(), bodyRequest);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return AuthResponse(success: data["success"] ?? false, message: data["message"]);
+    } catch (e) {
+      print("Error at verify account usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<bool> resendOTP(String email) async {
+    final Response response = await ApiService() 
+        .post(ApiUrls().apiSendVerificationOtp(), {"email": email.trim()});
+    final Map<String, dynamic> data = json.decode(response.body);
+    print(data);
+    return data['success'];
   }
 }

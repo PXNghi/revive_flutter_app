@@ -30,17 +30,19 @@ final GoRouter routers = GoRouter(
             create: (context) => RegisterBloc(),
             child: const RegisterPage(),
           ),
-        ),
-        GoRoute(
-          name: 'confirm-otp-register',
-          path: 'confirm-otp-register',
-          builder: (context, state) {
-            final String? email = state.uri.queryParameters['email'];
-            return BlocProvider(
-              create: (context) => RegisterBloc(),
-              child: RegisterOTPPage(email: email ?? ""),
-            );
-          },
+          routes: [
+            GoRoute(
+              name: 'confirm-otp-register',
+              path: 'confirm-otp-register',
+              builder: (context, state) {
+                final String? email = state.uri.queryParameters['email'];
+                return BlocProvider(
+                  create: (context) => RegisterBloc(),
+                  child: RegisterOTPPage(email: email ?? ""),
+                );
+              },
+            ),
+          ],
         ),
         GoRoute(
           name: 'forget-password',

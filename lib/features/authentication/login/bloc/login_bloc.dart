@@ -25,11 +25,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final password = event.password.trim();
     emit(const LoginState.loginLoading());
     final response = await _authUsecase.login(email, password);
-    if (response) {
+    if (response.success) {
       emit(const LoginState.loginSuccess());
       emit(const LoginState.loginLoaded());
     } else {
-      emit(const LoginState.loginError("Invalid credentials"));
+      emit(LoginState.loginError(response.message));
+      emit(const LoginState.loginLoaded());
     }
   }
 
@@ -43,15 +44,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String? passwordError;
 
       if (event.email.isEmpty) {
-        emailError = "Email is required";
+        emailError = "Không được để trống";
       } else if (!emailRegex.hasMatch(event.email.trim())) {
-        emailError = "Invalid email format";
+        emailError = "Định dạng email không đúng";
       }
       
       if (event.password.isEmpty) {
-        passwordError = "Password is required";
+        passwordError = "Không được để trống";
       } else if (!passwordRegex.hasMatch(event.password)) {
-        passwordError = "Password must has at least 6 characters and at least one uppercase letter";
+        passwordError = "Mật khẩu phải có ít nhất 6 chữ số và 1 chữ cái in hoa";
       }
 
       final isValid = emailError == null && passwordError == null;
