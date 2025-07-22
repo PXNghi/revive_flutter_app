@@ -5,12 +5,14 @@ class MyTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String label;
   final bool isPassword;
+  final String? errorText;
   
   const MyTextField({
     super.key,
     this.label = "",
     this.isPassword = false,
     this.controller,
+    this.errorText,
   });
 
   @override
@@ -26,7 +28,7 @@ class _MyTextFieldState extends State<MyTextField> {
       children: [
         Text(
           widget.label,
-          style: contentStyle,
+          style: contentStyle.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8.0),
         TextField(
@@ -40,6 +42,15 @@ class _MyTextFieldState extends State<MyTextField> {
               borderRadius: BorderRadius.circular(10.0),
               borderSide: const BorderSide(color: primaryColor, width: 1.0),
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: alertColor, width: 1.0),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: alertColor, width: 1.0),
+            ),
+            errorText: widget.errorText,
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(

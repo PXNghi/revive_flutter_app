@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
+import 'package:revive_flutter_project/features/authentication/login/bloc/login_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar:  MyAppbar(
+      appBar: MyAppbar(
         title: "ĐĂNG NHẬP",
         titleStyle: headerStyle.copyWith(color: Colors.black),
         isCenter: true,
@@ -44,38 +46,71 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 24),
-            MyTextField(
-              controller: emailController,
-              label: "Email:",
-            ),
-            const SizedBox(height: 24.0),
-            MyTextField(
-              controller: passwordController,
-              label: "Mật khẩu:",
-              isPassword: true,
-            ),
-            const SizedBox(height: 16.0),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  context.go('/forget-password');
+            BlocListener<LoginBloc, LoginState>(
+              listener: (context, state) {
+                if (state is LoginLoading) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                if (state is LoginSuccess) {
+                  // context.go('/home');
+                  Navigator.of(context).pop();
+                }
+              },
+              child: BlocBuilder<LoginBloc, LoginState>(
+                builder: (context, state) {
+                  return Column(
+                    children: [
+                      MyTextField(
+                        controller: emailController,
+                        label: "Email:",
+                        errorText: (state is LoginLoaded) ? state.emailError : null,
+                      ),
+                      const SizedBox(height: 24.0),
+                      MyTextField(
+                        controller: passwordController,
+                        label: "Mật khẩu:",
+                        isPassword: true,
+                        errorText: (state is LoginLoaded) ? state.passwordError : null,
+                      ),
+                      const SizedBox(height: 16.0),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            context.go('/forget-password');
+                          },
+                          child: const Text(
+                            "Quên mật khẩu",
+                            style: TextStyle(
+                              fontSize: smallFontSize,
+                              color: primaryColor,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: montFont,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 45),
+                      MyButton(
+                        onTap: () {
+                          context.read<LoginBloc>().add(
+                                LoginEvent.validateInformations(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
+                        },
+                        label: "Đăng nhập",
+                      ),
+                    ],
+                  );
                 },
-                child: const Text(
-                  "Quên mật khẩu",
-                  style: TextStyle(
-                    fontSize: smallFontSize,
-                    color: primaryColor,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: montFont,
-                  ),
-                ),
               ),
-            ),
-            const SizedBox(height: 45),
-            MyButton(
-              onTap: () {},
-              label: "Đăng nhập",
             ),
             const SizedBox(height: 16),
             Row(
@@ -89,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    context.go('/register');
+                    context.pushNamed('register');
                   },
                   child: Text(
                     "Đăng ký ngay!",

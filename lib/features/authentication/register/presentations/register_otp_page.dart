@@ -7,7 +7,8 @@ import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
 
 class RegisterOTPPage extends StatefulWidget {
-  const RegisterOTPPage({super.key});
+  final String email;
+  const RegisterOTPPage({super.key, required this.email});
 
   @override
   State<RegisterOTPPage> createState() => _RegisterOTPPageState();
@@ -41,16 +42,38 @@ class _RegisterOTPPageState extends State<RegisterOTPPage> {
               ),
             ),
             const SizedBox(height: 24),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: "Mã OTP đã được gửi qua email ",
+                    style: contentStyle,
+                  ),
+                  TextSpan(
+                    text: widget.email,
+                    style: contentStyle.copyWith(
+                      color: primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Text(
+              "Vui lòng không được gửi mã cho bất kỳ ai!",
+              style: contentStyle,
+            ),
+            const SizedBox(height: 24),
             MyTextField(
               controller: otpController,
-              label: "Email:",
+              label: "OTP:",
             ),
             const SizedBox(height: 16.0),
             Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
-                onTap: () {
-                },
+                onTap: () {},
                 child: const Text(
                   "Gửi lại",
                   style: TextStyle(

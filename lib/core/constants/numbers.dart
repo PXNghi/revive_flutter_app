@@ -1,0 +1,1 @@
+const apiTimeOutDuration = Duration(seconds: 60);
