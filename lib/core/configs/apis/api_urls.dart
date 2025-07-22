@@ -16,7 +16,7 @@ class ApiUrls {
   Uri apiSendVerificationOtp() => Uri.parse('$baseUrl/api/auth/send-verification-code');
   Uri apiConfirmVerificationOtp() => Uri.parse('$baseUrl/api/auth/confirmed-verification-code');
   Uri apiChangePassword() => Uri.parse('$baseUrl/api/auth/change-password');
-  Uri apiSendForgetPasswordOtp() => Uri.parse('$baseUrl/api/auth/send-forget-password-code');
+  Uri apiSendForgetPasswordOtp() => Uri.parse('$baseUrl/api/auth/send-forgot-password-code');
   Uri apiConfirmForgetPasswordOtp() => Uri.parse('$baseUrl/api/auth/confirm-forgot-verification-code');
   Uri apiResetPassword() => Uri.parse('$baseUrl/api/auth/reset-password');
 

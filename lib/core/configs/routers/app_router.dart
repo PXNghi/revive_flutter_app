@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:revive_flutter_project/features/authentication/forget_password/presentations/forget_password.dart';
-import 'package:revive_flutter_project/features/authentication/forget_password/presentations/reset_password.dart';
+import 'package:revive_flutter_project/features/authentication/forget_password/bloc/forget_password_bloc.dart';
+import 'package:revive_flutter_project/features/authentication/forget_password/presentations/forget_password_page.dart';
+import 'package:revive_flutter_project/features/authentication/forget_password/presentations/reset_password_page.dart';
 import 'package:revive_flutter_project/features/authentication/login/bloc/login_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/login/login_page.dart';
 import 'package:revive_flutter_project/features/authentication/register/bloc/register_bloc.dart';
@@ -47,12 +48,23 @@ final GoRouter routers = GoRouter(
         GoRoute(
           name: 'forget-password',
           path: 'forget-password',
-          builder: (context, state) => const ForgetPasswordPage(),
-        ),
-        GoRoute(
-          name: 'reset-password',
-          path: 'reset-password',
-          builder: (context, state) => const ResetPasswordPage(),
+          builder: (context, state) => BlocProvider(
+            create: (context) => ForgetPasswordBloc(),
+            child: const ForgetPasswordPage(),
+          ),
+          routes: [
+            GoRoute(
+              name: 'reset-password',
+              path: 'reset-password',
+              builder: (context, state) {
+                final String? email = state.uri.queryParameters['email'];
+                return BlocProvider(
+                  create: (context) => ForgetPasswordBloc(),
+                  child: ResetPasswordPage(email: email ?? ""),
+                );
+              }
+            ),
+          ],
         ),
       ],
     ),

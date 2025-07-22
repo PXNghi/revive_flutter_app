@@ -106,4 +106,51 @@ class AuthUsecases {
     print(data);
     return data['success'];
   }
+
+  Future<AuthResponse> sendForgetPasswordOTP(String email) async {
+    final Map<String, String> bodyRequest = {
+      "email": email.trim(),
+    };
+    try {
+      final Response response = await ApiService().patch(ApiUrls().apiSendForgetPasswordOtp(), bodyRequest);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return AuthResponse(success: data["success"] ?? false, message: data["message"]);
+    } catch (e) {
+      print("Error at send forget password otp usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<AuthResponse> verifyForgetPasswordOTP(String email, String otp) async {
+    final Map<String, String> bodyRequest = {
+      "email": email.trim(),
+      "provided_code": otp,
+    };
+    try {
+      final Response response = await ApiService()
+          .post(ApiUrls().apiConfirmForgetPasswordOtp(), bodyRequest);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return AuthResponse(success: data["success"] ?? false, message: data["message"]);
+    } catch (e) {
+      print("Error at verify forget password otp usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<AuthResponse> resetPassword(String email, String password, String confirmedPassword) async {
+    final Map<String, String> bodyRequest = {
+      "email": email.trim(),
+      "new_password": password,
+      "confirmed_password": confirmedPassword
+    };
+    try {
+      final Response response = await ApiService()
+          .patch(ApiUrls().apiResetPassword(), bodyRequest);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return AuthResponse(success: data["success"] ?? false, message: data["message"]);
+    } catch (e) {
+      print("Error at reset password usecase: $e");
+      rethrow;
+    }
+  }
 }
