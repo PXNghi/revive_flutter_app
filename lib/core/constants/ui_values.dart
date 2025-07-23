@@ -5,6 +5,7 @@ const primaryColor = Color(0xff64B541);
 const alertColor = Color(0xffE92929);
 const redColor = Color(0xffFD1111);
 const grayColor = Color(0xffD9D9D9);
+const grayBorderColor = Color(0xffC0C8BD);
 
 // font sizes
 const headerFontSize = 25.0;
@@ -37,3 +38,6 @@ const contentStyle = TextStyle(
   fontWeight: FontWeight.w500,
   fontFamily: montFont,
 );
+
+// padding
+const pageHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);

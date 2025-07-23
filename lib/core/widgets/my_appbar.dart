@@ -20,6 +20,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Text(title, style: titleStyle),
       centerTitle: isCenter,
       actions: actions ?? [],

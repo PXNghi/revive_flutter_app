@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:revive_flutter_project/features/authentication/login/login_page.dart';
+import 'package:revive_flutter_project/core/configs/routers/app_router.dart';
+import 'package:revive_flutter_project/core/constants/ui_values.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SessionData.init();
   runApp(const MyApp());
 }
 
@@ -11,13 +15,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      routerConfig: routers,
     );
   }
 }
