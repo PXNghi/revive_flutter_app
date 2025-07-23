@@ -40,7 +40,7 @@ class AuthUsecases {
       );
       final Map<String, dynamic> data = json.decode(response.body);
       if (data["success"] == true) {
-        await SessionData.login(data["token"], data);
+        await SessionData.login(data["data"]["token"], data["data"]["user"]);
         return const AuthResponse(success: true, message: "Đăng nhập thành công");
       } else {
         print("error login: ${data["message"]}");

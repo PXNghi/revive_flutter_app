@@ -43,7 +43,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             ));
           }
           if (state is SendOTPSuccess) {
-            context.pop();
+            Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Gửi OTP thành công! Vui lòng kiểm tra email"),
             ));

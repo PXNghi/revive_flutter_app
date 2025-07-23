@@ -58,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                 }
                 if (state is LoginSuccess) {
                   Navigator.of(context).pop();
+                  context.goNamed('home-page');
                 }
                 if (state is LoginError) {
                   Navigator.of(context).pop();

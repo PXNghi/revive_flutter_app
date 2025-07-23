@@ -123,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            context.pop();
+                            Navigator.of(context).pop();
                           },
                           child: Text(
                             "Đăng nhập ngay!",
