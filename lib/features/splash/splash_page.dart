@@ -26,7 +26,7 @@ class _SplashPageState extends State<SplashPage> {
     final token = await SessionData.token();
     if (token.isEmpty) {
       Future.delayed(const Duration(seconds: 2), () {
-        context.goNamed('login');
+        context.goNamed('login-page');
       });
     } else {
       ApiService.authorizeHeader(token);

@@ -26,7 +26,10 @@ final GoRouter routers = GoRouter(
     GoRoute(
       name: 'login-page',
       path: '/login',
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => LoginBloc(),
+        child: const LoginPage(),
+      ),
     ),
     GoRoute(
       name: 'register',
