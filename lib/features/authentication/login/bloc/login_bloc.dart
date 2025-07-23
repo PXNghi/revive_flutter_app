@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/features/authentication/auth_usecases.dart';
 
 part 'login_event.dart';

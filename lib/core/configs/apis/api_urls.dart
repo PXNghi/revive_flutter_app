@@ -20,4 +20,7 @@ class ApiUrls {
   Uri apiConfirmForgetPasswordOtp() => Uri.parse('$baseUrl/api/auth/confirm-forgot-verification-code');
   Uri apiResetPassword() => Uri.parse('$baseUrl/api/auth/reset-password');
 
+  // user
+  Uri apiGetProfileByToken() => Uri.parse('$baseUrl/api/user/get-profile-by-token');
+
 }

@@ -8,63 +8,65 @@ import 'package:revive_flutter_project/features/authentication/login/login_page.
 import 'package:revive_flutter_project/features/authentication/register/bloc/register_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_otp_page.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_page.dart';
+import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
+import 'package:revive_flutter_project/features/splash/splash_page.dart';
 
 final GoRouter routers = GoRouter(
   routes: [
     GoRoute(
-      name: 'login',
+      name: 'splash-page',
       path: '/',
+      builder: (context, state) => const SplashPage(),
+    ),
+    GoRoute(
+      name: 'home-page',
+      path: '/home',
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      name: 'login-page',
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      name: 'register',
+      path: '/register',
       builder: (context, state) => BlocProvider(
-        create: (context) => LoginBloc(),
-        child: const LoginPage(),
+        create: (context) => RegisterBloc(),
+        child: const RegisterPage(),
       ),
       routes: [
         GoRoute(
-          name: 'login-page',
-          path: 'login',
-          builder: (context, state) => const LoginPage(),
+          name: 'confirm-otp-register',
+          path: 'confirm-otp-register',
+          builder: (context, state) {
+            final String? email = state.uri.queryParameters['email'];
+            return BlocProvider(
+              create: (context) => RegisterBloc(),
+              child: RegisterOTPPage(email: email ?? ""),
+            );
+          },
         ),
+      ],
+    ),
+    GoRoute(
+      name: 'forget-password',
+      path: '/forget-password',
+      builder: (context, state) => BlocProvider(
+        create: (context) => ForgetPasswordBloc(),
+        child: const ForgetPasswordPage(),
+      ),
+      routes: [
         GoRoute(
-          name: 'register',
-          path: 'register',
-          builder: (context, state) => BlocProvider(
-            create: (context) => RegisterBloc(),
-            child: const RegisterPage(),
-          ),
-          routes: [
-            GoRoute(
-              name: 'confirm-otp-register',
-              path: 'confirm-otp-register',
-              builder: (context, state) {
-                final String? email = state.uri.queryParameters['email'];
-                return BlocProvider(
-                  create: (context) => RegisterBloc(),
-                  child: RegisterOTPPage(email: email ?? ""),
-                );
-              },
-            ),
-          ],
-        ),
-        GoRoute(
-          name: 'forget-password',
-          path: 'forget-password',
-          builder: (context, state) => BlocProvider(
-            create: (context) => ForgetPasswordBloc(),
-            child: const ForgetPasswordPage(),
-          ),
-          routes: [
-            GoRoute(
-              name: 'reset-password',
-              path: 'reset-password',
-              builder: (context, state) {
-                final String? email = state.uri.queryParameters['email'];
-                return BlocProvider(
-                  create: (context) => ForgetPasswordBloc(),
-                  child: ResetPasswordPage(email: email ?? ""),
-                );
-              }
-            ),
-          ],
+          name: 'reset-password',
+          path: '/reset-password',
+          builder: (context, state) {
+            final String? email = state.uri.queryParameters['email'];
+            return BlocProvider(
+              create: (context) => ForgetPasswordBloc(),
+              child: ResetPasswordPage(email: email ?? ""),
+            );
+          },
         ),
       ],
     ),
