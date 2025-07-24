@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:revive_flutter_project/core/constants/strings.dart';
 
 // colors
 const primaryColor = Color(0xff64B541);
@@ -6,6 +7,7 @@ const alertColor = Color(0xffE92929);
 const redColor = Color(0xffFD1111);
 const grayColor = Color(0xffD9D9D9);
 const grayBorderColor = Color(0xffC0C8BD);
+const grayContentColor = Color(0xff918C8C);
 
 // font sizes
 const headerFontSize = 25.0;
@@ -27,7 +29,7 @@ const headerStyle = TextStyle(
 
 const titleStyle = TextStyle(
   fontSize: titleFontSize,
-  color: primaryColor,
+  color: Colors.black,
   fontWeight: FontWeight.w600,
   fontFamily: montFont,
 );
@@ -41,3 +43,16 @@ const contentStyle = TextStyle(
 
 // padding
 const pageHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
+
+// border radius
+const defaultBorderRadius = 10.0;
+const cardBorderRadius = BorderRadius.all(Radius.circular(defaultBorderRadius));
+
+// mock data
+const bannerImageList = [
+  bannerImage,
+  bannerImage,
+  bannerImage,
+  bannerImage,
+  bannerImage,
+];

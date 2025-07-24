@@ -8,6 +8,9 @@ import 'package:revive_flutter_project/features/authentication/login/login_page.
 import 'package:revive_flutter_project/features/authentication/register/bloc/register_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_otp_page.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_page.dart';
+import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_bloc.dart';
+import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
+import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
 
@@ -21,7 +24,21 @@ final GoRouter routers = GoRouter(
     GoRoute(
       name: 'home-page',
       path: '/home',
-      builder: (context, state) => const HomePage(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => HomeBloc()..add(const HomeEvent.loadAllHomeData()),
+        child: const HomePage(),
+      ),
+      routes: [
+        GoRoute(
+            name: 'branch-list',
+            path: '/branch-list',
+            builder: (context, state) {
+              return BlocProvider(
+                create: (context) => BranchBloc()..add(const BranchEvent.getBranches()),
+                child: const BranchesPage(),
+              );
+            }),
+      ],
     ),
     GoRoute(
       name: 'login-page',
