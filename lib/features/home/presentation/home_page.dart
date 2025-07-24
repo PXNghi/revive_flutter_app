@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:revive_flutter_project/core/configs/routers/app_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
+import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
 import 'package:revive_flutter_project/core/widgets/product_item.dart';
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 
@@ -26,37 +26,88 @@ class _HomePageState extends State<HomePage> {
         flexibleSpace: SafeArea(
           child: Padding(
             padding: pageHorizontalPadding,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(redLocationIcon, height: 30, width: 30),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: BlocConsumer<LocationBloc, LocationState>(
+              listener: (context, state) {
+                if (state is PermissionDeniedLocationState) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Quyền truy cập bị từ chối"),
+                  ));
+                }
+
+                if (state is ErrorLocationState) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(state.message),
+                  ));
+                }
+              },
+              builder: (context, state) {
+                if (state is FetchingSuccessLocationState) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Địa chỉ",
-                        style: contentStyle,
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        "Số 182, phường Phước Long A, Thành phố Hồ Chí Minh",
-                        overflow: TextOverflow.ellipsis,
-                        style: contentStyle.copyWith(
-                          fontWeight: FontWeight.w600,
+                      Image.asset(redLocationIcon, height: 30, width: 30),
+                      const SizedBox(width: 8.0),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Địa chỉ",
+                              style: contentStyle,
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              state.address ?? "",
+                              overflow: TextOverflow.ellipsis,
+                              style: contentStyle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(width: 8.0),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Image.asset(bellIcon, height: 30, width: 30),
+                      ),
                     ],
-                  ),
-                ),
-                const SizedBox(width: 8.0),
-                GestureDetector(
-                  onTap: () {},
-                  child: Image.asset(bellIcon, height: 30, width: 30),
-                ),
-              ],
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(redLocationIcon, height: 30, width: 30),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Địa chỉ",
+                            style: contentStyle,
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            "Số 182, phường Phước Long A, Thành phố Hồ Chí Minh",
+                            overflow: TextOverflow.ellipsis,
+                            style: contentStyle.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Image.asset(bellIcon, height: 30, width: 30),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),

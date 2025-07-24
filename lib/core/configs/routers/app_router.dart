@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/bloc/forget_password_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/forget_password_page.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/reset_password_page.dart';
@@ -24,8 +25,16 @@ final GoRouter routers = GoRouter(
     GoRoute(
       name: 'home-page',
       path: '/home',
-      builder: (context, state) => BlocProvider(
-        create: (context) => HomeBloc()..add(const HomeEvent.loadAllHomeData()),
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                HomeBloc()..add(const HomeEvent.loadAllHomeData()),
+          ),
+          BlocProvider(
+            create: (context) => LocationBloc()..add(const LocationEvent.requestLocationPermission()),
+          ),
+        ],
         child: const HomePage(),
       ),
       routes: [
@@ -34,7 +43,8 @@ final GoRouter routers = GoRouter(
             path: '/branch-list',
             builder: (context, state) {
               return BlocProvider(
-                create: (context) => BranchBloc()..add(const BranchEvent.getBranches()),
+                create: (context) =>
+                    BranchBloc()..add(const BranchEvent.getBranches()),
                 child: const BranchesPage(),
               );
             }),
