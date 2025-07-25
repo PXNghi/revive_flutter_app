@@ -2,11 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
+import 'package:revive_flutter_project/core/widgets/my_bottom_nav_bar.dart';
 import 'package:revive_flutter_project/core/widgets/product_item.dart';
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 
@@ -249,3 +251,5 @@ class _HomePageState extends State<HomePage> {
         userAgentPackageName: 'com.example.revive_flutter_project',
       );
 }
+
+

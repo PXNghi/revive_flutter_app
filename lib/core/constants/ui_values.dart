@@ -5,7 +5,7 @@ import 'package:revive_flutter_project/core/constants/strings.dart';
 const primaryColor = Color(0xff64B541);
 const alertColor = Color(0xffE92929);
 const redColor = Color(0xffFD1111);
-const grayColor = Color(0xffD9D9D9);
+const grayColor = Color(0xffF9FAFB);
 const grayBorderColor = Color(0xffC0C8BD);
 const grayContentColor = Color(0xff918C8C);
 

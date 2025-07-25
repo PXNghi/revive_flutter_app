@@ -27,7 +27,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     try {
       final granted = await PermissionUtils.requestLocationPermission();
       if (granted) {
-        print("granted");
         emit(const LocationState.permissionGranted());
         add(const LocationEvent.getLocation());
       } else {
