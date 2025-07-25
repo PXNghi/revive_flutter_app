@@ -11,7 +11,7 @@ class BranchesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppbar(
+      appBar: const MyAppbar(
         title: "",
         isLeadingImplied: true,
       ),
@@ -24,22 +24,25 @@ class BranchesPage extends StatelessWidget {
               style: headerStyle,
             ),
             const SizedBox(height: 16.0),
-            BlocBuilder<BranchBloc, BranchState>(builder: (context, state) {
-              return ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(height: 16.0),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.branches.length,
-                itemBuilder: (context, index) {
-                  return BranchListItem(
-                    district: state.branches[index].district,
-                    address: state.branches[index].address,
-                    lat: state.branches[index].location.lat,
-                    lon: state.branches[index].location.lon,
-                  );
-                },
-              );
-            })
+            BlocBuilder<BranchBloc, BranchState>(
+              builder: (context, state) {
+                return ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16.0),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.branches.length,
+                  itemBuilder: (context, index) {
+                    return BranchListItem(
+                      district: state.branches[index].district,
+                      address: state.branches[index].address,
+                      lat: state.branches[index].location.coordinates[1],
+                      lon: state.branches[index].location.coordinates[0],
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

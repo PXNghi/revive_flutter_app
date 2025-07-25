@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            "Số 182, phường Phước Long A, Thành phố Hồ Chí Minh",
+                            "",
                             overflow: TextOverflow.ellipsis,
                             style: contentStyle.copyWith(
                               fontWeight: FontWeight.w600,
@@ -163,7 +163,6 @@ class _HomePageState extends State<HomePage> {
                 title: "Các chi nhánh khu vực",
                 isHasAll: true,
                 onTap: () {
-                  print("go to branch list");
                   context.pushNamed("branch-list");
                 },
               ),
@@ -222,8 +221,8 @@ class _HomePageState extends State<HomePage> {
                       .map(
                         (marker) => Marker(
                           point: LatLng(
-                            marker.location.lat,
-                            marker.location.lon,
+                            marker.location.coordinates[1],
+                            marker.location.coordinates[0],
                           ),
                           width: 100.0,
                           height: 100.0,

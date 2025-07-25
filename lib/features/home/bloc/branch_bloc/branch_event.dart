@@ -7,4 +7,5 @@ class BranchEvent with _$BranchEvent {
   const factory BranchEvent.createNewBranch(Branch branch) = _CreateNewBranch;
   const factory BranchEvent.updateBranch(String id) = _UpdateBranch;
   const factory BranchEvent.deleteBranch(String id) = _DeleteBranch;
+  const factory BranchEvent.getBranchesNearby(double lat, double lon) = _GetBranchesNearby;
 }

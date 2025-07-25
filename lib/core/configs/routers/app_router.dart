@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/bloc/forget_password_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/forget_password_page.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/reset_password_page.dart';
@@ -32,7 +33,8 @@ final GoRouter routers = GoRouter(
                 HomeBloc()..add(const HomeEvent.loadAllHomeData()),
           ),
           BlocProvider(
-            create: (context) => LocationBloc()..add(const LocationEvent.requestLocationPermission()),
+            create: (context) => LocationBloc()
+              ..add(const LocationEvent.requestLocationPermission()),
           ),
         ],
         child: const HomePage(),
@@ -42,9 +44,19 @@ final GoRouter routers = GoRouter(
             name: 'branch-list',
             path: '/branch-list',
             builder: (context, state) {
+              final address = SessionData.currentUserAddress;
               return BlocProvider(
-                create: (context) =>
-                    BranchBloc()..add(const BranchEvent.getBranches()),
+                create: (context) => BranchBloc()
+                  ..add(
+                    address == null
+                        ? const BranchEvent.getBranches()
+                        : (address.lat == null || address.lon == null)
+                            ? const BranchEvent.getBranches()
+                            : (BranchEvent.getBranchesNearby(
+                                address.lat!,
+                                address.lon!,
+                              )),
+                  ),
                 child: const BranchesPage(),
               );
             }),

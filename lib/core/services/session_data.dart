@@ -1,11 +1,14 @@
 import 'package:revive_flutter_project/core/services/api_services.dart';
+import 'package:revive_flutter_project/core/services/location/models/address.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionData {
   static User? _mine;
+  static Address? _currentUserAddress;
 
   static User? get mine => _mine;
+  static Address? get currentUserAddress => _currentUserAddress;
 
   static Future<void> init() async {
     
@@ -33,5 +36,9 @@ class SessionData {
     print("my profile: $myInformation");
     ApiService.authorizeHeader(token);
     await setToken(token);
+  }
+
+  static Future<void> updateAddress(Address address) async {
+    _currentUserAddress = address;
   }
 }

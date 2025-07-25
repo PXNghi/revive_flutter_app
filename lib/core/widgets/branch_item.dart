@@ -38,10 +38,17 @@ class BranchListItem extends StatelessWidget {
             address,
             style: contentStyle,
           ),
-          const SizedBox(height: 12.0),
-          Text(
-            "${distance.toStringAsFixed(2)} km",
-            style: contentStyle.copyWith(fontSize: 12.0),
+          Visibility(
+            visible: distance != 0.0,
+            child: Column(
+              children: [
+                const SizedBox(height: 12.0),
+                Text(
+                  "${distance.toStringAsFixed(2)} km",
+                  style: contentStyle.copyWith(fontSize: 12.0),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12.0),
           Row(
@@ -71,8 +78,8 @@ class BranchListItem extends StatelessWidget {
   }
 
   Future<void> _openMap(BuildContext context, double lat, double lon) async {
-    final Uri googleUrl =
-        Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lon&travelmode=driving');
+    final Uri googleUrl = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon&travelmode=driving');
     if (await canLaunchUrl(googleUrl)) {
       await launchUrl(googleUrl, mode: LaunchMode.externalApplication);
     } else {

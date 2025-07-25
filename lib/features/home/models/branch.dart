@@ -19,8 +19,7 @@ class Branch with _$Branch {
 @freezed 
 class Location with _$Location {
   const factory Location({
-    @JsonKey(name: "lat") required double lat,
-    @JsonKey(name: "lon") required double lon,
+    @JsonKey(name: "coordinates") required List<double> coordinates,
   }) = _Location;
 
   factory Location.fromJson(Map<String,Object?> json) => _$LocationFromJson(json);
