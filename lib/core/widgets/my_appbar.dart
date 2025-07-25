@@ -27,11 +27,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
       leading: isLeadingImplied
           ? GestureDetector(
               onTap: () => Navigator.pop(context),
-              child: Image.asset(
-                arrowLeftIcon,
-                height: 30,
-                width: 30,
-              ),
+              child: Image.asset(arrowLeftIcon),
             )
           : null,
     );

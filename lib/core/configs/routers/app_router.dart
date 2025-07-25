@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/core/widgets/my_bottom_nav_bar.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/bloc/forget_password_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/forget_password_page.dart';
 import 'package:revive_flutter_project/features/authentication/forget_password/presentations/reset_password_page.dart';
@@ -8,6 +12,9 @@ import 'package:revive_flutter_project/features/authentication/login/login_page.
 import 'package:revive_flutter_project/features/authentication/register/bloc/register_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_otp_page.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_page.dart';
+import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_bloc.dart';
+import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
+import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
 
@@ -18,11 +25,60 @@ final GoRouter routers = GoRouter(
       path: '/',
       builder: (context, state) => const SplashPage(),
     ),
-    GoRoute(
-      name: 'home-page',
-      path: '/home',
-      builder: (context, state) => const HomePage(),
+    ShellRoute(
+      builder: (context, GoRouterState state, child) {
+        final role = SessionData.mine?.role ?? "User";
+        final location = GoRouter.of(context)
+            .routerDelegate
+            .currentConfiguration
+            .uri
+            .toString();
+        return Scaffold(
+          body: child,
+          bottomNavigationBar:
+              CustomBottomNavBar(role: role, currentLocation: location),
+        );
+      },
+      routes: [
+        GoRoute(
+          name: 'home-page',
+          path: '/home',
+          builder: (context, state) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    HomeBloc()..add(const HomeEvent.loadAllHomeData()),
+              ),
+              BlocProvider(
+                create: (context) => LocationBloc()
+                  ..add(const LocationEvent.requestLocationPermission()),
+              ),
+            ],
+            child: const HomePage(),
+          ),
+        ),
+      ],
     ),
+    GoRoute(
+        name: 'branch-list',
+        path: '/branch-list',
+        builder: (context, state) {
+          final address = SessionData.currentUserAddress;
+          return BlocProvider(
+            create: (context) => BranchBloc()
+              ..add(
+                address == null
+                    ? const BranchEvent.getBranches()
+                    : (address.lat == null || address.lon == null)
+                        ? const BranchEvent.getBranches()
+                        : (BranchEvent.getBranchesNearby(
+                            address.lat!,
+                            address.lon!,
+                          )),
+              ),
+            child: const BranchesPage(),
+          );
+        }),
     GoRoute(
       name: 'login-page',
       path: '/login',

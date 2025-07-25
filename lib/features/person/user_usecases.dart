@@ -23,4 +23,19 @@ class UserUsecases {
       rethrow;
     }
   }
+
+  Future<bool> updateAddress(String address, double lat, double lon) async {
+    try {
+      final bodyRequest = {"address": address, "lat": lat, "lon": lon};
+      final Response response = await ApiService().post(ApiUrls().apiUpdateAddress(), bodyRequest);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("Error at update address usecase: $e");
+      rethrow;
+    }
+  }
 }

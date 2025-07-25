@@ -22,5 +22,13 @@ class ApiUrls {
 
   // user
   Uri apiGetProfileByToken() => Uri.parse('$baseUrl/api/user/get-profile-by-token');
+  Uri apiUpdateAddress() => Uri.parse('$baseUrl/api/user/update-user-address');
 
+  // branch
+  Uri apiGetAllBranches() => Uri.parse('$baseUrl/api/branch/get-all-branches');
+  Uri apiGetBranchById(String id) => Uri.parse('$baseUrl/api/branch/get-branch-by-id/$id');
+  Uri apiCreateNewBranch() => Uri.parse('$baseUrl/api/branch/create-new-branch');
+  Uri apiUpdateBranch(String id) => Uri.parse('$baseUrl/api/branch/update-branch/$id');
+  Uri apiDeleteBranch(String id) => Uri.parse('$baseUrl/api/branch/delete-branch/$id');
+  Uri apiGetAllBranchesNearby(double lat, double lon) => Uri.parse('$baseUrl/api/branch/get-all-branches-nearby?lat=$lat&lon=$lon');
 }

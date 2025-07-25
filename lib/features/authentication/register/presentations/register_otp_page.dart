@@ -35,7 +35,7 @@ class _RegisterOTPPageState extends State<RegisterOTPPage> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Đăng ký thành công!"),
             ));
-            context.pushNamed('login');
+            context.pushNamed('login-page');
           }
           if (state is ResendOTPSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
