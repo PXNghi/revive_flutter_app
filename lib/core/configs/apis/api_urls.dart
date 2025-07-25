@@ -31,4 +31,11 @@ class ApiUrls {
   Uri apiUpdateBranch(String id) => Uri.parse('$baseUrl/api/branch/update-branch/$id');
   Uri apiDeleteBranch(String id) => Uri.parse('$baseUrl/api/branch/delete-branch/$id');
   Uri apiGetAllBranchesNearby(double lat, double lon) => Uri.parse('$baseUrl/api/branch/get-all-branches-nearby?lat=$lat&lon=$lon');
+
+  // category
+  Uri apiGetAllCategories() => Uri.parse('$baseUrl/api/category/get-all-categories');
+  Uri apiGetCategoryById(String id) => Uri.parse('$baseUrl/api/category/get-category-by-id/$id');
+  Uri apiCreateNewCategory() => Uri.parse('$baseUrl/api/category/create-new-category');
+  Uri apiUpdateCategory(String id) => Uri.parse('$baseUrl/api/category/update-category/$id');
+  Uri apiDeleteCategory(String id) => Uri.parse('$baseUrl/api/category/delete-category/$id');
 }

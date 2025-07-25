@@ -16,6 +16,7 @@ import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_blo
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
+import 'package:revive_flutter_project/features/product/product_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
 
 final GoRouter routers = GoRouter(
@@ -57,28 +58,35 @@ final GoRouter routers = GoRouter(
             child: const HomePage(),
           ),
         ),
+
+        GoRoute(
+          name: 'product-page',
+          path: '/product',
+          builder: (context, state) => const ProductPage(),
+        ),
       ],
     ),
     GoRoute(
-        name: 'branch-list',
-        path: '/branch-list',
-        builder: (context, state) {
-          final address = SessionData.currentUserAddress;
-          return BlocProvider(
-            create: (context) => BranchBloc()
-              ..add(
-                address == null
-                    ? const BranchEvent.getBranches()
-                    : (address.lat == null || address.lon == null)
-                        ? const BranchEvent.getBranches()
-                        : (BranchEvent.getBranchesNearby(
-                            address.lat!,
-                            address.lon!,
-                          )),
-              ),
-            child: const BranchesPage(),
-          );
-        }),
+      name: 'branch-list',
+      path: '/branch-list',
+      builder: (context, state) {
+        final address = SessionData.currentUserAddress;
+        return BlocProvider(
+          create: (context) => BranchBloc()
+            ..add(
+              address == null
+                  ? const BranchEvent.getBranches()
+                  : (address.lat == null || address.lon == null)
+                      ? const BranchEvent.getBranches()
+                      : (BranchEvent.getBranchesNearby(
+                          address.lat!,
+                          address.lon!,
+                        )),
+            ),
+          child: const BranchesPage(),
+        );
+      },
+    ),
     GoRoute(
       name: 'login-page',
       path: '/login',
