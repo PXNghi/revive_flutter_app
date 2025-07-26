@@ -37,6 +37,7 @@ class CustomBottomNavBar extends StatelessWidget {
       showUnselectedLabels: true,
       selectedFontSize: 12,
       unselectedFontSize: 12,
+      backgroundColor: Colors.white,
       unselectedItemColor: grayContentColor,
       selectedItemColor: primaryColor,
       selectedLabelStyle: const TextStyle(
