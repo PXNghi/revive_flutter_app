@@ -38,4 +38,12 @@ class ApiUrls {
   Uri apiCreateNewCategory() => Uri.parse('$baseUrl/api/category/create-new-category');
   Uri apiUpdateCategory(String id) => Uri.parse('$baseUrl/api/category/update-category/$id');
   Uri apiDeleteCategory(String id) => Uri.parse('$baseUrl/api/category/delete-category/$id');
+
+  // product
+  Uri apiGetAllProducts() => Uri.parse('$baseUrl/api/product/get-all-products');
+  Uri apiGetAllProductsByCategory(String categoryId) => Uri.parse('$baseUrl/api/product/get-product-by-category/$categoryId');
+  Uri apiGetProductById(String id) => Uri.parse('$baseUrl/api/product/get-product-by-id/$id');
+  Uri apiCreateNewProduct() => Uri.parse('$baseUrl/api/product/create-new-product');
+  Uri apiUpdateProduct(String id) => Uri.parse('$baseUrl/api/product/update-product/$id');
+  Uri apiDeleteProduct(String id) => Uri.parse('$baseUrl/api/product/delete-product/$id');
 }
