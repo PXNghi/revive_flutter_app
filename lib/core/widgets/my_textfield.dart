@@ -8,6 +8,7 @@ class MyTextField extends StatefulWidget {
   final String? errorText;
   final int? maxLines;
   final int? maxLength;
+  final String? initialValue;
   
   const MyTextField({
     super.key,
@@ -17,6 +18,7 @@ class MyTextField extends StatefulWidget {
     this.errorText,
     this.maxLines,
     this.maxLength,
+    this.initialValue,
   });
 
   @override
@@ -38,6 +40,7 @@ class _MyTextFieldState extends State<MyTextField> {
         TextField(
           controller: widget.controller,
           decoration: InputDecoration(
+            hintText: widget.initialValue,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
               borderSide: const BorderSide(color: grayBorderColor, width: 1.0),

@@ -8,6 +8,11 @@ class ProductEvent with _$ProductEvent {
   const factory ProductEvent.selectCategory(int index) = _SelectCategory;
   const factory ProductEvent.createCategory(String categoryName) =
       _CreateCategory;
+  const factory ProductEvent.updateCategory(String newCategoryId, String newCategoryName) =
+      _UpdateCategory;
+  const factory ProductEvent.deleteCategory(String categoryId) =
+      _DeleteCategory;
+
   const factory ProductEvent.getAllProducts() = _GetAllProducts;
   const factory ProductEvent.getAllProductsByCategory(String categoryId) =
       _GetAllProductsByCategory;
@@ -19,6 +24,15 @@ class ProductEvent with _$ProductEvent {
     required String categoryId,
     @Default("") String image,
   }) = _CreateProduct;
-  const factory ProductEvent.updateProduct(Product product) = _UpdateProduct;
+  const factory ProductEvent.updateProduct({
+    required String id,
+    String? name,
+    double? price,
+    String? description,
+    String? categoryId,
+    String? image,
+  }) = _UpdateProduct;
   const factory ProductEvent.deleteProduct(String id) = _DeleteProduct;
+  const factory ProductEvent.toggleEditingMode() = _ToggleEditingMode;
+  const factory ProductEvent.warningDelete(String message, bool isProduct, String productId) = _WarningDelete;
 }

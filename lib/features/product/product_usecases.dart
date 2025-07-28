@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
-import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
 
@@ -50,6 +49,49 @@ class ProductUsecase {
       }
     } catch (e) {
       print("Error creating category: $e");
+      return false;
+    }
+  }
+
+  Future<bool> updateCategory(
+    String newCategoryId,
+    String newCategoryName,
+  ) async {
+    final bodyRequest = {
+      'category_name': newCategoryName,
+      'category_description': "",
+    };
+
+    try {
+      final Response response = await ApiService().put(
+        ApiUrls().apiUpdateCategory(newCategoryId),
+        bodyRequest,
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Error updating category: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error updating category: $e");
+      return false;
+    }
+  }
+
+  Future<bool> deleteCategory(String categoryId) async {
+    try {
+      final Response response = await ApiService().delete(
+        ApiUrls().apiDeleteCategory(categoryId),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Error deleting category: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error deleting category: $e");
       return false;
     }
   }
@@ -121,18 +163,25 @@ class ProductUsecase {
     }
   }
 
-  Future<bool> updateProduct(Product product) async {
-    final bodyRequest = {
-      'name': product.name,
-      'price': product.price.toString(),
-      'description': product.description,
-      'category': product.category,
-      'image': product.image,
-    };
+  Future<bool> updateProduct({
+    required String id,
+    String? name,
+    double? price,
+    String? description,
+    String? categoryId,
+    String? image,
+  }) async {
+    final Map<String, dynamic> bodyRequest = {};
+
+    if (name != null) bodyRequest['name'] = name;
+    if (price != null) bodyRequest['price'] = price.toString();
+    if (description != null) bodyRequest['description'] = description;
+    if (categoryId != null) bodyRequest['category'] = categoryId;
+    if (image != null) bodyRequest['image'] = image;
 
     try {
       final Response response = await ApiService().put(
-        ApiUrls().apiUpdateProduct(product.id),
+        ApiUrls().apiUpdateProduct(id),
         bodyRequest,
       );
       if (response.statusCode == 200) {
