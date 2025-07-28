@@ -6,6 +6,9 @@ class MyTextField extends StatefulWidget {
   final String label;
   final bool isPassword;
   final String? errorText;
+  final int? maxLines;
+  final int? maxLength;
+  final String? initialValue;
   
   const MyTextField({
     super.key,
@@ -13,6 +16,9 @@ class MyTextField extends StatefulWidget {
     this.isPassword = false,
     this.controller,
     this.errorText,
+    this.maxLines,
+    this.maxLength,
+    this.initialValue,
   });
 
   @override
@@ -34,6 +40,7 @@ class _MyTextFieldState extends State<MyTextField> {
         TextField(
           controller: widget.controller,
           decoration: InputDecoration(
+            hintText: widget.initialValue,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
               borderSide: const BorderSide(color: grayBorderColor, width: 1.0),
@@ -68,6 +75,8 @@ class _MyTextFieldState extends State<MyTextField> {
                 : null,
           ),
           obscureText: widget.isPassword ? isHiddenPassword : false,
+          maxLength: widget.maxLength,
+          maxLines: widget.maxLines ?? 1,
         ),
       ],
     );

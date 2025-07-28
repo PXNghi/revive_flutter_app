@@ -9,7 +9,6 @@ import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/location/bloc/location_bloc.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
-import 'package:revive_flutter_project/core/widgets/my_bottom_nav_bar.dart';
 import 'package:revive_flutter_project/core/widgets/product_item.dart';
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 
@@ -25,7 +24,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         flexibleSpace: SafeArea(
           child: Padding(
             padding: pageHorizontalPadding,

@@ -16,6 +16,8 @@ import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_blo
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
+import 'package:revive_flutter_project/features/person/person_page.dart';
+import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/product_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
 
@@ -58,11 +60,21 @@ final GoRouter routers = GoRouter(
             child: const HomePage(),
           ),
         ),
-
         GoRoute(
           name: 'product-page',
           path: '/product',
-          builder: (context, state) => const ProductPage(),
+          builder: (context, state) => BlocProvider(
+            create: (context) => ProductBloc()
+              ..add(const ProductEvent.fetchAllCategoriesAndProducts()),
+            child: const ProductPage(),
+          ),
+        ),
+        GoRoute(
+          name: 'person-page',
+          path: '/person',
+          builder: (context, state) {
+            return const PersonPage();
+          },
         ),
       ],
     ),
