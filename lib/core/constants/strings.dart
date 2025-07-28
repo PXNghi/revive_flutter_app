@@ -23,3 +23,4 @@ const searchIcon = "assets/images/search_icon.png";
 const bannerImage = "assets/images/banner_app_1.jpg";
 const checkSuccessImage = "assets/images/check_mark.png";
 const logoApp = "assets/images/revive_logo_app.png";
+const userDefaultImage = "assets/images/user_default_image.png";

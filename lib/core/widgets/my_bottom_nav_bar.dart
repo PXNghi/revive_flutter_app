@@ -19,12 +19,12 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = <_TabItem>[
-      _TabItem(label: 'Home', iconPath: homeIcon, route: '/home'),
-      _TabItem(label: 'Product', iconPath: orderIcon, route: '/product'),
-      _TabItem(label: 'Order', iconPath: cartIcon, route: '/order'),
-      _TabItem(label: 'Person', iconPath: personIcon, route: '/person'),
+      _TabItem(label: 'Trang chủ', iconPath: homeIcon, route: '/home'),
+      _TabItem(label: 'Bảng giá', iconPath: orderIcon, route: '/product'),
+      _TabItem(label: 'Đơn hàng', iconPath: cartIcon, route: '/order'),
+      _TabItem(label: 'Cá nhân', iconPath: personIcon, route: '/person'),
       if (role == "Admin")
-        _TabItem(label: 'Stat', iconPath: graphIcon, route: '/stat'),
+        _TabItem(label: 'Thống kê', iconPath: graphIcon, route: '/stat'),
     ];
 
     final currentIndex =
