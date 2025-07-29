@@ -14,6 +14,8 @@ class UserManagementBloc
   final UserUsecases _userUsecases = UserUsecases();
   UserManagementBloc() : super(const UserManagementState.initial()) {
     on<_GetAllUsers>(_handleGetAllUsers);
+    on<_ActivateUser>(_handleActivateUser);
+    on<_DeactivateUser>(_handleDeactivateUser);
   }
 
   FutureOr<void> _handleGetAllUsers(
@@ -26,6 +28,42 @@ class UserManagementBloc
       emit(UserManagementState.loaded(users: users));
     } catch (e) {
       print("Error fetching users: $e");
+    }
+  }
+
+  FutureOr<void> _handleActivateUser(
+    _ActivateUser event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    try {
+      emit(const UserManagementState.loading());
+      final bool success = await _userUsecases.activateUser(event.userId);
+      if (success) {
+        add(const UserManagementEvent.getAllUsers());
+      } else {
+        emit(const UserManagementState.error("Error activating user"));
+      }
+    } catch (e) {
+      emit(UserManagementState.error(e.toString()));
+      print("Error activating user: $e");
+    }
+  }
+
+  FutureOr<void> _handleDeactivateUser(
+    _DeactivateUser event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    try {
+      emit(const UserManagementState.loading());
+      final bool success = await _userUsecases.deactivateUser(event.userId);
+      if (success) {
+        add(const UserManagementEvent.getAllUsers());
+      } else {
+        emit(const UserManagementState.error("Error deactivating user"));
+      }
+    } catch (e) {
+      emit(UserManagementState.error(e.toString()));
+      print("Error deactivating user: $e");
     }
   }
 }

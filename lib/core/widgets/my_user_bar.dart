@@ -7,6 +7,7 @@ class UserInformationBar extends StatelessWidget {
   final String userName;
   final String userId;
   final bool isChatList;
+  final bool isActive;
   final VoidCallback? onEditTap;
   final VoidCallback? onActivateTap;
   const UserInformationBar({
@@ -14,6 +15,7 @@ class UserInformationBar extends StatelessWidget {
     required this.userName,
     required this.userId,
     this.isChatList = false,
+    this.isActive = true,
     this.onEditTap,
     this.onActivateTap,
   });
@@ -27,9 +29,19 @@ class UserInformationBar extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(userName, style: contentStyle),
+            Text(
+              userName,
+              style: contentStyle.copyWith(
+                color: !isActive ? grayContentColor : Colors.black,
+              ),
+            ),
             const SizedBox(height: 4.0),
-            Text("ID: $userId", style: contentStyle),
+            Text(
+              "ID: $userId",
+              style: contentStyle.copyWith(
+                color: !isActive ? grayContentColor : Colors.black,
+              ),
+            ),
           ],
         ),
         const Spacer(),
@@ -40,13 +52,13 @@ class UserInformationBar extends StatelessWidget {
               MyIconButton(
                 icon: editIcon,
                 size: 30,
-                onTap: () {},
+                onTap: onEditTap ?? () {},
               ),
               const SizedBox(width: 8.0),
               MyIconButton(
                 icon: alertIcon,
                 size: 30,
-                onTap: () {},
+                onTap: onActivateTap ?? () {},
               ),
             ],
           ),
