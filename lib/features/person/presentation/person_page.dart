@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:revive_flutter_project/core/configs/routers/app_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
-import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_option_bar.dart';
 
 class PersonPage extends StatefulWidget {
@@ -24,8 +22,8 @@ class _PersonPageState extends State<PersonPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 60.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 60.0),
                 child: Text("CÁ NHÂN", style: headerStyle),
               ),
               const SizedBox(height: 16.0),
@@ -90,12 +88,23 @@ class _PersonPageState extends State<PersonPage> {
     return Column(
       children: [
         MyOptionBar(
-          onTap: () {},
+          onTap: () async {
+            final shouldRefresh = await
+                context.pushNamed('user-profile', queryParameters: {
+              "role": "User",
+              "userId": SessionData.mine?.id ?? "",
+            });
+            if (shouldRefresh == true) {
+              setState(() {});
+            }
+          },
           label: "Thay đổi thông tin cá nhân",
         ),
         const SizedBox(height: 16.0),
         MyOptionBar(
-          onTap: () {},
+          onTap: () {
+            context.pushNamed('change-password');
+          },
           label: "Đổi mật khẩu",
         ),
         const SizedBox(height: 16.0),
@@ -105,7 +114,10 @@ class _PersonPageState extends State<PersonPage> {
         ),
         const SizedBox(height: 16.0),
         MyOptionBar(
-          onTap: () {},
+          onTap: () {
+            SessionData.logout();
+            context.goNamed('login-page');
+          },
           label: "Đăng xuất",
           isHasArrowRight: false,
         ),

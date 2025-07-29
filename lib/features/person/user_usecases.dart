@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 
 class UserUsecases {
@@ -109,10 +110,33 @@ class UserUsecases {
       if (data['success'] == false) {
         return null;
       } else {
+        final token = await SessionData.token();
+        SessionData.login(token, data['data']);
         return User.fromJson(data['data']);
       }
     } catch (e) {
       print("Error at update user profile by id usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<String?> changePassword(String oldPassword, String newPassword, String confirmedPassword) async {
+    final Map<String, String> bodyRequest = {
+      "old_password": oldPassword,
+      "new_password": newPassword,
+      "confirmed_password": confirmedPassword,
+    };
+    try {
+      final Response response = await ApiService().patch(ApiUrls().apiChangePassword(), bodyRequest);
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+        return null;
+      } else {
+        return data['message'];
+      }
+      
+    } catch (e) {
+      print("Error at change password usecase: $e");
       rethrow;
     }
   }
