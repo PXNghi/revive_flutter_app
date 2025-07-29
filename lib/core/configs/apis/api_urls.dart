@@ -23,6 +23,7 @@ class ApiUrls {
   // user
   Uri apiGetProfileByToken() => Uri.parse('$baseUrl/api/user/get-profile-by-token');
   Uri apiUpdateAddress() => Uri.parse('$baseUrl/api/user/update-user-address');
+  Uri apiGetAllUsers() => Uri.parse('$baseUrl/api/user/get-all-users');
 
   // branch
   Uri apiGetAllBranches() => Uri.parse('$baseUrl/api/branch/get-all-branches');

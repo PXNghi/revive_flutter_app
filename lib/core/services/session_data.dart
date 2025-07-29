@@ -1,5 +1,4 @@
 import 'package:revive_flutter_project/core/services/api_services.dart';
-import 'package:revive_flutter_project/core/services/location/models/address.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -16,7 +16,9 @@ import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_blo
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
-import 'package:revive_flutter_project/features/person/person_page.dart';
+import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
+import 'package:revive_flutter_project/features/person/presentation/admin/user_management_page.dart';
+import 'package:revive_flutter_project/features/person/presentation/person_page.dart';
 import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/product_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
@@ -78,27 +80,27 @@ final GoRouter routers = GoRouter(
         ),
       ],
     ),
-    GoRoute(
-      name: 'branch-list',
-      path: '/branch-list',
-      builder: (context, state) {
-        final address = SessionData.currentUserAddress;
-        return BlocProvider(
-          create: (context) => BranchBloc()
-            ..add(
-              address == null
-                  ? const BranchEvent.getBranches()
-                  : (address.lat == null || address.lon == null)
-                      ? const BranchEvent.getBranches()
-                      : (BranchEvent.getBranchesNearby(
-                          address.lat!,
-                          address.lon!,
-                        )),
-            ),
-          child: const BranchesPage(),
-        );
-      },
-    ),
+    // GoRoute(
+    //   name: 'branch-list',
+    //   path: '/branch-list',
+    //   builder: (context, state) {
+    //     final address = SessionData.currentUserAddress;
+    //     return BlocProvider(
+    //       create: (context) => BranchBloc()
+    //         ..add(
+    //           address == null
+    //               ? const BranchEvent.getBranches()
+    //               : (address.lat == null || address.lon == null)
+    //                   ? const BranchEvent.getBranches()
+    //                   : (BranchEvent.getBranchesNearby(
+    //                       address.lat!,
+    //                       address.lon!,
+    //                     )),
+    //         ),
+    //       child: const BranchesPage(),
+    //     );
+    //   },
+    // ),
     GoRoute(
       name: 'login-page',
       path: '/login',
@@ -148,6 +150,14 @@ final GoRouter routers = GoRouter(
           },
         ),
       ],
+    ),
+    GoRoute(
+      name: 'user-management',
+      path: '/user-management',
+      builder: (context, state) => BlocProvider(
+        create: (context) => UserManagementBloc()..add(const UserManagementEvent.getAllUsers()),
+        child: const UserManagementPage(),
+      ),
     ),
   ],
 );

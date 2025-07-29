@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
+import 'package:revive_flutter_project/features/person/models/user.dart';
 
 class UserUsecases {
   static final UserUsecases _singleton = UserUsecases._internal();
@@ -35,6 +36,17 @@ class UserUsecases {
       }
     } catch (e) {
       print("Error at update address usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<List<User>> getAllUsers() async {
+    try {
+      final Response response = await ApiService().get(ApiUrls().apiGetAllUsers());
+      final Map<String, dynamic> data = json.decode(response.body);
+      return (data['data'] as List).map((e) => User.fromJson(e)).toList();
+    } catch (e) {
+      print("Error at get all users usecase: $e");
       rethrow;
     }
   }
