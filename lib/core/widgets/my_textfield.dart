@@ -9,6 +9,7 @@ class MyTextField extends StatefulWidget {
   final int? maxLines;
   final int? maxLength;
   final String? initialValue;
+  final bool isReadOnly;
   
   const MyTextField({
     super.key,
@@ -19,6 +20,7 @@ class MyTextField extends StatefulWidget {
     this.maxLines,
     this.maxLength,
     this.initialValue,
+    this.isReadOnly = false,
   });
 
   @override
@@ -38,6 +40,7 @@ class _MyTextFieldState extends State<MyTextField> {
         ),
         const SizedBox(height: 8.0),
         TextField(
+          readOnly: widget.isReadOnly,
           controller: widget.controller,
           decoration: InputDecoration(
             hintText: widget.initialValue,

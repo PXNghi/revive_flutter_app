@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
@@ -48,7 +49,21 @@ class UserManagementPage extends StatelessWidget {
                           userName: user.name,
                           isChatList: false,
                           isActive: user.isActive,
-                          onEditTap: () {},
+                          onEditTap: () async {
+                            final shouldRefresh = await context.pushNamed(
+                              'user-profile',
+                              queryParameters: {
+                                'role': user.role,
+                                'userId': user.id,
+                              },
+                            );
+
+                            if (shouldRefresh == true) {
+                              context
+                                  .read<UserManagementBloc>()
+                                  .add(const UserManagementEvent.getAllUsers());
+                            }
+                          },
                           onActivateTap: () {
                             _showWarningDialog(context, user);
                           },

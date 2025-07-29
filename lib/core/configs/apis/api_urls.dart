@@ -27,6 +27,8 @@ class ApiUrls {
   Uri apiGetAllUsers() => Uri.parse('$baseUrl/api/user/get-all-users');
   Uri apiActivateUserAccount(String userId) => Uri.parse('$baseUrl/api/user/activate-account/$userId');
   Uri apiDeactivateUserAccount(String userId) => Uri.parse('$baseUrl/api/user/unactivate-account/$userId');
+  Uri apiGetUserById(String userId) => Uri.parse('$baseUrl/api/user/get-user-by-id/$userId');
+  Uri apiUpdateUserProfileById(String userId) => Uri.parse('$baseUrl/api/user/update-user-profile-by-id/$userId');
 
   // branch
   Uri apiGetAllBranches() => Uri.parse('$baseUrl/api/branch/get-all-branches');

@@ -5,5 +5,12 @@ class UserManagementEvent with _$UserManagementEvent {
   const factory UserManagementEvent.started() = _Started;
   const factory UserManagementEvent.getAllUsers() = _GetAllUsers;
   const factory UserManagementEvent.activateUser(String userId) = _ActivateUser;
-  const factory UserManagementEvent.deactivateUser(String userId) = _DeactivateUser;
+  const factory UserManagementEvent.deactivateUser(String userId) =
+      _DeactivateUser;
+  const factory UserManagementEvent.getUserById(String userId) = _GetUserById;
+  const factory UserManagementEvent.updateUserProfileById(
+    String userId,
+    String userName,
+    String userPhone,
+  ) = _UpdateUserProfileById;
 }

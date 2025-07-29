@@ -78,4 +78,42 @@ class UserUsecases {
       rethrow;
     }
   }
+
+  Future<User> getUserById(String userId) async {
+    try {
+      final Response response =
+          await ApiService().get(ApiUrls().apiGetUserById(userId));
+      final Map<String, dynamic> data = json.decode(response.body);
+      return User.fromJson(data['data']);
+    } catch (e) {
+      print("Error at get user by id usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<User?> updateUserProfileById(
+    String userId,
+    String userName,
+    String userPhone,
+  ) async {
+    final Map<String, String> bodyRequest = {
+      "full_name": userName,
+      "phone": userPhone,
+    };
+    try {
+      final Response response = await ApiService().put(
+        ApiUrls().apiUpdateUserProfileById(userId),
+        bodyRequest,
+      );
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == false) {
+        return null;
+      } else {
+        return User.fromJson(data['data']);
+      }
+    } catch (e) {
+      print("Error at update user profile by id usecase: $e");
+      rethrow;
+    }
+  }
 }

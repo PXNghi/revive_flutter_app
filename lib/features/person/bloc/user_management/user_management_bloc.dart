@@ -16,6 +16,8 @@ class UserManagementBloc
     on<_GetAllUsers>(_handleGetAllUsers);
     on<_ActivateUser>(_handleActivateUser);
     on<_DeactivateUser>(_handleDeactivateUser);
+    on<_GetUserById>(_handleGetUserById);
+    on<_UpdateUserProfileById>(_handleUpdateUserProfileById);
   }
 
   FutureOr<void> _handleGetAllUsers(
@@ -64,6 +66,41 @@ class UserManagementBloc
     } catch (e) {
       emit(UserManagementState.error(e.toString()));
       print("Error deactivating user: $e");
+    }
+  }
+
+  FutureOr<void> _handleGetUserById(
+    _GetUserById event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    try {
+      emit(const UserManagementState.loading());
+      final User user = await _userUsecases.getUserById(event.userId);
+      emit(UserManagementState.loaded(user: user));
+    } catch (e) {
+      emit(UserManagementState.error(e.toString()));
+      print("Error getting user by id: $e");
+    }
+  }
+
+  FutureOr<void> _handleUpdateUserProfileById(
+    _UpdateUserProfileById event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    try {
+      emit(const UserManagementState.loading());
+      final User? user = await _userUsecases.updateUserProfileById(
+        event.userId,
+        event.userName,
+        event.userPhone,
+      );
+      if (user != null) {
+        emit(UserManagementState.loaded(user: user, message: "Cập nhật thành công"));
+      } else {
+        emit(const UserManagementState.error("Error updating user profile"));
+      }
+    } catch (e) {
+      print("Error updating user profile by id: $e");
     }
   }
 }

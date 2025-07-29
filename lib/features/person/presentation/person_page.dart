@@ -74,7 +74,10 @@ class _PersonPageState extends State<PersonPage> {
         ),
         const SizedBox(height: 16.0),
         MyOptionBar(
-          onTap: () {},
+          onTap: () {
+            SessionData.logout();
+            context.goNamed('login-page');
+          },
           label: "Đăng xuất",
           isHasArrowRight: false,
         ),
