@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
@@ -58,7 +59,16 @@ class _LoginPageState extends State<LoginPage> {
                 }
                 if (state is LoginSuccess) {
                   Navigator.of(context).pop();
-                  context.goNamed('home-page');
+                  if (SessionData.mine!.isActive == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            "Tài khoản của bạn đã bị khoá. Vui lòng liên hệ số hotline!"),
+                      ),
+                    );
+                  } else {
+                    context.goNamed('home-page');
+                  }
                 }
                 if (state is LoginError) {
                   Navigator.of(context).pop();

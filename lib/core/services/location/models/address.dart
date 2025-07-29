@@ -1,7 +1,7 @@
-class Address {
+class MyAddress {
   final String address;
   final double? lat;
   final double? lon;
 
-  Address({required this.address, this.lat, this.lon});
+  MyAddress({required this.address, this.lat, this.lon});
 }

@@ -4,7 +4,9 @@ final passwordRegex = RegExp(r'^(?=.*[A-Z]).{6,}$');
 
 // icon image strings
 const addIcon = "assets/images/add_icon.png";
+const alertIcon = "assets/images/alert_icon.png";
 const arrowLeftIcon = "assets/images/arrow_left_icon.png";
+const arrowRightIcon = "assets/images/arrow_right_icon.png";
 const bellIcon = "assets/images/bell_icon.png";
 const cartIcon = "assets/images/cart_icon.svg";
 const checkMarkIcon = "assets/images/checkmark_icon.png";

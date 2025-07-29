@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:revive_flutter_project/core/services/location/models/address.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/utils/permission_utils.dart';
+import 'package:revive_flutter_project/features/person/models/user.dart';
 import 'package:revive_flutter_project/features/person/user_usecases.dart';
 
 part 'location_event.dart';
@@ -44,10 +44,13 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     try {
       emit(const LocationState.fetchingLocation());
       final position = await Geolocator.getCurrentPosition();
-      final placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
-      final address = "${placeMark[0].street}, ${placeMark[0].subAdministrativeArea}, ${placeMark[0].administrativeArea}";
+      final placeMark =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      final address =
+          "${placeMark[0].street}, ${placeMark[0].subAdministrativeArea}, ${placeMark[0].administrativeArea}";
       await updateUserAddress(address, position.latitude, position.longitude);
-      emit(LocationState.fetchingSuccess(currentPosition: position, address: address));
+      emit(LocationState.fetchingSuccess(
+          currentPosition: position, address: address));
     } catch (e) {
       emit(LocationState.error(e.toString()));
     }
@@ -57,7 +60,14 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     try {
       final response = await _userUsecase.updateAddress(address, lat, lon);
       if (response) {
-        await SessionData.updateAddress(Address(address: address, lat: lat, lon: lon));
+        final CustomLocation location = CustomLocation(coordinates: [lat, lon]);
+        await SessionData.updateAddress(
+          Address(
+            address: address,
+            location: location,
+            id: 'temp_id',
+          ),
+        );
         await _userUsecase.getUserProfileByToken(await SessionData.token());
       }
     } catch (e) {

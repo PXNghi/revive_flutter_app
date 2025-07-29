@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 
@@ -23,10 +24,11 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
       automaticallyImplyLeading: false,
       title: Text(title, style: titleStyle),
       centerTitle: isCenter,
+      elevation: 0,
       actions: actions ?? [],
       leading: isLeadingImplied
           ? GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () => context.pop(true),
               child: Image.asset(arrowLeftIcon),
             )
           : null,

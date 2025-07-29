@@ -16,7 +16,12 @@ import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_blo
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
-import 'package:revive_flutter_project/features/person/person_page.dart';
+import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
+import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
+import 'package:revive_flutter_project/features/person/presentation/admin/user_management_page.dart';
+import 'package:revive_flutter_project/features/person/presentation/person_page.dart';
+import 'package:revive_flutter_project/features/person/presentation/user/change_password_page.dart';
+import 'package:revive_flutter_project/features/person/presentation/user/user_profile_page.dart';
 import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/product_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
@@ -88,11 +93,11 @@ final GoRouter routers = GoRouter(
             ..add(
               address == null
                   ? const BranchEvent.getBranches()
-                  : (address.lat == null || address.lon == null)
+                  : (address.location.coordinates.isEmpty)
                       ? const BranchEvent.getBranches()
                       : (BranchEvent.getBranchesNearby(
-                          address.lat!,
-                          address.lon!,
+                          address.location.coordinates[1],
+                          address.location.coordinates[0],
                         )),
             ),
           child: const BranchesPage(),
@@ -148,6 +153,39 @@ final GoRouter routers = GoRouter(
           },
         ),
       ],
+    ),
+    GoRoute(
+      name: 'user-management',
+      path: '/user-management',
+      builder: (context, state) => BlocProvider(
+        create: (context) =>
+            UserManagementBloc()..add(const UserManagementEvent.getAllUsers()),
+        child: const UserManagementPage(),
+      ),
+    ),
+    GoRoute(
+      name: 'user-profile',
+      path: '/user-profile',
+      builder: (context, state) {
+        final String role = state.uri.queryParameters['role'] ?? "User";
+        final String userId = state.uri.queryParameters['userId'] ?? "";
+        return BlocProvider(
+          create: (context) => UserManagementBloc()
+            ..add(UserManagementEvent.getUserById(userId)),
+          child: UserProfilePage(
+            role: role,
+            userId: userId,
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      name: 'change-password',
+      path: '/change-password',
+      builder: (context, state) => BlocProvider(
+        create: (context) => ChangePasswordBloc(),
+        child: const ChangePasswordPage(),
+      ),
     ),
   ],
 );
