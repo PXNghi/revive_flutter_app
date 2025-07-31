@@ -30,10 +30,11 @@ class ProductUsecase {
     }
   }
 
-  Future<bool> createCategory(String categoryName) async {
+  Future<bool> createCategory(String categoryName, {String? categoryImage}) async {
     final bodyRequest = {
       'category_name': categoryName,
       'category_description': "",
+      'category_image': categoryImage ?? "",
     };
 
     try {

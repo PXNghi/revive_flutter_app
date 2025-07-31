@@ -15,6 +15,7 @@ const editIcon = "assets/images/edit_icon.png";
 const graphIcon = 'assets/images/graph_icon.svg';
 const filterIcon = 'assets/images/filter_icon.png';
 const homeIcon = "assets/images/home.svg";
+const linkIcon = "assets/images/link_icon.png";
 const locationIcon = "assets/images/location.png";
 const orderIcon = "assets/images/order_icon.svg";
 const personIcon = "assets/images/person_icon.svg";

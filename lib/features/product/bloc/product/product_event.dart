@@ -6,9 +6,9 @@ class ProductEvent with _$ProductEvent {
       _FetchAllCategoriesAndProducts;
   const factory ProductEvent.getAllCategories() = _GetAllCategories;
   const factory ProductEvent.selectCategory(int index) = _SelectCategory;
-  const factory ProductEvent.createCategory(String categoryName) =
+  const factory ProductEvent.createCategory(String categoryName, {String? categoryUrl}) =
       _CreateCategory;
-  const factory ProductEvent.updateCategory(String newCategoryId, String newCategoryName) =
+  const factory ProductEvent.updateCategory(String newCategoryId, String newCategoryName, {String? newCategoryUrl}) =
       _UpdateCategory;
   const factory ProductEvent.deleteCategory(String categoryId) =
       _DeleteCategory;

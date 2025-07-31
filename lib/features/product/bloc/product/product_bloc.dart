@@ -64,7 +64,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(const ProductState.loading());
-    final response = await _productUsecase.createCategory(event.categoryName);
+    final response = await _productUsecase.createCategory(event.categoryName, categoryImage: event.categoryUrl ?? "");
     if (response) {
       add(const ProductEvent.fetchAllCategoriesAndProducts());
     } else {

@@ -6,6 +6,7 @@ import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/category_item_list.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
+import 'package:revive_flutter_project/core/widgets/my_text_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
 import 'package:revive_flutter_project/core/widgets/product_item_list.dart';
 import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
@@ -171,11 +172,10 @@ class _ProductPageState extends State<ProductPage> {
                                             onTap: () {
                                               context.read<ProductBloc>().add(
                                                     ProductEvent.warningDelete(
-                                                      state.categories[index]
-                                                          .name,
-                                                      false,
-                                                      ""
-                                                    ),
+                                                        state.categories[index]
+                                                            .name,
+                                                        false,
+                                                        ""),
                                                   );
                                             },
                                           ),
@@ -523,11 +523,27 @@ class _ProductPageState extends State<ProductPage> {
                     BlocBuilder<ProductBloc, ProductState>(
                       builder: (context, state) {
                         return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             MyTextField(
                               label: "Nhập tên danh mục",
                               controller: categoryNameController,
                               initialValue: categoryName,
+                            ),
+                            const SizedBox(height: 16.0),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  linkIcon,
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                const SizedBox(width: 4.0),
+                                MyTextButton(
+                                  text: 'Thêm hình ảnh',
+                                  onTap: () {},
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 24.0),
                             Center(
@@ -693,6 +709,21 @@ class _ProductPageState extends State<ProductPage> {
                                   label: "Nhập chi tiết sản phẩm",
                                   maxLines: 3,
                                   initialValue: productDetails,
+                                ),
+                                const SizedBox(height: 10.0),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      linkIcon,
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    MyTextButton(
+                                      text: 'Thêm hình ảnh',
+                                      onTap: () {},
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 20.0),
                                 Center(
