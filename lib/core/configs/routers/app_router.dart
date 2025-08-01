@@ -16,6 +16,7 @@ import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_blo
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
+import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
 import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
 import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
 import 'package:revive_flutter_project/features/person/presentation/admin/user_management_page.dart';
@@ -73,6 +74,13 @@ final GoRouter routers = GoRouter(
               ..add(const ProductEvent.fetchAllCategoriesAndProducts()),
             child: const ProductPage(),
           ),
+        ),
+        GoRoute(
+          name: "order-page",
+          path: '/order',
+          builder: (context, state) {
+            return const OrderPage();
+          },
         ),
         GoRoute(
           name: 'person-page',
