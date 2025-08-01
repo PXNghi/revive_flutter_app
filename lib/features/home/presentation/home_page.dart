@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +64,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(height: 4.0),
                             Text(
-                              state.address ?? SessionData.currentUserAddress?.address ?? "",
+                              state.address ??
+                                  SessionData.currentUserAddress?.address ??
+                                  "",
                               overflow: TextOverflow.ellipsis,
                               style: contentStyle.copyWith(
                                 fontWeight: FontWeight.w600,
@@ -153,22 +157,30 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              SizedBox(
-                height: 285,
-                width: double.infinity,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 16.0),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => ProductItem(
-                    image: bannerImage,
-                    productName: "Red Iron",
-                    productCategory: "Iron",
-                    productPrice: "100.000",
-                  ),
-                  itemCount: 5,
-                ),
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SizedBox(
+                    height: 285,
+                    width: double.infinity,
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 16.0),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) => ProductItem(
+                        image: state.products?[index].image ?? "",
+                        productName: state.products?[index].name ?? "",
+                        productCategory:  state.products?[index].category.name ?? "",
+                        productPrice: state.products?[index].price ?? 0.0,
+                      ),
+                      itemCount: min(state.products?.length ?? 0, 5),
+                    ),
+                  );
+                },
               ),
+              const SizedBox(height: 24.0),
               _buildTitleSection(
                 title: "Các chi nhánh khu vực",
                 isHasAll: true,
