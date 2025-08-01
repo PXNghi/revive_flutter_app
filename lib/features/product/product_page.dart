@@ -173,10 +173,13 @@ class _ProductPageState extends State<ProductPage> {
                                             onTap: () {
                                               context.read<ProductBloc>().add(
                                                     ProductEvent.warningDelete(
-                                                        state.categories[index]
-                                                            .name,
-                                                        false,
-                                                        ""),
+                                                      state.categories[index]
+                                                          .name,
+                                                      false,
+                                                      "",
+                                                      state
+                                                          .categories[index].id,
+                                                    ),
                                                   );
                                             },
                                           ),
@@ -271,6 +274,7 @@ class _ProductPageState extends State<ProductPage> {
                                                   state.products[index].name,
                                                   true,
                                                   state.products[index].id,
+                                                  "",
                                                 ),
                                               );
                                         },
@@ -553,9 +557,9 @@ class _ProductPageState extends State<ProductPage> {
                                           width: 100,
                                           height: 100,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (context, error,
-                                                  stackTrace) =>
-                                              const Icon(Icons.error),
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Icon(Icons.error),
                                         ),
                                         onDelete: () {
                                           bloc.add(
@@ -598,25 +602,24 @@ class _ProductPageState extends State<ProductPage> {
                                     ? "Sửa"
                                     : "Thêm danh mục",
                                 onTap: () {
-                                  if (categoryNameController.text.isNotEmpty) {
-                                    if (isEdit) {
-                                      print("testing edit");
-                                      bloc.add(
-                                        ProductEvent.updateCategory(
-                                          categoryId!,
-                                          categoryNameController.text,
-                                          newCategoryUrl: categoryImage,
-                                        ),
-                                      );
-                                    } else {
-                                      bloc.add(
-                                        ProductEvent.createCategory(
-                                          categoryNameController.text,
-                                        ),
-                                      );
-                                    }
-                                    Navigator.of(context).pop();
+                                  if (isEdit) {
+                                    bloc.add(
+                                      ProductEvent.updateCategory(
+                                        categoryId!,
+                                        categoryNameController.text.isEmpty
+                                            ? categoryName ?? ""
+                                            : categoryNameController.text,
+                                        newCategoryUrl: categoryImage,
+                                      ),
+                                    );
+                                  } else {
+                                    bloc.add(
+                                      ProductEvent.createCategory(
+                                        categoryNameController.text,
+                                      ),
+                                    );
                                   }
+                                  Navigator.of(context).pop();
                                 },
                               ),
                             )

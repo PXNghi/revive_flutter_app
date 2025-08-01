@@ -39,7 +39,11 @@ class ProductEvent with _$ProductEvent {
   const factory ProductEvent.deleteProduct(String id) = _DeleteProduct;
   const factory ProductEvent.toggleEditingMode() = _ToggleEditingMode;
   const factory ProductEvent.warningDelete(
-      String message, bool isProduct, String productId) = _WarningDelete;
+    String message,
+    bool isProduct,
+    String productId,
+    String categoryId,
+  ) = _WarningDelete;
   const factory ProductEvent.uploadImage() = _UploadImage;
   const factory ProductEvent.deleteImage({bool? isEdit, String? imagePath}) =
       _DeleteImage;
