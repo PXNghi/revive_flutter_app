@@ -36,29 +36,6 @@ class _ProductPageState extends State<ProductPage> {
                 _buildDeleteDialog(context);
               }
 
-              if (state is ProductCreated) {
-                Navigator.of(context).pop();
-                context.read<ProductBloc>().add(
-                      const ProductEvent.fetchAllCategoriesAndProducts(),
-                    );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Thêm sản phẩm thành công!"),
-                  ),
-                );
-              }
-
-              if (state is ProductUpdated) {
-                context.read<ProductBloc>().add(
-                      const ProductEvent.fetchAllCategoriesAndProducts(),
-                    );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Cập nhật sản phẩm thành công!"),
-                  ),
-                );
-              }
-
               if (state is ProductDeleted) {
                 context.read<ProductBloc>().add(
                       const ProductEvent.fetchAllCategoriesAndProducts(),
@@ -351,7 +328,8 @@ class _ProductPageState extends State<ProductPage> {
             ),
             child: BlocBuilder<ProductBloc, ProductState>(
               builder: (context, state) {
-                print("state delete category id: ${state.warningDeleteCategoryId}");
+                print(
+                    "state delete category id: ${state.warningDeleteCategoryId}");
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -649,7 +627,7 @@ class _ProductPageState extends State<ProductPage> {
     String? categoryId,
     String? productImage,
     bool isEdit = false,
-  }) {
+  }) async {
     final bloc = context.read<ProductBloc>();
     final TextEditingController productNameController = TextEditingController();
     final TextEditingController productPriceController =
@@ -657,192 +635,269 @@ class _ProductPageState extends State<ProductPage> {
     final TextEditingController productDetailsController =
         TextEditingController();
     String selectedCategoryId = "";
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return BlocProvider.value(
           value: bloc,
           child: Builder(builder: (context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                side: const BorderSide(
-                  color: primaryColor,
-                  width: 1.0,
+            return BlocListener<ProductBloc, ProductState>(
+              listener: (context, state) {
+                if (state is ProductCreated) {
+                  Navigator.pop(context);
+                  context.read<ProductBloc>().add(
+                        const ProductEvent.fetchAllCategoriesAndProducts(),
+                      );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Thêm sản phẩm thành công!"),
+                    ),
+                  );
+                }
+
+                if (state is ProductUpdated) {
+                  Navigator.pop(context);
+                  context.read<ProductBloc>().add(
+                        const ProductEvent.fetchAllCategoriesAndProducts(),
+                      );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Cập nhật sản phẩm thành công!"),
+                    ),
+                  );
+                }
+              },
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: const BorderSide(
+                    color: primaryColor,
+                    width: 1.0,
+                  ),
                 ),
-              ),
-              insetPadding: pageHorizontalPadding,
-              child: Container(
-                padding: pageHorizontalPadding,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.white),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                          icon: const Icon(Icons.close, color: primaryColor),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          "Thêm sản phẩm".toUpperCase(),
-                          style: titleStyle.copyWith(
-                            fontSize: 20,
-                            color: primaryColor,
+                insetPadding: pageHorizontalPadding,
+                child: Container(
+                  padding: pageHorizontalPadding,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close, color: primaryColor),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20.0),
-                      BlocBuilder<ProductBloc, ProductState>(
-                        builder: (context, state) {
-                          return Padding(
-                            padding: pageHorizontalPadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Thêm danh mục",
-                                  style: contentStyle.copyWith(
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                const SizedBox(height: 4),
-                                DropdownButtonFormField(
-                                  dropdownColor: Colors.white,
-                                  decoration: const InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: cardBorderRadius,
-                                      borderSide: BorderSide(
-                                        color: grayBorderColor,
-                                        width: 1.0,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: cardBorderRadius,
-                                      borderSide: BorderSide(
-                                        color: primaryColor,
-                                        width: 1.0,
-                                      ),
-                                    ),
+                        Center(
+                          child: Text(
+                            "Thêm sản phẩm".toUpperCase(),
+                            style: titleStyle.copyWith(
+                              fontSize: 20,
+                              color: primaryColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        BlocBuilder<ProductBloc, ProductState>(
+                          builder: (context, state) {
+                            return Padding(
+                              padding: pageHorizontalPadding,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Thêm danh mục",
+                                    style: contentStyle.copyWith(
+                                        fontWeight: FontWeight.w500),
                                   ),
-                                  value: categoryId,
-                                  items: state.categories != null
-                                      ? state.categories!
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e.id,
-                                              child: Text(e.name),
-                                            ),
-                                          )
-                                          .toList()
-                                      : [],
-                                  onChanged: (value) {
-                                    selectedCategoryId = value.toString();
-                                  },
-                                ),
-                                const SizedBox(height: 10.0),
-                                MyTextField(
-                                  controller: productNameController,
-                                  label: "Nhập tên sản phẩm",
-                                  initialValue: productName,
-                                ),
-                                const SizedBox(height: 10.0),
-                                MyTextField(
-                                  controller: productPriceController,
-                                  label: "Nhập giá",
-                                  initialValue: productPrice,
-                                ),
-                                const SizedBox(height: 10.0),
-                                MyTextField(
-                                  controller: productDetailsController,
-                                  label: "Nhập chi tiết sản phẩm",
-                                  maxLines: 3,
-                                  initialValue: productDetails,
-                                ),
-                                const SizedBox(height: 10.0),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      linkIcon,
-                                      width: 24,
-                                      height: 24,
+                                  const SizedBox(height: 4),
+                                  DropdownButtonFormField(
+                                    dropdownColor: Colors.white,
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: cardBorderRadius,
+                                        borderSide: BorderSide(
+                                          color: grayBorderColor,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: cardBorderRadius,
+                                        borderSide: BorderSide(
+                                          color: primaryColor,
+                                          width: 1.0,
+                                        ),
+                                      ),
                                     ),
-                                    const SizedBox(width: 4.0),
-                                    MyTextButton(
-                                      text: 'Thêm hình ảnh',
-                                      onTap: () {},
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20.0),
-                                Center(
-                                  child: MyButton(
-                                    label: isEdit ? "Sửa" : "Thêm",
-                                    onTap: () {
-                                      if (isEdit) {
-                                        context.read<ProductBloc>().add(
-                                              ProductEvent.updateProduct(
-                                                id: productId!,
-                                                name: productNameController
-                                                        .text.isNotEmpty
-                                                    ? productNameController.text
-                                                    : productName ?? "",
-                                                price: double.tryParse(
-                                                      productPriceController
-                                                              .text.isNotEmpty
-                                                          ? productPriceController
-                                                              .text
-                                                          : productPrice ?? "",
-                                                    ) ??
-                                                    0.0,
-                                                categoryId: selectedCategoryId
-                                                        .isNotEmpty
-                                                    ? selectedCategoryId
-                                                    : categoryId ?? "",
-                                                description:
-                                                    productDetailsController
-                                                            .text.isNotEmpty
-                                                        ? productDetailsController
-                                                            .text
-                                                        : productDetails ?? "",
-                                                image: productImage ?? "",
+                                    value: categoryId,
+                                    items: state.categories != null
+                                        ? state.categories!
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e.id,
+                                                child: Text(e.name),
                                               ),
-                                            );
-                                      } else {
-                                        context.read<ProductBloc>().add(
-                                              ProductEvent.createProduct(
-                                                name:
-                                                    productNameController.text,
-                                                price: double.tryParse(
-                                                      productPriceController
-                                                          .text,
-                                                    ) ??
-                                                    0.0,
-                                                categoryId: selectedCategoryId,
-                                                description:
-                                                    productDetailsController
-                                                        .text,
-                                                image: "",
-                                              ),
-                                            );
-                                      }
-                                      Navigator.of(context).pop();
+                                            )
+                                            .toList()
+                                        : [],
+                                    onChanged: (value) {
+                                      selectedCategoryId = value.toString();
                                     },
                                   ),
-                                ),
-                                const SizedBox(height: 16.0),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                                  const SizedBox(height: 10.0),
+                                  MyTextField(
+                                    controller: productNameController,
+                                    label: "Nhập tên sản phẩm",
+                                    initialValue: productName,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  MyTextField(
+                                    controller: productPriceController,
+                                    label: "Nhập giá",
+                                    initialValue: productPrice,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  MyTextField(
+                                    controller: productDetailsController,
+                                    label: "Nhập chi tiết sản phẩm",
+                                    maxLines: 3,
+                                    initialValue: productDetails,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        linkIcon,
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                      const SizedBox(width: 4.0),
+                                      state.image != null
+                                          ? buildImageWidget(
+                                              isEdit: false,
+                                              imageWidget: Image.file(
+                                                state.image!,
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                        stackTrace) =>
+                                                    const Icon(Icons.error),
+                                              ),
+                                              onDelete: () {
+                                                bloc.add(
+                                                  const ProductEvent
+                                                      .deleteImage(),
+                                                );
+                                              },
+                                            )
+                                          : (productImage != "" &&
+                                                  productImage != null)
+                                              ? buildImageWidget(
+                                                  isEdit: true,
+                                                  imageWidget: Image.network(
+                                                    "${Enviroment.baseUrl}$productImage",
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        const Icon(Icons.error),
+                                                  ),
+                                                  onDelete: () {
+                                                    bloc.add(
+                                                      ProductEvent.editImage(
+                                                        productImage,
+                                                        "product",
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : MyTextButton(
+                                                  text: 'Thêm hình ảnh',
+                                                  onTap: () {
+                                                    bloc.add(
+                                                      const ProductEvent
+                                                          .uploadImage(),
+                                                    );
+                                                  },
+                                                ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20.0),
+                                  Center(
+                                    child: MyButton(
+                                      label: isEdit ? "Sửa" : "Thêm",
+                                      onTap: () {
+                                        if (isEdit) {
+                                          print("image product: $productImage");
+                                          context.read<ProductBloc>().add(
+                                                ProductEvent.updateProduct(
+                                                  id: productId!,
+                                                  name: productNameController
+                                                          .text.isNotEmpty
+                                                      ? productNameController
+                                                          .text
+                                                      : productName ?? "",
+                                                  price: double.tryParse(
+                                                        productPriceController
+                                                                .text.isNotEmpty
+                                                            ? productPriceController
+                                                                .text
+                                                            : productPrice ??
+                                                                "",
+                                                      ) ??
+                                                      0.0,
+                                                  categoryId: selectedCategoryId
+                                                          .isNotEmpty
+                                                      ? selectedCategoryId
+                                                      : categoryId ?? "",
+                                                  description:
+                                                      productDetailsController
+                                                              .text.isNotEmpty
+                                                          ? productDetailsController
+                                                              .text
+                                                          : productDetails ??
+                                                              "",
+                                                  image: productImage ?? "",
+                                                ),
+                                              );
+                                        } else {
+                                          context.read<ProductBloc>().add(
+                                                ProductEvent.createProduct(
+                                                  name: productNameController
+                                                      .text,
+                                                  price: double.tryParse(
+                                                        productPriceController
+                                                            .text,
+                                                      ) ??
+                                                      0.0,
+                                                  categoryId:
+                                                      selectedCategoryId,
+                                                  description:
+                                                      productDetailsController
+                                                          .text,
+                                                ),
+                                              );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -851,6 +906,7 @@ class _ProductPageState extends State<ProductPage> {
         );
       },
     );
+    bloc.add(const ProductEvent.deleteImage());
   }
 
   Widget buildImageWidget({

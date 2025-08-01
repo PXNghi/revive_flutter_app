@@ -181,7 +181,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     try {
-      print("come here");
       String url = "";
       if (imageFile != null) {
         final uploadResponse =
@@ -213,13 +212,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     try {
+      String url = "";
+      if (imageFile != null) {
+        final uploadResponse =
+            await _productUsecase.uploadImage([imageFile!.path]);
+        url = uploadResponse.url[0];
+      }
+      if (currentImage != null && url != "") {
+        await _productUsecase.deleteImage(currentImage!, "product");
+      }
       final response = await _productUsecase.updateProduct(
         id: event.id,
         name: event.name,
         price: event.price,
         description: event.description,
         categoryId: event.categoryId,
-        image: event.image,
+        image: url == "" ? currentImage : url,
       );
 
       if (response) {
