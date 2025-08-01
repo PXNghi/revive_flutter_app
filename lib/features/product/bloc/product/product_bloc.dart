@@ -15,6 +15,7 @@ part 'product_bloc.freezed.dart';
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductUsecase _productUsecase = ProductUsecase();
   File? imageFile;
+  String? currentImage;
   ProductBloc() : super(const ProductState.initial()) {
     on<_FetchAllCategoriesAndProducts>(_handleFetchAllCategoriesAndProducts);
     on<_GetAllCategories>(_handleGetCategories);
@@ -31,6 +32,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<_WarningDelete>(_handleWarningDelete);
     on<_UploadImage>(_handleUploadImage);
     on<_DeleteImage>(_handleDeleteImage);
+    on<_EditImage>(_handleEditImage);
   }
 
   FutureOr<void> _handleFetchAllCategoriesAndProducts(
@@ -98,11 +100,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             await _productUsecase.uploadImage([imageFile!.path]);
         url = uploadResponse.url[0];
       }
-      print("url: $url");
+      if (currentImage != null && url != "") {
+        await _productUsecase.deleteImage(currentImage!, "category");
+      }
       final response = await _productUsecase.updateCategory(
         event.newCategoryId,
         event.newCategoryName,
-        newCategoryImage: url,
+        newCategoryImage: url.isEmpty ? currentImage : url,
       );
       if (response) {
         add(const ProductEvent.fetchAllCategoriesAndProducts());
@@ -123,6 +127,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     try {
+      print("category id: ${event.categoryId}");
       final response = await _productUsecase.deleteCategory(event.categoryId);
       if (response) {
         add(const ProductEvent.fetchAllCategoriesAndProducts());
@@ -271,6 +276,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           warningMessage: event.message,
           isDeleteProduct: event.isProduct,
           warningDeleteProductId: event.productId,
+          warningDeleteCategoryId: event.categoryId,
         ),
       );
     } else {
@@ -305,17 +311,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       if (state is Loaded) {
         final loadedState = state as Loaded;
-        if (event.isEdit == true) {
-          // final res = await _productUsecase.deleteImage(event.imagePath!, );
-          // if (res) {
-          //   emit(loadedState.copyWith(image: null));
-          // }
-        } else {
-          emit(loadedState.copyWith(image: null));
-        }
+        emit(loadedState.copyWith(image: null));
       }
     } catch (e) {
       print("Error deleting image: $e");
+    }
+  }
+
+  FutureOr<void> _handleEditImage(
+    _EditImage event,
+    Emitter<ProductState> emit,
+  ) async {
+    try {
+      currentImage = event.path;
+      add(const ProductEvent.uploadImage());
+    } catch (e) {
+      print("Error editing image: $e");
     }
   }
 }

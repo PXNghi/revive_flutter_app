@@ -351,6 +351,7 @@ class _ProductPageState extends State<ProductPage> {
             ),
             child: BlocBuilder<ProductBloc, ProductState>(
               builder: (context, state) {
+                print("state delete category id: ${state.warningDeleteCategoryId}");
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -406,10 +407,7 @@ class _ProductPageState extends State<ProductPage> {
                             } else {
                               context.read<ProductBloc>().add(
                                     ProductEvent.deleteCategory(
-                                      state
-                                          .categories![
-                                              state.selectedCategoryIndex]
-                                          .id,
+                                      state.warningDeleteCategoryId,
                                     ),
                                   );
                             }
@@ -485,7 +483,6 @@ class _ProductPageState extends State<ProductPage> {
     String? categoryImage,
     bool isEdit = false,
   }) async {
-    print("category image: $categoryImage");
     final TextEditingController categoryNameController =
         TextEditingController();
     final bloc = context.read<ProductBloc>();
@@ -550,10 +547,11 @@ class _ProductPageState extends State<ProductPage> {
                                   height: 24,
                                 ),
                                 const SizedBox(width: 4.0),
-                                (categoryImage != "" && categoryImage != null)
+                                state.image != null
                                     ? buildImageWidget(
-                                        imageWidget: Image.network(
-                                          "${Enviroment.baseUrl}$categoryImage",
+                                        isEdit: false,
+                                        imageWidget: Image.file(
+                                          state.image!,
                                           width: 100,
                                           height: 100,
                                           fit: BoxFit.cover,
@@ -563,17 +561,16 @@ class _ProductPageState extends State<ProductPage> {
                                         ),
                                         onDelete: () {
                                           bloc.add(
-                                            ProductEvent.deleteImage(
-                                              isEdit: true,
-                                              imagePath: categoryImage,
-                                            ),
+                                            const ProductEvent.deleteImage(),
                                           );
                                         },
                                       )
-                                    : state.image != null
+                                    : (categoryImage != "" &&
+                                            categoryImage != null)
                                         ? buildImageWidget(
-                                            imageWidget: Image.file(
-                                              state.image!,
+                                            isEdit: true,
+                                            imageWidget: Image.network(
+                                              "${Enviroment.baseUrl}$categoryImage",
                                               width: 100,
                                               height: 100,
                                               fit: BoxFit.cover,
@@ -582,8 +579,12 @@ class _ProductPageState extends State<ProductPage> {
                                                   const Icon(Icons.error),
                                             ),
                                             onDelete: () {
-                                              bloc.add(const ProductEvent
-                                                  .deleteImage(isEdit: false));
+                                              bloc.add(
+                                                ProductEvent.editImage(
+                                                  categoryImage,
+                                                  "category",
+                                                ),
+                                              );
                                             },
                                           )
                                         : MyTextButton(
@@ -636,7 +637,7 @@ class _ProductPageState extends State<ProductPage> {
         );
       },
     );
-    bloc.add(const ProductEvent.deleteImage(isEdit: false));
+    bloc.add(const ProductEvent.deleteImage());
   }
 
   void _showProductDialog(
@@ -855,6 +856,7 @@ class _ProductPageState extends State<ProductPage> {
   Widget buildImageWidget({
     required Widget imageWidget,
     required VoidCallback onDelete,
+    required bool isEdit,
   }) {
     return Stack(
       clipBehavior: Clip.none,
@@ -866,13 +868,18 @@ class _ProductPageState extends State<ProductPage> {
         Positioned(
           top: -10,
           right: -10,
-          child: IconButton(
-            onPressed: onDelete,
-            icon: const Icon(
-              Icons.close,
-              color: primaryColor,
-            ),
-          ),
+          child: !isEdit
+              ? IconButton(
+                  onPressed: onDelete,
+                  icon: const Icon(
+                    Icons.close,
+                    color: primaryColor,
+                  ),
+                )
+              : MyIconButton(
+                  icon: editIcon,
+                  onTap: onDelete,
+                ),
         ),
       ],
     );

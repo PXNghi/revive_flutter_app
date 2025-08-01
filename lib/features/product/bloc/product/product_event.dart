@@ -45,6 +45,7 @@ class ProductEvent with _$ProductEvent {
     String categoryId,
   ) = _WarningDelete;
   const factory ProductEvent.uploadImage() = _UploadImage;
-  const factory ProductEvent.deleteImage({bool? isEdit, String? imagePath}) =
-      _DeleteImage;
+  const factory ProductEvent.editImage(String path, String type) =
+      _EditImage;
+  const factory ProductEvent.deleteImage() = _DeleteImage;
 }

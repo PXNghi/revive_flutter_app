@@ -15,6 +15,7 @@ class ProductState with _$ProductState {
     @Default("") String warningDeleteProductId,
     @Default("") String warningDeleteCategoryId,
     File? image,
+    String? currentImage,
   }) = Loaded;
   const factory ProductState.error(String message) = Error;
   const factory ProductState.productCreated() = ProductCreated;
@@ -40,5 +41,7 @@ class ProductState with _$ProductState {
   String get warningDeleteCategoryId => mapOrNull(loaded: (state) => state.warningDeleteCategoryId) ?? "";
 
   File? get image => mapOrNull(loaded: (state) => state.image);
+
+  String? get currentImage => mapOrNull(loaded: (state) => state.currentImage);
 
 }
