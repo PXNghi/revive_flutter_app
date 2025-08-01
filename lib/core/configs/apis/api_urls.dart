@@ -53,5 +53,5 @@ class ApiUrls {
   Uri apiUpdateProduct(String id) => Uri.parse('$baseUrl/api/product/update-product/$id');
   Uri apiDeleteProduct(String id) => Uri.parse('$baseUrl/api/product/delete-product/$id');
   Uri apiUploadProductImage() => Uri.parse('$baseUrl/api/upload-product');
-  Uri apiDeleteProductImage(String url) => Uri.parse('$baseUrl/api/delete-product-image');
+  Uri apiDeleteProductImage() => Uri.parse('$baseUrl/api/delete-product-image');
 }

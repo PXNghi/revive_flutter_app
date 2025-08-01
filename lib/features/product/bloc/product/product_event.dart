@@ -6,10 +6,14 @@ class ProductEvent with _$ProductEvent {
       _FetchAllCategoriesAndProducts;
   const factory ProductEvent.getAllCategories() = _GetAllCategories;
   const factory ProductEvent.selectCategory(int index) = _SelectCategory;
-  const factory ProductEvent.createCategory(String categoryName, {String? categoryUrl}) =
-      _CreateCategory;
-  const factory ProductEvent.updateCategory(String newCategoryId, String newCategoryName, {String? newCategoryUrl}) =
-      _UpdateCategory;
+  const factory ProductEvent.createCategory(String categoryName,
+      {String? categoryUrl}) = _CreateCategory;
+  const factory ProductEvent.updateCategory(
+    String newCategoryId,
+    String newCategoryName, {
+    String? newCategoryUrl,
+    String? type,
+  }) = _UpdateCategory;
   const factory ProductEvent.deleteCategory(String categoryId) =
       _DeleteCategory;
 
@@ -34,5 +38,9 @@ class ProductEvent with _$ProductEvent {
   }) = _UpdateProduct;
   const factory ProductEvent.deleteProduct(String id) = _DeleteProduct;
   const factory ProductEvent.toggleEditingMode() = _ToggleEditingMode;
-  const factory ProductEvent.warningDelete(String message, bool isProduct, String productId) = _WarningDelete;
+  const factory ProductEvent.warningDelete(
+      String message, bool isProduct, String productId) = _WarningDelete;
+  const factory ProductEvent.uploadImage() = _UploadImage;
+  const factory ProductEvent.deleteImage({bool? isEdit, String? imagePath}) =
+      _DeleteImage;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
@@ -33,10 +34,9 @@ class _CategoryItemListState extends State<CategoryItemList> {
               height: 62,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: widget.isSelected ? Border.all(color: Colors.green, width: 4) : null,
-                color: primaryColor,
+                border: widget.isSelected ? Border.all(color: Colors.green, width: 2) : null,
                 image: widget.category?.image != "" ? DecorationImage(
-                  image: AssetImage(widget.category!.image),
+                  image: NetworkImage("${Enviroment.baseUrl}${widget.category!.image}"),
                   fit: BoxFit.cover,
                 ) : const DecorationImage(image: AssetImage(logoApp)),
               ),

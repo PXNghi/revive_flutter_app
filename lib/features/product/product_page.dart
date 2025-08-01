@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
@@ -192,12 +193,16 @@ class _ProductPageState extends State<ProductPage> {
                                             size: 24,
                                             isCircleIcon: false,
                                             onTap: () {
-                                              _showCategoryDialog(context,
-                                                  categoryId: state
-                                                      .categories[index].id,
-                                                  categoryName: state
-                                                      .categories[index].name,
-                                                  isEdit: true);
+                                              _showCategoryDialog(
+                                                context,
+                                                categoryId:
+                                                    state.categories[index].id,
+                                                categoryName: state
+                                                    .categories[index].name,
+                                                categoryImage: state
+                                                    .categories[index].image,
+                                                isEdit: true,
+                                              );
                                             },
                                           ),
                                         )
@@ -473,12 +478,14 @@ class _ProductPageState extends State<ProductPage> {
     BuildContext context, {
     String? categoryId,
     String? categoryName,
+    String? categoryImage,
     bool isEdit = false,
   }) async {
+    print("category image: $categoryImage");
     final TextEditingController categoryNameController =
         TextEditingController();
     final bloc = context.read<ProductBloc>();
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return BlocProvider.value(
@@ -539,23 +546,66 @@ class _ProductPageState extends State<ProductPage> {
                                   height: 24,
                                 ),
                                 const SizedBox(width: 4.0),
-                                MyTextButton(
-                                  text: 'Thêm hình ảnh',
-                                  onTap: () {},
-                                ),
+                                (categoryImage != "" && categoryImage != null)
+                                    ? buildImageWidget(
+                                        imageWidget: Image.network(
+                                          "${Enviroment.baseUrl}$categoryImage",
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error,
+                                                  stackTrace) =>
+                                              const Icon(Icons.error),
+                                        ),
+                                        onDelete: () {
+                                          bloc.add(
+                                            ProductEvent.deleteImage(
+                                              isEdit: true,
+                                              imagePath: categoryImage,
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : state.image != null
+                                        ? buildImageWidget(
+                                            imageWidget: Image.file(
+                                              state.image!,
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  const Icon(Icons.error),
+                                            ),
+                                            onDelete: () {
+                                              bloc.add(const ProductEvent
+                                                  .deleteImage(isEdit: false));
+                                            },
+                                          )
+                                        : MyTextButton(
+                                            text: 'Thêm hình ảnh',
+                                            onTap: () {
+                                              bloc.add(const ProductEvent
+                                                  .uploadImage());
+                                            },
+                                          ),
                               ],
                             ),
                             const SizedBox(height: 24.0),
                             Center(
                               child: MyButton(
-                                label: "Thêm danh mục",
+                                label: state.isEditingMode
+                                    ? "Sửa"
+                                    : "Thêm danh mục",
                                 onTap: () {
                                   if (categoryNameController.text.isNotEmpty) {
                                     if (isEdit) {
+                                      print("testing edit");
                                       bloc.add(
                                         ProductEvent.updateCategory(
                                           categoryId!,
                                           categoryNameController.text,
+                                          newCategoryUrl: categoryImage,
                                         ),
                                       );
                                     } else {
@@ -583,6 +633,7 @@ class _ProductPageState extends State<ProductPage> {
         );
       },
     );
+    bloc.add(const ProductEvent.deleteImage(isEdit: false));
   }
 
   void _showProductDialog(
@@ -795,6 +846,32 @@ class _ProductPageState extends State<ProductPage> {
           }),
         );
       },
+    );
+  }
+
+  Widget buildImageWidget({
+    required Widget imageWidget,
+    required VoidCallback onDelete,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: imageWidget,
+        ),
+        Positioned(
+          top: -10,
+          right: -10,
+          child: IconButton(
+            onPressed: onDelete,
+            icon: const Icon(
+              Icons.close,
+              color: primaryColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

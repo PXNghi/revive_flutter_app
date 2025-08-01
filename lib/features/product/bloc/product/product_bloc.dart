@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
 import 'package:revive_flutter_project/features/product/product_usecases.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'product_event.dart';
 part 'product_state.dart';
@@ -12,6 +14,7 @@ part 'product_bloc.freezed.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductUsecase _productUsecase = ProductUsecase();
+  File? imageFile;
   ProductBloc() : super(const ProductState.initial()) {
     on<_FetchAllCategoriesAndProducts>(_handleFetchAllCategoriesAndProducts);
     on<_GetAllCategories>(_handleGetCategories);
@@ -26,6 +29,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<_DeleteProduct>(_handleDeleteProduct);
     on<_ToggleEditingMode>(_handleToggleEditingMode);
     on<_WarningDelete>(_handleWarningDelete);
+    on<_UploadImage>(_handleUploadImage);
+    on<_DeleteImage>(_handleDeleteImage);
   }
 
   FutureOr<void> _handleFetchAllCategoriesAndProducts(
@@ -44,6 +49,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     final List<Category> categories = await _productUsecase.getAllCategories();
+
     emit(ProductState.loaded(categories: categories));
   }
 
@@ -64,7 +70,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(const ProductState.loading());
-    final response = await _productUsecase.createCategory(event.categoryName, categoryImage: event.categoryUrl ?? "");
+    String url = "";
+    if (imageFile != null) {
+      final uploadResponse =
+          await _productUsecase.uploadImage([imageFile!.path]);
+      url = uploadResponse.url[0];
+    }
+    final response = await _productUsecase.createCategory(
+      event.categoryName,
+      categoryImage: url,
+    );
     if (response) {
       add(const ProductEvent.fetchAllCategoriesAndProducts());
     } else {
@@ -77,9 +92,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     try {
+      String url = "";
+      if (imageFile != null) {
+        final uploadResponse =
+            await _productUsecase.uploadImage([imageFile!.path]);
+        url = uploadResponse.url[0];
+      }
+      print("url: $url");
       final response = await _productUsecase.updateCategory(
         event.newCategoryId,
         event.newCategoryName,
+        newCategoryImage: url,
       );
       if (response) {
         add(const ProductEvent.fetchAllCategoriesAndProducts());
@@ -153,12 +176,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     try {
+      print("come here");
+      String url = "";
+      if (imageFile != null) {
+        final uploadResponse =
+            await _productUsecase.uploadImage([imageFile!.path]);
+        url = uploadResponse.url[0];
+        print("url: $url");
+      }
       final response = await _productUsecase.createNewProduct(
         productName: event.name,
         productPrice: event.price,
         productCategory: event.categoryId,
         productDescription: event.description,
-        productImage: event.image,
+        productImage: url,
       );
       if (response) {
         emit(const ProductState.productCreated());
@@ -245,6 +276,46 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     } else {
       print("Invalid state for warning delete");
       emit(const ProductState.error("Invalid state for warning delete"));
+    }
+  }
+
+  FutureOr<void> _handleUploadImage(
+    _UploadImage event,
+    Emitter<ProductState> emit,
+  ) async {
+    try {
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+        final result =
+            await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (result != null) {
+          imageFile = File(result.path);
+          emit(loadedState.copyWith(image: imageFile));
+        }
+      }
+    } catch (e) {
+      print("Error uploading image: $e");
+    }
+  }
+
+  FutureOr<void> _handleDeleteImage(
+    _DeleteImage event,
+    Emitter<ProductState> emit,
+  ) async {
+    try {
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+        if (event.isEdit == true) {
+          // final res = await _productUsecase.deleteImage(event.imagePath!, );
+          // if (res) {
+          //   emit(loadedState.copyWith(image: null));
+          // }
+        } else {
+          emit(loadedState.copyWith(image: null));
+        }
+      }
+    } catch (e) {
+      print("Error deleting image: $e");
     }
   }
 }

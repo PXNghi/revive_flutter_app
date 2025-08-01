@@ -5,6 +5,7 @@ import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
+import 'package:revive_flutter_project/features/product/model/upload_image_response.dart';
 
 class ProductUsecase {
   static final ProductUsecase _singleton = ProductUsecase._internal();
@@ -30,7 +31,8 @@ class ProductUsecase {
     }
   }
 
-  Future<bool> createCategory(String categoryName, {String? categoryImage}) async {
+  Future<bool> createCategory(String categoryName,
+      {String? categoryImage}) async {
     final bodyRequest = {
       'category_name': categoryName,
       'category_description': "",
@@ -57,10 +59,12 @@ class ProductUsecase {
   Future<bool> updateCategory(
     String newCategoryId,
     String newCategoryName,
+    {String? newCategoryImage}
   ) async {
     final bodyRequest = {
       'category_name': newCategoryName,
       'category_description': "",
+      'category_image': newCategoryImage ?? "",
     };
 
     try {
@@ -213,4 +217,37 @@ class ProductUsecase {
       return false;
     }
   }
+
+  Future<UploadImageResponse> uploadImage(List<String> paths) async {
+    try {
+      final UploadImageResponse response = await ApiService()
+          .uploadImage(ApiUrls().apiUploadProductImage(), paths);
+      return response;
+    } catch (e) {
+      print("Error uploading image: $e");
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteImage(String path, String type) async {
+    final bodyRequest = {
+      'filename': path,
+      'type': type
+    };
+    try {
+      final Response response = await ApiService().delete(
+        ApiUrls().apiDeleteProductImage(),
+        data: bodyRequest,
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Error deleting image: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error deleting image: $e");
+      return false;
+    }
+  } 
 }

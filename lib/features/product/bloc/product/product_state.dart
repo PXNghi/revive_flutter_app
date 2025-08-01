@@ -13,6 +13,7 @@ class ProductState with _$ProductState {
     String? warningMessage,
     @Default(false) bool isDeleteProduct,
     @Default("") String warningDeleteProductId,
+    File? image,
   }) = Loaded;
   const factory ProductState.error(String message) = Error;
   const factory ProductState.productCreated() = ProductCreated;
@@ -34,5 +35,7 @@ class ProductState with _$ProductState {
   bool get isDeleteProduct => mapOrNull(loaded: (state) => state.isDeleteProduct) ?? false;
 
   String get warningDeleteProductId => mapOrNull(loaded: (state) => state.warningDeleteProductId) ?? "";
+
+  File? get image => mapOrNull(loaded: (state) => state.image);
 
 }
