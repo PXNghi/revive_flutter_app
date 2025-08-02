@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
@@ -24,7 +25,9 @@ class _OrderPageState extends State<OrderPage> {
             child: MyIconButton(
               icon: addIcon,
               size: 30.0,
-              onTap: () {},
+              onTap: () {
+                context.pushNamed('create-order');
+              },
             ),
           ),
         ],
@@ -37,6 +40,7 @@ class _OrderPageState extends State<OrderPage> {
               "ĐƠN HÀNG CỦA BẠN",
               style: headerStyle,
             ),
+            
           ],
         ),
       ),

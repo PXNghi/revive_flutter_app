@@ -54,4 +54,10 @@ class ApiUrls {
   Uri apiDeleteProduct(String id) => Uri.parse('$baseUrl/api/product/delete-product/$id');
   Uri apiUploadProductImage() => Uri.parse('$baseUrl/api/upload-product');
   Uri apiDeleteProductImage() => Uri.parse('$baseUrl/api/delete-product-image');
+
+  // order
+  Uri apiGetAllOrders() => Uri.parse('$baseUrl/api/order/get-all-orders');
+  Uri apiGetOrderById(String id) => Uri.parse('$baseUrl/api/order/get-order-by-id/$id');
+  Uri apiGetDetailedOrderByOrderId(String orderId) => Uri.parse('$baseUrl/api/order/get-detailed-order-by-order-id/$orderId');
+  Uri apiCreateNewOrder() => Uri.parse('$baseUrl/api/order/create-new-order');
 }

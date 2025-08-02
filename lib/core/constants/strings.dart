@@ -1,6 +1,8 @@
 // regex
 final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 final passwordRegex = RegExp(r'^(?=.*[A-Z]).{6,}$');
+final phoneRegex = RegExp(r'^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$');
+
 
 // icon image strings
 const addIcon = "assets/images/add_icon.png";
