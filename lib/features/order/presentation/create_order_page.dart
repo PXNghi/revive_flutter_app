@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/expand_product_board.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
+import 'package:revive_flutter_project/core/widgets/my_border_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_text_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
-import 'package:revive_flutter_project/core/widgets/order_product_item.dart';
 import 'package:revive_flutter_project/features/order/bloc/order_bloc/order_bloc.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CreateOrderPage extends StatefulWidget {
   const CreateOrderPage({super.key});
@@ -40,116 +42,206 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrderBloc, OrderState>(
-      builder: (context, state) {
-        print("cart: ${state.cart}");
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: const MyAppbar(
-            title: "",
-            isLeadingImplied: true,
-          ),
-          body: Padding(
-            padding: pageHorizontalPadding,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "TẠO ĐƠN HÀNG",
-                    style: headerStyle,
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    "THÔNG TIN CÁ NHÂN",
-                    style: titleStyle.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextField(
-                    label: "Họ và tên",
-                    controller: _nameController,
-                    errorText: state.userNameError,
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextField(
-                    label: "Số điện thoại",
-                    controller: _phoneController,
-                    errorText: state.userPhoneError,
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextField(
-                    label: "Địa chỉ",
-                    controller: _addressController,
-                    errorText: state.userAddressError,
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    "THÔNG TIN VẬT PHẨM",
-                    style: titleStyle.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: MyButton(
-                      onTap: () {
-                        _showProductDialog(context);
-                      },
-                      label: "Thêm vật phẩm",
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Visibility(
-                    visible: state.cart?.isNotEmpty ?? false,
-                    child: ExpandProduct(
-                      cart: state.addedListProduct
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Text(
-                    "CÁCH THU GOM",
-                    style: titleStyle.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  
-                  const SizedBox(height: 16.0),
+    return BlocListener<OrderBloc, OrderState>(
+      listener: (context, state) {
+        // if (state.isLoading) {
+        //   showDialog(
+        //     context: context,
+        //     builder: (context) => const Center(
+        //       child: CircularProgressIndicator(),
+        //     ),
+        //   );
+        // } else {
+        //   Navigator.pop(context);
+        // }
 
+        if (state.disabledDates != null) {
+          print("disabledDates: ${state.disabledDates}");
+          _showPickDateDialog(context, state.disabledDates!);
+        }
+      },
+      child: BlocBuilder<OrderBloc, OrderState>(
+        builder: (context, state) {
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: const MyAppbar(
+              title: "",
+              isLeadingImplied: true,
+            ),
+            body: Padding(
+              padding: pageHorizontalPadding,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "TẠO ĐƠN HÀNG",
+                      style: headerStyle,
+                    ),
+                    const SizedBox(height: 30),
+                    Text(
+                      "THÔNG TIN CÁ NHÂN",
+                      style: titleStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    MyTextField(
+                      label: "Họ và tên",
+                      controller: _nameController,
+                      errorText: state.userNameError,
+                    ),
+                    const SizedBox(height: 16),
+                    MyTextField(
+                      label: "Số điện thoại",
+                      controller: _phoneController,
+                      errorText: state.userPhoneError,
+                    ),
+                    const SizedBox(height: 16),
+                    MyTextField(
+                      label: "Địa chỉ",
+                      controller: _addressController,
+                      errorText: state.userAddressError,
+                    ),
+                    const SizedBox(height: 30),
+                    Text(
+                      "THÔNG TIN VẬT PHẨM",
+                      style: titleStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: MyButton(
+                        onTap: () {
+                          _showProductDialog(context);
+                        },
+                        label: "Thêm vật phẩm",
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    Visibility(
+                      visible: state.cart?.isNotEmpty ?? false,
+                      child: ExpandProduct(cart: state.addedListProduct),
+                    ),
+                    const SizedBox(height: 20.0),
+                    Text(
+                      "CÁCH THU GOM",
+                      style: titleStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyBorderButton(
+                      isChosen:
+                          state.selectedPickUpOption == PickUpOption.pickUp,
+                      onTap: () {
+                        context.read<OrderBloc>().add(
+                            const OrderEvent.choosePickupOption(
+                                PickUpOption.pickUp));
+                      },
+                      customWidget: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Nhân viên đến nhà ở",
+                            style: titleStyle,
+                          ),
+                          const SizedBox(height: 16.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text("Ngày: ", style: contentStyle),
+                                    const SizedBox(width: 10.0),
+                                    GestureDetector(
+                                      onTap: () {
+                                        context.read<OrderBloc>().add(
+                                              const OrderEvent
+                                                  .choosePickupOption(
+                                                  PickUpOption.pickUp),
+                                            );
+
+                                        context.read<OrderBloc>().add(
+                                              OrderEvent.getDisabledDates(
+                                                DateFormat('yyyy-MM')
+                                                    .format(DateTime.now()),
+                                              ),
+                                            );
+                                      },
+                                      child: Image.asset(
+                                        arrowDownIcon,
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyBorderButton(
+                      isChosen:
+                          state.selectedPickUpOption == PickUpOption.comeBranch,
+                      onTap: () {
+                        context.read<OrderBloc>().add(
+                              const OrderEvent.choosePickupOption(
+                                  PickUpOption.comeBranch),
+                            );
+                      },
+                      customWidget: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Đem đến cửa hàng gần nhất", style: titleStyle),
+                          SizedBox(height: 8),
+                          Text(
+                            "Có thể đem đến bất kỳ chi nhánh nào và trong giờ làm việc (từ 8:00 đến 22.00) ",
+                            style: contentStyle,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                  ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: Container(
+              height: 70,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xffD1D1D6).withOpacity(0.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
               ),
-            ),
-          ),
-          bottomNavigationBar: Container(
-            height: 70,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xffD1D1D6).withOpacity(0.2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: const Offset(0, 2),
+              child: Center(
+                child: MyButton(
+                  label: "Tiếp theo",
+                  onTap: () {
+                    context.read<OrderBloc>().add(
+                          OrderEvent.validateInformations(
+                            userName: _nameController.text,
+                            userPhone: _phoneController.text,
+                            userAddress: _addressController.text,
+                            products: [],
+                            pickUpOption: "",
+                          ),
+                        );
+                  },
+                  width: 130,
+                  height: 40,
                 ),
-              ],
-            ),
-            child: Center(
-              child: MyButton(
-                label: "Tiếp theo",
-                onTap: () {
-                  context.read<OrderBloc>().add(
-                        OrderEvent.validateInformations(
-                          userName: _nameController.text,
-                          userPhone: _phoneController.text,
-                          userAddress: _addressController.text,
-                          products: [],
-                          pickUpOption: "",
-                        ),
-                      );
-                },
-                width: 130,
-                height: 40,
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -166,7 +258,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     final TextEditingController productNoteController = TextEditingController();
     String selectedCategoryId = "";
     String selectedProductId = "";
-    bool isValid = true;
     await showDialog(
       context: context,
       builder: (context) {
@@ -444,8 +535,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                                   state.imageFile?.path ?? "",
                                             );
                                             context.read<OrderBloc>().add(
-                                                OrderEvent.addProductToCart(
-                                                    newOrder, ));
+                                                    OrderEvent.addProductToCart(
+                                                  newOrder,
+                                                ));
                                             Navigator.pop(context);
                                           }
                                         }
@@ -499,6 +591,88 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 ),
         ),
       ],
+    );
+  }
+
+  _showPickDateDialog(BuildContext context, List<DateTime> list) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: const BorderSide(
+              color: primaryColor,
+              width: 1.0,
+            ),
+          ),
+          insetPadding: pageHorizontalPadding,
+          child: Container(
+            padding: pageHorizontalPadding,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TableCalendar(
+                  locale: 'vi_VN',
+                  focusedDay: DateTime.now(),
+                  firstDay: DateTime.utc(1970, 1, 1),
+                  lastDay: DateTime.utc(2090, 1, 1),
+                  calendarFormat: CalendarFormat.month,
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  headerStyle: const HeaderStyle(
+                    titleCentered: true,
+                    formatButtonVisible: false,
+                  ),
+                  calendarStyle: const CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    print("selectedDay: $selectedDay");
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Text(
+                      "Giờ: ",
+                      style: titleStyle,
+                    ),
+                    const SizedBox(width: 8.0),
+                    // Expanded(
+                    //   child: DropdownButtonFormField<String>(
+                    //     value: list.first.toString(),
+                    //     items: list
+                    //         .map((time) => DropdownMenuItem<String>(
+                    //               value: time.toString(),
+                    //               child: Text(time.toString()),
+                    //             ))
+                    //         .toList(),
+                    //     onChanged: (value) {},
+                    //   ),
+                    // ),
+                  ],
+                ),
+                const SizedBox(height: 32.0),
+                MyButton(
+                  label: "OK",
+                ),
+                const SizedBox(height: 16.0),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

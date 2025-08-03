@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
@@ -17,6 +18,8 @@ part 'order_event.dart';
 part 'order_state.dart';
 part 'order_bloc.freezed.dart';
 
+enum PickUpOption { pickUp, comeBranch }
+
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final OrderUsecases _orderUsecases = OrderUsecases();
   final ProductUsecase _productUsecase = ProductUsecase();
@@ -27,6 +30,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_FetchAllProductByCategory>(_handleFetchProductByCategoryId);
     on<_UploadProductImage>(_handleUploadProductImage);
     on<_DeleteProductImage>(_handleDeleteProductImage);
+    on<_GetDisabledDates>(_handleGetDisableDates);
+    on<_ChoosePickupOption>(_handleChoosePickupOption);
+    on<_ChooseDatePickup>(_handleChooseDatePickup);
     on<_ValidateInformations>(_handleValidateInformations);
     on<_CreateOrder>(_handleCreateOrder);
     on<_AddProductToCart>(_handleAddProductToCart);
@@ -69,7 +75,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
 
-      emit(const OrderState.loading());
+      // emit(const OrderState.loading());
       try {
         String? nameError;
         String? phoneError;
@@ -179,6 +185,40 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     } catch (e) {
       print("Error adding product to cart: $e");
+    }
+  }
+
+  FutureOr<void> _handleChoosePickupOption(
+    _ChoosePickupOption event,
+    Emitter<OrderState> emit,
+  ) async {
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
+      if (event.pick == PickUpOption.pickUp) {
+        add(OrderEvent.getDisabledDates(DateFormat('yyyy-MM').format(DateTime.now())));
+      }
+      emit(loadedState.copyWith(selectedPickUpOption: event.pick));
+    }
+  }
+
+  FutureOr<void> _handleChooseDatePickup(
+    _ChooseDatePickup event,
+    Emitter<OrderState> emit,
+  ) async {
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
+    }
+  }
+
+  FutureOr<void> _handleGetDisableDates(
+    _GetDisabledDates event,
+    Emitter<OrderState> emit,
+  ) async {
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
+      emit(const OrderState.loading());
+      final List<DateTime> disabledDates = await _orderUsecases.getDisabledDates(event.month);
+      emit(loadedState.copyWith(disabledDates: disabledDates));
     }
   }
 }

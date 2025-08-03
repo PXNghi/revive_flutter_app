@@ -7,6 +7,10 @@ class OrderEvent with _$OrderEvent {
   const factory OrderEvent.fetchAllProductByCategory(String categoryId) = _FetchAllProductByCategory;
   const factory OrderEvent.uploadProductImage() = _UploadProductImage;
   const factory OrderEvent.deleteProductImage() = _DeleteProductImage;
+  const factory OrderEvent.choosePickupOption(PickUpOption pick) = _ChoosePickupOption;
+  const factory OrderEvent.getDisabledDates(String month) = _GetDisabledDates;
+  const factory OrderEvent.chooseDatePickup() = _ChooseDatePickup;
+  const factory OrderEvent.chooseTimePickup() = _ChooseTimePickup;
   const factory OrderEvent.getUserById(String userId) = _GetUserById;
   const factory OrderEvent.validateInformations({
     required String userName,

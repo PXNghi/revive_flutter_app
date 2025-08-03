@@ -9,6 +9,10 @@ class OrderState with _$OrderState {
     @Default([]) List<Product> products,
     @Default([]) List<DetailedOrder> cart,
     @Default([]) List<AddedListProduct> addedListProduct,
+    PickUpOption? selectedPickUpOption,
+    List<DateTime>? disabledDates,
+    DateTime? selectedDateAndTime,
+    String? selectedTime,
     String? userNameError,
     String? userAddressError,
     String? userPhoneError,
@@ -21,10 +25,15 @@ class OrderState with _$OrderState {
 
   const OrderState._();
 
+  bool get isLoading => mapOrNull(loading: (_) => true) ?? false;
   List<Category>? get categories => mapOrNull(loaded: (value) => value.categories) ?? [];
   List<Product>? get products => mapOrNull(loaded: (value) => value.products) ?? [];
   List<DetailedOrder>? get cart => mapOrNull(loaded: (value) => value.cart) ?? [];
   List<AddedListProduct>? get addedListProduct => mapOrNull(loaded: (value) => value.addedListProduct) ?? [];
+  PickUpOption? get selectedPickUpOption => mapOrNull(loaded: (value) => value.selectedPickUpOption);
+  List<DateTime>? get disabledDates => mapOrNull(loaded: (value) => value.disabledDates);
+  DateTime? get selectedDateAndTime => mapOrNull(loaded: (value) => value.selectedDateAndTime);
+  String? get selectedTime => mapOrNull(loaded: (value) => value.selectedTime);
   File? get imageFile => mapOrNull(loaded: (value) => value.imageFile);
   String? get userNameError => mapOrNull(loaded: (value) => value.userNameError);
   String? get userAddressError => mapOrNull(loaded: (value) => value.userAddressError);
