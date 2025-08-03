@@ -16,5 +16,6 @@ class OrderEvent with _$OrderEvent {
     required String pickUpOption,
     DateTime? pickUpDate,
   }) = _ValidateInformations;
+  const factory OrderEvent.addProductToCart(DetailedOrder detailedOrder) = _AddProductToCart;
   const factory OrderEvent.createOrder() = _CreateOrder;
 }

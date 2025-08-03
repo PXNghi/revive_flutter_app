@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
+import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
+import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
 import 'package:revive_flutter_project/features/order/order_usecases.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
@@ -18,6 +21,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final OrderUsecases _orderUsecases = OrderUsecases();
   final ProductUsecase _productUsecase = ProductUsecase();
   File? imageFile;
+  List<DetailedOrder> cartChosen = [];
   OrderBloc() : super(const OrderState.initial()) {
     on<_FetchAllCategory>(_handleFetchAllCategory);
     on<_FetchAllProductByCategory>(_handleFetchProductByCategoryId);
@@ -25,6 +29,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_DeleteProductImage>(_handleDeleteProductImage);
     on<_ValidateInformations>(_handleValidateInformations);
     on<_CreateOrder>(_handleCreateOrder);
+    on<_AddProductToCart>(_handleAddProductToCart);
   }
 
   FutureOr<void> _handleFetchAllCategory(
@@ -61,41 +66,47 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     _ValidateInformations event,
     Emitter<OrderState> emit,
   ) async {
-    emit(const OrderState.loading());
-    try {
-      String? nameError;
-      String? phoneError;
-      String? addressError;
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
 
-      if (event.userName.isEmpty) {
-        nameError = "Không được để trống";
+      emit(const OrderState.loading());
+      try {
+        String? nameError;
+        String? phoneError;
+        String? addressError;
+
+        if (event.userName.isEmpty) {
+          nameError = "Không được để trống";
+        }
+
+        if (event.userPhone.isEmpty) {
+          phoneError = "Không được để trống";
+        } else if (!phoneRegex.hasMatch(event.userPhone)) {
+          phoneError = "Định dạng số điện thoại không đúng";
+        }
+
+        if (event.userAddress.isEmpty) {
+          addressError = "Không được để trống";
+        } else if (event.userAddress.length < 10) {
+          addressError = "Địa chỉ không hợp lệ";
+        }
+
+        final isValid =
+            nameError == null && phoneError == null && addressError == null;
+
+        if (isValid) {
+        } else {
+          emit(
+            loadedState.copyWith(
+              userNameError: nameError,
+              userPhoneError: phoneError,
+              userAddressError: addressError,
+            ),
+          );
+        }
+      } catch (e) {
+        print("Error validating informations: $e");
       }
-
-      if (event.userPhone.isEmpty) {
-        phoneError = "Không được để trống";
-      } else if (!phoneRegex.hasMatch(event.userPhone)) {
-        phoneError = "Định dạng số điện thoại không đúng";
-      }
-
-      if (event.userAddress.isEmpty) {
-        addressError = "Không được để trống";
-      } else if (event.userAddress.length < 10) {
-        addressError = "Địa chỉ không hợp lệ";
-      }
-
-      final isValid =
-          nameError == null && phoneError == null && addressError == null;
-
-      if (isValid) {
-      } else {
-        emit(OrderState.validateError(
-          userNameError: nameError,
-          userPhoneError: phoneError,
-          userAddressError: addressError,
-        ));
-      }
-    } catch (e) {
-      print("Error validating informations: $e");
     }
   }
 
@@ -129,6 +140,45 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     } catch (e) {
       print("Error deleting image: $e");
+    }
+  }
+
+  FutureOr<void> _handleAddProductToCart(
+    _AddProductToCart event,
+    Emitter<OrderState> emit,
+  ) async {
+    try {
+      if (state is _Loaded) {
+        final loadedState = state as _Loaded;
+
+        final updatedCart = List<DetailedOrder>.from(loadedState.cart)
+          ..add(event.detailedOrder);
+
+        final product = loadedState.products.firstWhereOrNull(
+          (p) => p.id == event.detailedOrder.productId,
+        );
+
+        final category = loadedState.categories.firstWhereOrNull(
+          (c) => c.id == product?.category.id,
+        );
+
+        final addedProduct = AddedListProduct(
+          detailedOrder: event.detailedOrder,
+          productName: product?.name ?? "",
+          categoryName: category?.name ?? "",
+        );
+
+        final updatedAddedList =
+            List<AddedListProduct>.from(loadedState.addedListProduct)
+              ..add(addedProduct);
+
+        emit(loadedState.copyWith(
+          cart: updatedCart,
+          addedListProduct: updatedAddedList,
+        ));
+      }
+    } catch (e) {
+      print("Error adding product to cart: $e");
     }
   }
 }

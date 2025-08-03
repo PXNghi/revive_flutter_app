@@ -4,12 +4,15 @@ import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/core/widgets/expand_product_board.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_text_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
+import 'package:revive_flutter_project/core/widgets/order_product_item.dart';
 import 'package:revive_flutter_project/features/order/bloc/order_bloc/order_bloc.dart';
+import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 
 class CreateOrderPage extends StatefulWidget {
@@ -39,6 +42,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderBloc, OrderState>(
       builder: (context, state) {
+        print("cart: ${state.cart}");
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: const MyAppbar(
@@ -92,6 +96,21 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       label: "Thêm vật phẩm",
                     ),
                   ),
+                  const SizedBox(height: 20.0),
+                  Visibility(
+                    visible: state.cart?.isNotEmpty ?? false,
+                    child: ExpandProduct(
+                      cart: state.addedListProduct
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Text(
+                    "CÁCH THU GOM",
+                    style: titleStyle.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  
+                  const SizedBox(height: 16.0),
+
                 ],
               ),
             ),
@@ -137,8 +156,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   void _showProductDialog(
     BuildContext context, {
     String? productId,
-    String? productPrice,
-    String? productDetails,
     String? categoryId,
     String? productImage,
     bool isEdit = false,
@@ -146,8 +163,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     final bloc = context.read<OrderBloc>();
     final TextEditingController productAmountController =
         TextEditingController();
-    final TextEditingController productDetailsController =
-        TextEditingController();
+    final TextEditingController productNoteController = TextEditingController();
     String selectedCategoryId = "";
     String selectedProductId = "";
     bool isValid = true;
@@ -292,14 +308,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                   MyTextField(
                                     controller: productAmountController,
                                     label: "Nhập số lượng",
-                                    initialValue: productPrice,
                                   ),
                                   const SizedBox(height: 10.0),
                                   MyTextField(
-                                    controller: productDetailsController,
+                                    controller: productNoteController,
                                     label: "Ghi chú",
                                     maxLines: 3,
-                                    initialValue: productDetails,
                                   ),
                                   const SizedBox(height: 10.0),
                                   Row(
@@ -389,7 +403,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        const SizedBox(height: 10.0),
+                                                        const SizedBox(
+                                                            height: 10.0),
                                                         const Text(
                                                           "THÔNG BÁO",
                                                           style: headerStyle,
@@ -397,7 +412,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                                         const SizedBox(
                                                             height: 20.0),
                                                         const Padding(
-                                                          padding: pageHorizontalPadding,
+                                                          padding:
+                                                              pageHorizontalPadding,
                                                           child: Text(
                                                               "Vui lòng chọn danh mục và sản phẩm tương ứng!"),
                                                         ),
@@ -416,6 +432,21 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                                     ),
                                                   );
                                                 });
+                                          } else {
+                                            final DetailedOrder newOrder =
+                                                DetailedOrder(
+                                              productId: selectedProductId,
+                                              productNote:
+                                                  productNoteController.text,
+                                              amount: double.parse(
+                                                  productAmountController.text),
+                                              image:
+                                                  state.imageFile?.path ?? "",
+                                            );
+                                            context.read<OrderBloc>().add(
+                                                OrderEvent.addProductToCart(
+                                                    newOrder, ));
+                                            Navigator.pop(context);
                                           }
                                         }
                                       },

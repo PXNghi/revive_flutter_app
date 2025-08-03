@@ -7,14 +7,15 @@ class OrderState with _$OrderState {
   const factory OrderState.loaded({
     @Default([]) List<Category> categories,
     @Default([]) List<Product> products,
-    File? imageFile,
-  }) = _Loaded;
-  const factory OrderState.validateError({
+    @Default([]) List<DetailedOrder> cart,
+    @Default([]) List<AddedListProduct> addedListProduct,
     String? userNameError,
     String? userAddressError,
     String? userPhoneError,
     bool? isChoosePickUpOption,
-  }) = _ValidateError;
+
+    File? imageFile,
+  }) = _Loaded;
   const factory OrderState.createSuccess() = _CreateSuccess;
   const factory OrderState.error(String message) = _Error;
 
@@ -22,9 +23,11 @@ class OrderState with _$OrderState {
 
   List<Category>? get categories => mapOrNull(loaded: (value) => value.categories) ?? [];
   List<Product>? get products => mapOrNull(loaded: (value) => value.products) ?? [];
+  List<DetailedOrder>? get cart => mapOrNull(loaded: (value) => value.cart) ?? [];
+  List<AddedListProduct>? get addedListProduct => mapOrNull(loaded: (value) => value.addedListProduct) ?? [];
   File? get imageFile => mapOrNull(loaded: (value) => value.imageFile);
-  String? get userNameError => mapOrNull(validateError: (value) => value.userNameError);
-  String? get userAddressError => mapOrNull(validateError: (value) => value.userAddressError);
-  String? get userPhoneError => mapOrNull(validateError: (value) => value.userPhoneError);
-  bool? get isChoosePickUpOption => mapOrNull(validateError: (value) => value.isChoosePickUpOption);
+  String? get userNameError => mapOrNull(loaded: (value) => value.userNameError);
+  String? get userAddressError => mapOrNull(loaded: (value) => value.userAddressError);
+  String? get userPhoneError => mapOrNull(loaded: (value) => value.userPhoneError);
+  bool? get isChoosePickUpOption => mapOrNull(loaded: (value) => value.isChoosePickUpOption);
 }
