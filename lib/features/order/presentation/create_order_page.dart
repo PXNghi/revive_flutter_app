@@ -44,20 +44,28 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Widget build(BuildContext context) {
     return BlocListener<OrderBloc, OrderState>(
       listener: (context, state) {
-        // if (state.isLoading) {
-        //   showDialog(
-        //     context: context,
-        //     builder: (context) => const Center(
-        //       child: CircularProgressIndicator(),
-        //     ),
-        //   );
-        // } else {
-        //   Navigator.pop(context);
-        // }
+        if (state.isLoading == true) {
+          showDialog(
+            context: context,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state.isLoading == false) {
+          Navigator.pop(context);
+        }
 
-        if (state.disabledDates != null) {
-          print("disabledDates: ${state.disabledDates}");
-          _showPickDateDialog(context, state.disabledDates!);
+        if (state.isChoosePickUpOption == false) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content:
+                Text("Vui lòng chọn đầy đủ thông tin cho phương thức thu gom!"),
+          ));
+        }
+
+        if (state.isAddedListProduct == false) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Vui lòng cung cấp sản phẩm cho đơn hàng!"),
+          ));
         }
       },
       child: BlocBuilder<OrderBloc, OrderState>(
@@ -118,7 +126,15 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     const SizedBox(height: 20.0),
                     Visibility(
                       visible: state.cart?.isNotEmpty ?? false,
-                      child: ExpandProduct(cart: state.addedListProduct),
+                      child: ExpandProduct(
+                        cart: state.addedListProduct,
+                        onDelete: (value) {
+                          print("value is: $value");
+                          context
+                              .read<OrderBloc>()
+                              .add(OrderEvent.deleteCartItem(value));
+                        },
+                      ),
                     ),
                     const SizedBox(height: 20.0),
                     Text(
@@ -138,37 +154,117 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Nhân viên đến nhà ở",
+                            "Nhân viên đến thu gom",
                             style: titleStyle,
                           ),
                           const SizedBox(height: 16.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                          Visibility(
+                            visible: state.selectedPickUpOption ==
+                                PickUpOption.pickUp,
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
+                                TableCalendar(
+                                  locale: 'vi_VN',
+                                  currentDay: DateTime.now(),
+                                  focusedDay:
+                                      state.selectedDate ?? DateTime.now(),
+                                  firstDay: DateTime.utc(1970, 1, 1),
+                                  lastDay: DateTime.utc(2090, 1, 1),
+                                  calendarFormat: CalendarFormat.month,
+                                  startingDayOfWeek: StartingDayOfWeek.monday,
+                                  headerStyle: const HeaderStyle(
+                                    titleCentered: true,
+                                    formatButtonVisible: false,
+                                  ),
+                                  calendarStyle: const CalendarStyle(
+                                    isTodayHighlighted: false,
+                                    todayDecoration: BoxDecoration(
+                                      color: primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    selectedDecoration: BoxDecoration(
+                                      color: primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  onDaySelected: (selectedDay, focusedDay) {
+                                    context.read<OrderBloc>().add(
+                                        OrderEvent.chooseDatePickup(
+                                            selectedDay));
+                                  },
+                                  selectedDayPredicate: (day) {
+                                    return isSameDay(day, state.selectedDate);
+                                  },
+                                  enabledDayPredicate: (day) {
+                                    final today = DateTime.now();
+                                    final dayOnly =
+                                        DateTime(day.year, day.month, day.day);
+                                    final todayOnly = DateTime(
+                                        today.year, today.month, today.day);
+
+                                    final isTodayOrBefore =
+                                        !dayOnly.isAfter(todayOnly);
+                                    final isDisabled = state.disabledDates
+                                            ?.any((d) => isSameDay(day, d)) ??
+                                        false;
+
+                                    return !isTodayOrBefore && !isDisabled;
+                                  },
+                                ),
+                                const SizedBox(height: 16),
                                 Row(
                                   children: [
-                                    const Text("Ngày: ", style: contentStyle),
-                                    const SizedBox(width: 10.0),
-                                    GestureDetector(
-                                      onTap: () {
-                                        context.read<OrderBloc>().add(
-                                              const OrderEvent
-                                                  .choosePickupOption(
-                                                  PickUpOption.pickUp),
-                                            );
-
-                                        context.read<OrderBloc>().add(
-                                              OrderEvent.getDisabledDates(
-                                                DateFormat('yyyy-MM')
-                                                    .format(DateTime.now()),
-                                              ),
-                                            );
-                                      },
-                                      child: Image.asset(
-                                        arrowDownIcon,
-                                        width: 24,
-                                        height: 24,
+                                    const Text(
+                                      "Giờ: ",
+                                      style: titleStyle,
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: DropdownButtonFormField(
+                                        dropdownColor: Colors.white,
+                                        decoration: const InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: cardBorderRadius,
+                                            borderSide: BorderSide(
+                                              color: grayBorderColor,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: cardBorderRadius,
+                                            borderSide: BorderSide(
+                                              color: primaryColor,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        items: state.slots != null
+                                            ? state.slots!.slots
+                                                .map(
+                                                  (e) => DropdownMenuItem(
+                                                    value:
+                                                        "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}",
+                                                    child: Text(
+                                                        "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}"),
+                                                  ),
+                                                )
+                                                .toList()
+                                            : [],
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            final parts =
+                                                value.toString().split(" - ");
+                                            final timeStart = parts[0];
+                                            final timeEnd = parts[1];
+                                            context.read<OrderBloc>().add(
+                                                  OrderEvent.chooseTimePickup(
+                                                    timeStart: timeStart,
+                                                    timeEnd: timeEnd,
+                                                  ),
+                                                );
+                                          }
+                                        },
                                       ),
                                     ),
                                   ],
@@ -230,7 +326,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                             userPhone: _phoneController.text,
                             userAddress: _addressController.text,
                             products: [],
-                            pickUpOption: "",
+                            pickUpOption:
+                                state.selectedPickUpOption?.name ?? "",
                           ),
                         );
                   },
@@ -591,88 +688,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 ),
         ),
       ],
-    );
-  }
-
-  _showPickDateDialog(BuildContext context, List<DateTime> list) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-            side: const BorderSide(
-              color: primaryColor,
-              width: 1.0,
-            ),
-          ),
-          insetPadding: pageHorizontalPadding,
-          child: Container(
-            padding: pageHorizontalPadding,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TableCalendar(
-                  locale: 'vi_VN',
-                  focusedDay: DateTime.now(),
-                  firstDay: DateTime.utc(1970, 1, 1),
-                  lastDay: DateTime.utc(2090, 1, 1),
-                  calendarFormat: CalendarFormat.month,
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  headerStyle: const HeaderStyle(
-                    titleCentered: true,
-                    formatButtonVisible: false,
-                  ),
-                  calendarStyle: const CalendarStyle(
-                    todayDecoration: BoxDecoration(
-                      color: primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    selectedDecoration: BoxDecoration(
-                      color: primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    print("selectedDay: $selectedDay");
-                  },
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    const Text(
-                      "Giờ: ",
-                      style: titleStyle,
-                    ),
-                    const SizedBox(width: 8.0),
-                    // Expanded(
-                    //   child: DropdownButtonFormField<String>(
-                    //     value: list.first.toString(),
-                    //     items: list
-                    //         .map((time) => DropdownMenuItem<String>(
-                    //               value: time.toString(),
-                    //               child: Text(time.toString()),
-                    //             ))
-                    //         .toList(),
-                    //     onChanged: (value) {},
-                    //   ),
-                    // ),
-                  ],
-                ),
-                const SizedBox(height: 32.0),
-                MyButton(
-                  label: "OK",
-                ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
+import 'package:revive_flutter_project/features/order/models/slot_response.dart';
 import 'package:revive_flutter_project/features/order/order_usecases.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
@@ -24,7 +25,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final OrderUsecases _orderUsecases = OrderUsecases();
   final ProductUsecase _productUsecase = ProductUsecase();
   File? imageFile;
-  List<DetailedOrder> cartChosen = [];
+  List<AddedListProduct> cartChosen = [];
+  String? timeStart;
+  String? timeEnd;
   OrderBloc() : super(const OrderState.initial()) {
     on<_FetchAllCategory>(_handleFetchAllCategory);
     on<_FetchAllProductByCategory>(_handleFetchProductByCategoryId);
@@ -33,9 +36,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_GetDisabledDates>(_handleGetDisableDates);
     on<_ChoosePickupOption>(_handleChoosePickupOption);
     on<_ChooseDatePickup>(_handleChooseDatePickup);
+    on<_ChooseTimePickup>(_handleChooseTimePickup);
     on<_ValidateInformations>(_handleValidateInformations);
     on<_CreateOrder>(_handleCreateOrder);
     on<_AddProductToCart>(_handleAddProductToCart);
+    on<_DeleteCartItem>(_handleDeleteCartItem);
   }
 
   FutureOr<void> _handleFetchAllCategory(
@@ -72,14 +77,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     _ValidateInformations event,
     Emitter<OrderState> emit,
   ) async {
+    print("state is: ${state.runtimeType}");
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
-
-      // emit(const OrderState.loading());
       try {
         String? nameError;
         String? phoneError;
         String? addressError;
+        bool isChoosePickUpOption = false;
+        bool isAddedListProduct = false;
 
         if (event.userName.isEmpty) {
           nameError = "Không được để trống";
@@ -97,16 +103,39 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           addressError = "Địa chỉ không hợp lệ";
         }
 
-        final isValid =
-            nameError == null && phoneError == null && addressError == null;
+        if (event.pickUpOption != "") {
+          isChoosePickUpOption = true;
+        }
+
+        if (event.pickUpOption == PickUpOption.pickUp.name) {
+          if (timeStart == null || timeEnd == null) {
+            isChoosePickUpOption = false;
+          }
+        }
+
+        if (cartChosen.isNotEmpty) {
+          print("cartChosen: ${cartChosen.length}");
+          isAddedListProduct = true;
+        }
+
+        print("added list product: $isAddedListProduct");
+
+        final isValid = nameError == null &&
+            phoneError == null &&
+            addressError == null &&
+            isChoosePickUpOption &&
+            isAddedListProduct;
 
         if (isValid) {
+          print('validated informations');
         } else {
           emit(
             loadedState.copyWith(
               userNameError: nameError,
               userPhoneError: phoneError,
               userAddressError: addressError,
+              isChoosePickUpOption: isChoosePickUpOption,
+              isAddedListProduct: isAddedListProduct,
             ),
           );
         }
@@ -178,6 +207,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             List<AddedListProduct>.from(loadedState.addedListProduct)
               ..add(addedProduct);
 
+        cartChosen.addAll(updatedAddedList);
+
         emit(loadedState.copyWith(
           cart: updatedCart,
           addedListProduct: updatedAddedList,
@@ -195,9 +226,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
       if (event.pick == PickUpOption.pickUp) {
-        add(OrderEvent.getDisabledDates(DateFormat('yyyy-MM').format(DateTime.now())));
+        add(OrderEvent.getDisabledDates(
+            DateFormat('yyyy-MM').format(DateTime.now())));
       }
-      emit(loadedState.copyWith(selectedPickUpOption: event.pick));
+      emit(loadedState.copyWith(
+          selectedPickUpOption: event.pick, isLoading: null));
     }
   }
 
@@ -207,6 +240,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
+      emit(loadedState.copyWith(isLoading: true));
+      final SlotResponse slots = await _orderUsecases.getAvailableSlots(
+          DateFormat('yyyy-MM-dd').format(event.selectedDate));
+      emit(loadedState.copyWith(isLoading: false));
+      emit(loadedState.copyWith(
+        slots: slots,
+        selectedDate: event.selectedDate,
+        isLoading: null,
+      ));
     }
   }
 
@@ -216,9 +258,41 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   ) async {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
-      emit(const OrderState.loading());
-      final List<DateTime> disabledDates = await _orderUsecases.getDisabledDates(event.month);
-      emit(loadedState.copyWith(disabledDates: disabledDates));
+      emit(loadedState.copyWith(isLoading: true));
+      final List<DateTime> disabledDates =
+          await _orderUsecases.getDisabledDates(event.month);
+      emit(loadedState.copyWith(isLoading: false));
+      emit(loadedState.copyWith(isLoading: null, disabledDates: disabledDates));
+    }
+  }
+
+  FutureOr<void> _handleChooseTimePickup(
+    _ChooseTimePickup event,
+    Emitter<OrderState> emit,
+  ) async {
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
+      timeStart = event.timeStart;
+      timeEnd = event.timeEnd;
+      emit(loadedState.copyWith(
+          selectedTime: "${event.timeStart} - ${event.timeEnd}"));
+    }
+  }
+
+  FutureOr<void> _handleDeleteCartItem(
+    _DeleteCartItem event,
+    Emitter<OrderState> emit,
+  ) async {
+    try {
+      if (state is _Loaded) {
+        final loadedState = state as _Loaded;
+        final updatedCart = List<DetailedOrder>.from(loadedState.cart)
+          ..remove(event.detailedOrder);
+        cartChosen.removeWhere((element) => element.detailedOrder.productId == event.detailedOrder.productId);
+        emit(loadedState.copyWith(cart: updatedCart));
+      }
+    } catch (e) {
+      print("Error deleting product from cart: $e");
     }
   }
 }

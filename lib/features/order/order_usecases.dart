@@ -18,7 +18,7 @@ class OrderUsecases {
       final Response response = await ApiService().get(ApiUrls().apiGetAvailableScheduleByDate(date));
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
-        return SlotResponse.fromJson(data['slots']);
+        return SlotResponse.fromJson(data);
       } else {
         throw Exception(data['message']);
       }

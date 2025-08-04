@@ -23,6 +23,7 @@ class _MyBorderButtonState extends State<MyBorderButton> {
       onTap: widget.onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: cardBorderRadius,
           border: Border.all(color: widget.isChosen ? primaryColor : grayBorderColor),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
@@ -10,7 +12,6 @@ class OrderProductItem extends StatelessWidget {
   final double amount;
   final bool isEditMode;
   final VoidCallback? onDeleteTap;
-  final VoidCallback? onEditTap;
   const OrderProductItem({
     super.key,
     required this.productName,
@@ -19,7 +20,6 @@ class OrderProductItem extends StatelessWidget {
     this.amount = 0.0,
     this.isEditMode = true,
     this.onDeleteTap,
-    this.onEditTap,
   });
 
   @override
@@ -28,12 +28,25 @@ class OrderProductItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: cardBorderRadius,
-          child: Image.asset(
-            imagePath == "" ? logoApp : imagePath,
-            height: 90,
-            width: 90,
-            fit: BoxFit.cover,
-          ),
+          child: imagePath != ""
+              ? Image.file(
+                  File(imagePath),
+                  fit: BoxFit.cover,
+                  width: 100,
+                  height: 100,
+                  errorBuilder: (context, error, stackTrace) => const Image(
+                    image: AssetImage(logoApp),
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                  ),
+                )
+              : const Image(
+                  image: AssetImage(logoApp),
+                  fit: BoxFit.cover,
+                  width: 100,
+                  height: 100,
+                ),
         ),
         const SizedBox(width: 16.0),
         Expanded(
@@ -52,18 +65,11 @@ class OrderProductItem extends StatelessWidget {
                     icon: deleteIcon,
                     onTap: onDeleteTap,
                   ),
-                  const SizedBox(width: 10.0),
-                  MyIconButton(
-                    size: 24.0,
-                    icon: editIcon,
-                    onTap: onEditTap,
-                  ),
                 ],
               ),
               const SizedBox(height: 8.0),
               Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     categoryName,
