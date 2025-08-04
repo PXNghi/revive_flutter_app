@@ -7,11 +7,13 @@ import 'package:revive_flutter_project/features/order/models/detailed_order_mode
 class ExpandProduct extends StatefulWidget {
   final List<AddedListProduct>? cart;
   final Function(DetailedOrder)? onDelete;
+  final bool isHasIcon;
 
   const ExpandProduct({
     super.key,
     this.cart,
     this.onDelete,
+    this.isHasIcon = true,
   });
 
   @override
@@ -43,6 +45,7 @@ class _ExpandProductState extends State<ExpandProduct> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: OrderProductItem(
+                    isEditMode: widget.isHasIcon,
                     productName: cart[i].productName,
                     categoryName: cart[i].categoryName,
                     imagePath: cart[i].detailedOrder.image,

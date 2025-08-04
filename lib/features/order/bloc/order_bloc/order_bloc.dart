@@ -38,9 +38,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_ChooseDatePickup>(_handleChooseDatePickup);
     on<_ChooseTimePickup>(_handleChooseTimePickup);
     on<_ValidateInformations>(_handleValidateInformations);
-    on<_CreateOrder>(_handleCreateOrder);
     on<_AddProductToCart>(_handleAddProductToCart);
     on<_DeleteCartItem>(_handleDeleteCartItem);
+    on<_CreateOrder>(_handleCreateOrder);
   }
 
   FutureOr<void> _handleFetchAllCategory(
@@ -71,7 +71,28 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   FutureOr<void> _handleCreateOrder(
     _CreateOrder event,
     Emitter<OrderState> emit,
-  ) async {}
+  ) async {
+    if (state is _Loaded) {
+      final loadedState = state as _Loaded;
+      emit(loadedState.copyWith(isLoading: true));
+      print("come to create order new");
+      final bool isCreateOrderSuccess = await _orderUsecases.createOrder(
+        userName: event.userName,
+        userPhone: event.userPhone,
+        userAddress: event.userAddress,
+        addedListProduct: event.addedListProduct,
+        selectedDate: event.selectedDate,
+        selectedTime: event.selectedTime,
+      );
+      emit(loadedState.copyWith(isLoading: false));
+      emit(loadedState.copyWith(isLoading: null));
+      if (isCreateOrderSuccess) {
+        emit(const OrderState.createSuccess());
+      } else {
+        emit(const OrderState.error("Đã có lỗi xảy ra!"));
+      }
+    }
+  }
 
   FutureOr<void> _handleValidateInformations(
     _ValidateInformations event,
@@ -107,18 +128,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           isChoosePickUpOption = true;
         }
 
-        if (event.pickUpOption == PickUpOption.pickUp.name) {
-          if (timeStart == null || timeEnd == null) {
-            isChoosePickUpOption = false;
-          }
+        if (timeStart == null || timeEnd == null) {
+          isChoosePickUpOption = false;
         }
 
         if (cartChosen.isNotEmpty) {
-          print("cartChosen: ${cartChosen.length}");
           isAddedListProduct = true;
         }
-
-        print("added list product: $isAddedListProduct");
 
         final isValid = nameError == null &&
             phoneError == null &&
@@ -127,7 +143,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             isAddedListProduct;
 
         if (isValid) {
-          print('validated informations');
+          emit(loadedState.copyWith(isValidInformations: true));
+          emit(loadedState.copyWith(isValidInformations: false));
         } else {
           emit(
             loadedState.copyWith(
@@ -288,7 +305,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final loadedState = state as _Loaded;
         final updatedCart = List<DetailedOrder>.from(loadedState.cart)
           ..remove(event.detailedOrder);
-        cartChosen.removeWhere((element) => element.detailedOrder.productId == event.detailedOrder.productId);
+        cartChosen.removeWhere((element) =>
+            element.detailedOrder.productId == event.detailedOrder.productId);
         emit(loadedState.copyWith(cart: updatedCart));
       }
     } catch (e) {

@@ -21,6 +21,7 @@ class OrderState with _$OrderState {
     bool? isAddedListProduct,
     bool? isChoosePickUpOption,
     bool? isLoading,
+    bool? isValidInformations,
 
     File? imageFile,
   }) = _Loaded;
@@ -46,4 +47,6 @@ class OrderState with _$OrderState {
   bool? get isChoosePickUpOption => mapOrNull(loaded: (value) => value.isChoosePickUpOption);
   bool? get isAddedListProduct => mapOrNull(loaded: (value) => value.isAddedListProduct);
   bool? get isLoading => mapOrNull(loaded: (value) => value.isLoading);
+  bool? get isValidInformations => mapOrNull(loaded: (value) => value.isValidInformations);
+  bool? get isCreateSuccess => mapOrNull(createSuccess: (_) => true);
 }

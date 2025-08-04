@@ -60,10 +60,13 @@ class OrderProductItem extends StatelessWidget {
                     style: titleStyle,
                   ),
                   const Spacer(),
-                  MyIconButton(
-                    size: 24.0,
-                    icon: deleteIcon,
-                    onTap: onDeleteTap,
+                  Visibility(
+                    visible: isEditMode,
+                    child: MyIconButton(
+                      size: 24.0,
+                      icon: deleteIcon,
+                      onTap: onDeleteTap,
+                    ),
                   ),
                 ],
               ),

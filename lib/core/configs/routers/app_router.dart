@@ -20,6 +20,7 @@ import 'package:revive_flutter_project/features/order/bloc/order_bloc/order_bloc
 import 'package:revive_flutter_project/features/order/presentation/confirmed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/create_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
+import 'package:revive_flutter_project/features/order/presentation/success_order_page.dart';
 import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
 import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
 import 'package:revive_flutter_project/features/person/presentation/admin/user_management_page.dart';
@@ -203,7 +204,8 @@ final GoRouter routers = GoRouter(
       path: "/create-order",
       builder: (context, state) {
         return BlocProvider(
-          create: (context) => OrderBloc()..add(const OrderEvent.fetchAllCategory()),
+          create: (context) =>
+              OrderBloc()..add(const OrderEvent.fetchAllCategory()),
           child: const CreateOrderPage(),
         );
       },
@@ -212,13 +214,21 @@ final GoRouter routers = GoRouter(
           name: 'confirm-order',
           path: 'confirm-order',
           builder: (context, state) {
-            final bloc = context.read<OrderBloc>();
+            final bloc = state.extra as OrderBloc;
+            final userName = state.uri.queryParameters['userName'] ?? "";
+            final userPhone = state.uri.queryParameters['userPhone'] ?? "";
+            final userAddress = state.uri.queryParameters['userAddress'] ?? "";
             return BlocProvider.value(
               value: bloc,
-              child: const ConfirmedOrderPage(),
+              child: ConfirmedOrderPage(
+                userName: userName,
+                userPhone: userPhone,
+                userAddress: userAddress,
+              ),
             );
           },
         ),
+        GoRoute(name: 'success-order-page', path: 'success-order-page', builder: (context, state) => const SuccessOrderPage()),
       ],
     ),
   ],
