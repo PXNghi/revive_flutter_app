@@ -8,6 +8,7 @@ const redColor = Color(0xffFD1111);
 const grayColor = Color(0xffF9FAFB);
 const grayBorderColor = Color(0xffC0C8BD);
 const grayContentColor = Color(0xff918C8C);
+const dartGrayColor = Color(0xff9C9CA0);
 
 // font sizes
 const headerFontSize = 25.0;
@@ -47,6 +48,7 @@ const pageHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
 // border radius
 const defaultBorderRadius = 10.0;
 const cardBorderRadius = BorderRadius.all(Radius.circular(defaultBorderRadius));
+const imageBorderRadius = BorderRadius.all(Radius.circular(5.0));
 
 // mock data
 const bannerImageList = [

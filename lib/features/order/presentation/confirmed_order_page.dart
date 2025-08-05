@@ -6,7 +6,7 @@ import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/widgets/expand_product_board.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
-import 'package:revive_flutter_project/features/order/bloc/order_bloc/order_bloc.dart';
+import 'package:revive_flutter_project/features/order/bloc/add_order/order_bloc.dart';
 
 class ConfirmedOrderPage extends StatefulWidget {
   final String userName;
