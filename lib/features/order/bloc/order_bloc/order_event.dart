@@ -34,6 +34,7 @@ class OrderEvent with _$OrderEvent {
     required String userName,
     required String userPhone,
     required String userAddress,
+    String? userNote,
     required List<AddedListProduct> addedListProduct,
     required DateTime selectedDate,
     required String selectedTime,

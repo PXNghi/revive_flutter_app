@@ -13,6 +13,7 @@ import 'package:revive_flutter_project/features/order/models/slot_response.dart'
 import 'package:revive_flutter_project/features/order/order_usecases.dart';
 import 'package:revive_flutter_project/features/product/model/category.dart';
 import 'package:revive_flutter_project/features/product/model/product.dart';
+import 'package:revive_flutter_project/features/product/model/upload_image_response.dart';
 import 'package:revive_flutter_project/features/product/product_usecases.dart';
 
 part 'order_event.dart';
@@ -76,11 +77,30 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       final loadedState = state as _Loaded;
       emit(loadedState.copyWith(isLoading: true));
       print("come to create order new");
+      final updatedListProduct = await Future.wait(
+        event.addedListProduct.map((e) async {
+          if (e.detailedOrder.image != "") {
+            final UploadImageResponse url =
+                await _orderUsecases.uploadImage([e.detailedOrder.image]);
+            final updatedDetailedOrder =
+                e.detailedOrder.copyWith(image: url.url[0]);
+            return AddedListProduct(
+              detailedOrder: updatedDetailedOrder,
+              quantity: e.quantity,
+              productName: e.productName,
+              categoryName: e.categoryName,
+            );
+          } else {
+            return e;
+          }
+        }),
+      );
       final bool isCreateOrderSuccess = await _orderUsecases.createOrder(
         userName: event.userName,
         userPhone: event.userPhone,
         userAddress: event.userAddress,
-        addedListProduct: event.addedListProduct,
+        userNote: event.userNote,
+        addedListProduct: updatedListProduct,
         selectedDate: event.selectedDate,
         selectedTime: event.selectedTime,
       );
@@ -98,7 +118,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     _ValidateInformations event,
     Emitter<OrderState> emit,
   ) async {
-    print("state is: ${state.runtimeType}");
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
       try {
@@ -124,12 +143,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           addressError = "Địa chỉ không hợp lệ";
         }
 
-        if (event.pickUpOption != "") {
+        if (timeStart != null || timeEnd != null) {
           isChoosePickUpOption = true;
-        }
-
-        if (timeStart == null || timeEnd == null) {
-          isChoosePickUpOption = false;
         }
 
         if (cartChosen.isNotEmpty) {

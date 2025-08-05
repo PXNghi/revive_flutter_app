@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
-import 'package:revive_flutter_project/features/order/bloc/order_bloc/order_bloc.dart';
 import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
 import 'package:revive_flutter_project/features/order/models/slot_response.dart';
+import 'package:revive_flutter_project/features/product/model/upload_image_response.dart';
 
 class OrderUsecases {
   static final OrderUsecases _singleton = OrderUsecases._internal();
@@ -52,25 +52,26 @@ class OrderUsecases {
     required String userName,
     required String userPhone,
     required String userAddress,
+    String? userNote,
     required List<AddedListProduct> addedListProduct,
     required DateTime selectedDate,
     required String selectedTime,
   }) async {
     final timeStart = selectedTime.split("-")[0];
     final timeEnd = selectedTime.split("-")[1];
-    final String timeStartStandardize = combineDateAndTime(selectedDate, timeStart).toUtc().toIso8601String();
-    final String timeEndStandardize = combineDateAndTime(selectedDate, timeEnd).toUtc().toIso8601String();
-    List<DetailedOrder> detailedOrders = addedListProduct.map((item) => item.detailedOrder).toList();
-    print("timeStartStandardize: $timeStartStandardize, timeEndStandardize: $timeEndStandardize");
-    print("selectedDate: ${selectedDate.toUtc().toIso8601String()}");
-    print("detailedOrders: $detailedOrders");
+    final timeStartStandardize = toIsoStringWithTimezone(
+        combineDateAndTime(selectedDate, timeStart));
+    final timeEndStandardize = toIsoStringWithTimezone(
+        combineDateAndTime(selectedDate, timeEnd));
+    List<DetailedOrder> detailedOrders =
+        addedListProduct.map((item) => item.detailedOrder).toList();
     try {
       final bodyRequest = {
         "userName": userName,
         "userPhone": userPhone,
         "userAddress": userAddress,
-        "userNote": "",
-        "pickupDate": selectedDate.toUtc().toIso8601String(),
+        "userNote": userNote ?? "",
+        "pickupDate": selectedDate.toIso8601String(),
         "slotStart": timeStartStandardize,
         "slotEnd": timeEndStandardize,
         "products": detailedOrders,
@@ -90,11 +91,32 @@ class OrderUsecases {
     }
   }
 
-  DateTime combineDateAndTime(DateTime date, String timeString) {
-  final parts = timeString.split(':');
-  final hour = int.parse(parts[0]);
-  final minute = int.parse(parts[1]);
+  Future<UploadImageResponse> uploadImage(List<String> paths) async {
+    try {
+      final UploadImageResponse response = await ApiService()
+          .uploadImage(ApiUrls().apiUploadOrderImage(), paths);
+      return response;
+    } catch (e) {
+      print("Error uploading image: $e");
+      rethrow;
+    }
+  }
 
-  return DateTime(date.year, date.month, date.day, hour, minute);
-}
+  DateTime combineDateAndTime(DateTime date, String timeString) {
+    final parts = timeString.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+
+    return DateTime(date.year, date.month, date.day, hour, minute);
+  }
+
+  String toIsoStringWithTimezone(DateTime dt) {
+    final duration = dt.timeZoneOffset;
+    final hours = duration.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (duration.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    final sign = duration.isNegative ? '-' : '+';
+    final offset = '$sign$hours:$minutes';
+
+    return dt.toIso8601String() + offset;
+  }
 }

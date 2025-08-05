@@ -30,5 +30,5 @@ class SlotDateTime with _$SlotDateTime {
       _$SlotDateTimeFromJson(json);
 }
 
-DateTime _fromJson(String date) => DateTime.parse(date);
+DateTime _fromJson(String date) => DateTime.parse(date).toLocal();
 String _toJson(DateTime date) => date.toIso8601String();

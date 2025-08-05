@@ -12,11 +12,13 @@ class ConfirmedOrderPage extends StatefulWidget {
   final String userName;
   final String userPhone;
   final String userAddress;
+  final String userNote;
   const ConfirmedOrderPage({
     super.key,
     required this.userName,
     required this.userPhone,
     required this.userAddress,
+    this.userNote = "",
   });
 
   @override
@@ -104,13 +106,10 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                         border: Border.all(color: primaryColor),
                         borderRadius: cardBorderRadius,
                       ),
-                      child: state.selectedPickUpOption == PickUpOption.pickUp
-                          ? Text(
-                              "Nhân viên đến thu gom tại địa chỉ đã nhập vào ngày ${DateFormat('dd/MM/yyyy').format(state.selectedDate ?? DateTime.now())} khoảng ${state.selectedTime}",
-                              style: contentStyle)
-                          : const Text(
-                              "Đem đến cửa hàng gần nhất tại bất kể lúc nào trong giờ làm việc (8:00 - 22:00)",
-                              style: contentStyle),
+                      child: Text(
+                        "Nhân viên đến thu gom tại địa chỉ đã nhập vào ngày ${DateFormat('dd/MM/yyyy').format(state.selectedDate ?? DateTime.now())} khoảng ${state.selectedTime}",
+                        style: contentStyle,
+                      ),
                     ),
                   ],
                 ),
@@ -139,6 +138,7 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                             userName: widget.userName,
                             userPhone: widget.userPhone,
                             userAddress: widget.userAddress,
+                            userNote: widget.userNote,
                             addedListProduct: state.addedListProduct ?? [],
                             selectedDate: state.selectedDate ?? DateTime.now(),
                             selectedTime: state.selectedTime ?? "",

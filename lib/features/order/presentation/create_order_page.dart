@@ -32,6 +32,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _orderNoteController = TextEditingController();
 
   @override
   void initState() {
@@ -58,8 +59,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
         if (state.isChoosePickUpOption == false) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content:
-                Text("Vui lòng chọn ngày thu gom!"),
+            content: Text("Vui lòng chọn ngày thu gom!"),
           ));
         }
 
@@ -140,7 +140,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       child: ExpandProduct(
                         cart: state.addedListProduct,
                         onDelete: (value) {
-                          print("value is: $value");
                           context
                               .read<OrderBloc>()
                               .add(OrderEvent.deleteCartItem(value));
@@ -154,8 +153,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     ),
                     const SizedBox(height: 20.0),
                     MyBorderButton(
-                      isChosen:
-                          true,
+                      isChosen: true,
                       onTap: () {
                         context.read<OrderBloc>().add(
                             const OrderEvent.choosePickupOption(
@@ -198,8 +196,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                 ),
                                 onDaySelected: (selectedDay, focusedDay) {
                                   context.read<OrderBloc>().add(
-                                      OrderEvent.chooseDatePickup(
-                                          selectedDay));
+                                      OrderEvent.chooseDatePickup(selectedDay));
                                 },
                                 selectedDayPredicate: (day) {
                                   return isSameDay(day, state.selectedDate);
@@ -210,13 +207,13 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                       DateTime(day.year, day.month, day.day);
                                   final todayOnly = DateTime(
                                       today.year, today.month, today.day);
-                          
+
                                   final isTodayOrBefore =
                                       !dayOnly.isAfter(todayOnly);
                                   final isDisabled = state.disabledDates
                                           ?.any((d) => isSameDay(day, d)) ??
                                       false;
-                          
+
                                   return !isTodayOrBefore && !isDisabled;
                                 },
                               ),
@@ -265,6 +262,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                               value.toString().split(" - ");
                                           final timeStart = parts[0];
                                           final timeEnd = parts[1];
+                                          print("timeStart: $timeStart, timeEnd: $timeEnd");
                                           context.read<OrderBloc>().add(
                                                 OrderEvent.chooseTimePickup(
                                                   timeStart: timeStart,
@@ -281,6 +279,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                           ),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyTextField(
+                      controller: _orderNoteController,
+                      label: "Ghi chú cho đơn hàng",
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 20.0),
                   ],
@@ -337,7 +341,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     final bloc = context.read<OrderBloc>();
     final TextEditingController productAmountController =
         TextEditingController();
-    final TextEditingController productNoteController = TextEditingController();
     String selectedCategoryId = "";
     String selectedProductId = "";
     await showDialog(
@@ -483,12 +486,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                     label: "Nhập số lượng",
                                   ),
                                   const SizedBox(height: 10.0),
-                                  MyTextField(
-                                    controller: productNoteController,
-                                    label: "Ghi chú",
-                                    maxLines: 3,
-                                  ),
-                                  const SizedBox(height: 10.0),
                                   Row(
                                     children: [
                                       Image.asset(
@@ -550,78 +547,72 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                   const SizedBox(height: 20.0),
                                   Center(
                                     child: MyButton(
-                                      label: isEdit ? "Sửa" : "Thêm",
+                                      label: "Thêm",
                                       onTap: () {
-                                        if (isEdit) {
-                                        } else {
-                                          if (selectedProductId == "" ||
-                                              selectedCategoryId == "") {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return Dialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.0),
-                                                      side: const BorderSide(
-                                                        color: primaryColor,
-                                                        width: 1.0,
+                                        if (selectedProductId == "" ||
+                                            selectedCategoryId == "") {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                    side: const BorderSide(
+                                                      color: primaryColor,
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                  insetPadding:
+                                                      pageHorizontalPadding,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      const SizedBox(
+                                                          height: 10.0),
+                                                      const Text(
+                                                        "THÔNG BÁO",
+                                                        style: headerStyle,
                                                       ),
-                                                    ),
-                                                    insetPadding:
-                                                        pageHorizontalPadding,
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        const SizedBox(
-                                                            height: 10.0),
-                                                        const Text(
-                                                          "THÔNG BÁO",
-                                                          style: headerStyle,
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 20.0),
-                                                        const Padding(
-                                                          padding:
-                                                              pageHorizontalPadding,
-                                                          child: Text(
-                                                              "Vui lòng chọn danh mục và sản phẩm tương ứng!"),
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 20.0),
-                                                        MyButton(
-                                                          label: "OK",
-                                                          onTap: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 10.0),
-                                                      ],
-                                                    ),
-                                                  );
-                                                });
-                                          } else {
-                                            final DetailedOrder newOrder =
-                                                DetailedOrder(
-                                              productId: selectedProductId,
-                                              productNote:
-                                                  productNoteController.text,
-                                              amount: double.parse(
-                                                  productAmountController.text),
-                                              image:
-                                                  state.imageFile?.path ?? "",
-                                            );
-                                            context.read<OrderBloc>().add(
-                                                    OrderEvent.addProductToCart(
-                                                  newOrder,
-                                                ));
-                                            Navigator.pop(context);
-                                          }
+                                                      const SizedBox(
+                                                          height: 20.0),
+                                                      const Padding(
+                                                        padding:
+                                                            pageHorizontalPadding,
+                                                        child: Text(
+                                                            "Vui lòng chọn danh mục và sản phẩm tương ứng!"),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 20.0),
+                                                      MyButton(
+                                                        label: "OK",
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10.0),
+                                                    ],
+                                                  ),
+                                                );
+                                              });
+                                        } else {
+                                          final DetailedOrder newOrder =
+                                              DetailedOrder(
+                                            productId: selectedProductId,
+                                            amount: double.parse(
+                                                productAmountController.text),
+                                            image: state.imageFile?.path ?? "",
+                                          );
+                                          context
+                                              .read<OrderBloc>()
+                                              .add(OrderEvent.addProductToCart(
+                                                newOrder,
+                                              ));
+                                          Navigator.pop(context);
                                         }
                                       },
                                     ),
