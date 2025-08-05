@@ -218,63 +218,63 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                 },
                               ),
                               const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Giờ: ",
-                                    style: titleStyle,
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: DropdownButtonFormField(
-                                      dropdownColor: Colors.white,
-                                      decoration: const InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: cardBorderRadius,
-                                          borderSide: BorderSide(
-                                            color: grayBorderColor,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: cardBorderRadius,
-                                          borderSide: BorderSide(
-                                            color: primaryColor,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      items: state.slots != null
-                                          ? state.slots!.slots
-                                              .map(
-                                                (e) => DropdownMenuItem(
-                                                  value:
-                                                      "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}",
-                                                  child: Text(
-                                                      "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}"),
-                                                ),
-                                              )
-                                              .toList()
-                                          : [],
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          final parts =
-                                              value.toString().split(" - ");
-                                          final timeStart = parts[0];
-                                          final timeEnd = parts[1];
-                                          print("timeStart: $timeStart, timeEnd: $timeEnd");
-                                          context.read<OrderBloc>().add(
-                                                OrderEvent.chooseTimePickup(
-                                                  timeStart: timeStart,
-                                                  timeEnd: timeEnd,
-                                                ),
-                                              );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   children: [
+                              //     const Text(
+                              //       "Giờ: ",
+                              //       style: titleStyle,
+                              //     ),
+                              //     const SizedBox(width: 8.0),
+                              //     Expanded(
+                              //       child: DropdownButtonFormField(
+                              //         dropdownColor: Colors.white,
+                              //         decoration: const InputDecoration(
+                              //           enabledBorder: OutlineInputBorder(
+                              //             borderRadius: cardBorderRadius,
+                              //             borderSide: BorderSide(
+                              //               color: grayBorderColor,
+                              //               width: 1.0,
+                              //             ),
+                              //           ),
+                              //           focusedBorder: OutlineInputBorder(
+                              //             borderRadius: cardBorderRadius,
+                              //             borderSide: BorderSide(
+                              //               color: primaryColor,
+                              //               width: 1.0,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         items: state.slots != null
+                              //             ? state.slots!.slots
+                              //                 .map(
+                              //                   (e) => DropdownMenuItem(
+                              //                     value:
+                              //                         "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}",
+                              //                     child: Text(
+                              //                         "${DateFormat('HH:mm').format(e.startTime)} - ${DateFormat('HH:mm').format(e.endTime)}"),
+                              //                   ),
+                              //                 )
+                              //                 .toList()
+                              //             : [],
+                              //         onChanged: (value) {
+                              //           if (value != null) {
+                              //             final parts =
+                              //                 value.toString().split(" - ");
+                              //             final timeStart = parts[0];
+                              //             final timeEnd = parts[1];
+                              //             print("timeStart: $timeStart, timeEnd: $timeEnd");
+                              //             context.read<OrderBloc>().add(
+                              //                   OrderEvent.chooseTimePickup(
+                              //                     timeStart: timeStart,
+                              //                     timeEnd: timeEnd,
+                              //                   ),
+                              //                 );
+                              //           }
+                              //         },
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ],

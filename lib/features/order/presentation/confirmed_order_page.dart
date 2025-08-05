@@ -107,7 +107,7 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                         borderRadius: cardBorderRadius,
                       ),
                       child: Text(
-                        "Nhân viên đến thu gom tại địa chỉ đã nhập vào ngày ${DateFormat('dd/MM/yyyy').format(state.selectedDate ?? DateTime.now())} khoảng ${state.selectedTime}",
+                        "Nhân viên đến thu gom tại địa chỉ đã nhập vào ngày ${DateFormat('dd/MM/yyyy').format(state.selectedDate ?? DateTime.now())}.",
                         style: contentStyle,
                       ),
                     ),

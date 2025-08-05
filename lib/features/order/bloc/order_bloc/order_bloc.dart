@@ -102,7 +102,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         userNote: event.userNote,
         addedListProduct: updatedListProduct,
         selectedDate: event.selectedDate,
-        selectedTime: event.selectedTime,
       );
       emit(loadedState.copyWith(isLoading: false));
       emit(loadedState.copyWith(isLoading: null));
@@ -124,7 +123,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         String? nameError;
         String? phoneError;
         String? addressError;
-        bool isChoosePickUpOption = false;
+        // bool isChoosePickUpOption = false;
         bool isAddedListProduct = false;
 
         if (event.userName.isEmpty) {
@@ -143,9 +142,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           addressError = "Địa chỉ không hợp lệ";
         }
 
-        if (timeStart != null || timeEnd != null) {
-          isChoosePickUpOption = true;
-        }
+        // if (timeStart != null || timeEnd != null) {
+        //   isChoosePickUpOption = true;
+        // }
 
         if (cartChosen.isNotEmpty) {
           isAddedListProduct = true;
@@ -154,19 +153,18 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final isValid = nameError == null &&
             phoneError == null &&
             addressError == null &&
-            isChoosePickUpOption &&
             isAddedListProduct;
 
         if (isValid) {
           emit(loadedState.copyWith(isValidInformations: true));
           emit(loadedState.copyWith(isValidInformations: false));
+          emit(loadedState.copyWith(isValidInformations: null));
         } else {
           emit(
             loadedState.copyWith(
               userNameError: nameError,
               userPhoneError: phoneError,
               userAddressError: addressError,
-              isChoosePickUpOption: isChoosePickUpOption,
               isAddedListProduct: isAddedListProduct,
             ),
           );
@@ -273,11 +271,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
       emit(loadedState.copyWith(isLoading: true));
-      final SlotResponse slots = await _orderUsecases.getAvailableSlots(
-          DateFormat('yyyy-MM-dd').format(event.selectedDate));
+      // final SlotResponse slots = await _orderUsecases.getAvailableSlots(
+      //     DateFormat('yyyy-MM-dd').format(event.selectedDate));
       emit(loadedState.copyWith(isLoading: false));
       emit(loadedState.copyWith(
-        slots: slots,
         selectedDate: event.selectedDate,
         isLoading: null,
       ));

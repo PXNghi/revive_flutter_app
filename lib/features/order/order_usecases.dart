@@ -35,7 +35,6 @@ class OrderUsecases {
     try {
       final Response response =
           await ApiService().get(ApiUrls().apiGetDisabledDates(month));
-      print("month is: $month");
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
         return (data['data'] as List).map((e) => DateTime.parse(e)).toList();
@@ -55,14 +54,13 @@ class OrderUsecases {
     String? userNote,
     required List<AddedListProduct> addedListProduct,
     required DateTime selectedDate,
-    required String selectedTime,
   }) async {
-    final timeStart = selectedTime.split("-")[0];
-    final timeEnd = selectedTime.split("-")[1];
-    final timeStartStandardize = toIsoStringWithTimezone(
-        combineDateAndTime(selectedDate, timeStart));
-    final timeEndStandardize = toIsoStringWithTimezone(
-        combineDateAndTime(selectedDate, timeEnd));
+    // final timeStart = selectedTime.split("-")[0];
+    // final timeEnd = selectedTime.split("-")[1];
+    // final timeStartStandardize = toIsoStringWithTimezone(
+    //     combineDateAndTime(selectedDate, timeStart));
+    // final timeEndStandardize = toIsoStringWithTimezone(
+    //     combineDateAndTime(selectedDate, timeEnd));
     List<DetailedOrder> detailedOrders =
         addedListProduct.map((item) => item.detailedOrder).toList();
     try {
@@ -71,9 +69,7 @@ class OrderUsecases {
         "userPhone": userPhone,
         "userAddress": userAddress,
         "userNote": userNote ?? "",
-        "pickupDate": selectedDate.toIso8601String(),
-        "slotStart": timeStartStandardize,
-        "slotEnd": timeEndStandardize,
+        "pickUpDate": selectedDate.toIso8601String(),
         "products": detailedOrders,
       };
 
