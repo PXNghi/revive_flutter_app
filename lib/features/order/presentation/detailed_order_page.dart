@@ -7,10 +7,8 @@ import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
-import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
 import 'package:revive_flutter_project/core/widgets/my_timeline.dart';
 import 'package:revive_flutter_project/features/order/models/order.dart';
-import 'package:timelines_plus/timelines_plus.dart';
 
 class DetailedOrderPage extends StatefulWidget {
   final Order order;
