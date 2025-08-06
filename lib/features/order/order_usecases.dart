@@ -5,6 +5,8 @@ import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
 import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
+import 'package:revive_flutter_project/features/order/models/detailed_order_response.dart';
+import 'package:revive_flutter_project/features/order/models/order.dart';
 import 'package:revive_flutter_project/features/order/models/slot_response.dart';
 import 'package:revive_flutter_project/features/product/model/upload_image_response.dart';
 
@@ -94,6 +96,54 @@ class OrderUsecases {
       return response;
     } catch (e) {
       print("Error uploading image: $e");
+      rethrow;
+    }
+  }
+
+  Future<List<Order>> getAllMyOrders(String status) async {
+    try {
+      final Response response = await ApiService()
+          .get(ApiUrls().apiGetAllOrdersByStatusWithUserId(status));
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+      print("data: ${data["data"]}");
+
+        return (data['data'] as List).map((e) => Order.fromJson(e)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error at get all my orders usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<List<Order>> getAllOrdersAdmin(String status) async {
+    try {
+      final Response response = await ApiService().get(ApiUrls().apiGetAllOrdersByStatus(status));
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+        return (data['data'] as List).map((e) => Order.fromJson(e)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error at get all my orders usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<List<DetailedOrderResponse>> getOrderDetails(String orderId) async {
+    try {
+      final Response response = await ApiService().get(ApiUrls().apiGetDetailedOrderByOrderId(orderId));
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+        return (data['data'] as List).map((e) => DetailedOrderResponse.fromJson(e)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error at get all my orders usecase: $e");
       rethrow;
     }
   }

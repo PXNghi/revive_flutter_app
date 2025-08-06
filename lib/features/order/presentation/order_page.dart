@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
-import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
-import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_tab_item.dart';
+import 'package:revive_flutter_project/core/widgets/order_item.dart';
+import 'package:revive_flutter_project/features/order/bloc/main_order/main_order_bloc.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -17,10 +18,12 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   final ScrollController _scrollController = ScrollController();
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: MyAppbar(
         title: "",
         isLeadingImplied: false,
@@ -37,147 +40,62 @@ class _OrderPageState extends State<OrderPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: pageHorizontalPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "ĐƠN HÀNG CỦA BẠN",
-              style: headerStyle,
-            ),
-            const SizedBox(height: 20),
-            SizedBox(height: 45, child: _buildTabs(context)),
-            Container(
-              padding: const EdgeInsets.all(16),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: primaryColor),
-                  borderRadius: cardBorderRadius,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4.0,
-                      spreadRadius: 3.0,
-                      offset: const Offset(0.0, 5.0),
-                    ),
-                  ]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      body: BlocConsumer<MainOrderBloc, MainOrderState>(
+        listener: (context, state) {
+          final int currentPage = _pageController.page?.round() ?? 0;
+          if (state.selectedIndex != currentPage) {
+            _pageController.jumpToPage(state.selectedIndex);
+          }
+          final offset = (state.selectedIndex * 100.0) -
+              (MediaQuery.of(context).size.width / 2) +
+              (100.0 / 2);
+          _scrollController.animateTo(
+            offset.clamp(0, _scrollController.position.maxScrollExtent),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: pageHorizontalPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "ĐƠN HÀNG CỦA BẠN",
+                  style: headerStyle,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 45,
+                  child: _buildTabs(
+                    context,
+                    state,
+                  ),
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) => context.read<MainOrderBloc>().add(
+                          MainOrderEvent.changeTab(index),
+                        ),
                     children: [
-                      const Spacer(),
-                      Text(
-                        "Đang đi lấy",
-                        style: contentStyle.copyWith(color: primaryColor),
-                      ),
-                      const SizedBox(width: 12),
-                      Image.asset(
-                        chatIcon,
-                        width: 24,
-                        height: 24,
-                      ),
+                      _buildOrderSection(state),
+                      _buildOrderSection(state),
+                      _buildOrderSection(state),
+                      _buildOrderSection(state),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Mã đơn hàng: 6892415b11b2e065abe2e8d2",
-                    style: contentStyle.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: imageBorderRadius,
-                        child: Image.asset(
-                          logoApp,
-                          width: 70,
-                          height: 70,
-                        ),
-                      ),
-                      const SizedBox(width: 13),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Sắt công trình",
-                            style: titleStyle.copyWith(fontSize: 18.0),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Text(
-                            "10 kg",
-                            style: contentStyle.copyWith(
-                              fontSize: 10.0,
-                              color: dartGrayColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Tổng: 4 sản phẩm",
-                      style: contentStyle.copyWith(fontSize: 12.0),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: imageBorderRadius,
-                      border: Border.all(color: primaryColor),
-                      color: primaryColor.withOpacity(0.1),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Ngày thu gom: 15/07/2025",
-                        style: titleStyle.copyWith(
-                          fontSize: defaultFontSize,
-                          color: primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Visibility(
-                    visible: SessionData.mine?.role == "Admin",
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: MyButton(
-                            onTap: () {},
-                            label: "Từ chối",
-                            color: alertColor,
-                          ),
-                        ),
-                        const SizedBox(width: 8.0),
-                        Expanded(
-                          child: MyButton(
-                            onTap: () {},
-                            label: "Xác nhận",
-                            color: primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTabs(BuildContext context) {
+  Widget _buildTabs(BuildContext context, MainOrderState state) {
     return ListView.builder(
       controller: _scrollController,
       scrollDirection: Axis.horizontal,
@@ -190,10 +108,37 @@ class _OrderPageState extends State<OrderPage> {
             "Đã hoàn thành",
             "Đã hủy",
           ][index],
-          isChosen: false,
-          onTap: () {},
+          isChosen: state.selectedIndex == index,
+          onTap: () {
+            context.read<MainOrderBloc>().add(
+                  MainOrderEvent.changeTab(index),
+                );
+          },
         );
       },
+    );
+  }
+
+  _buildOrderSection(MainOrderState state) {
+    if (state is Loaded) {
+      return ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(height: 32.0),
+        itemCount: state.orders.length,
+        itemBuilder: (context, index) {
+          final orderItem = state.orders[index];
+          return OrderItem(
+            orderId: orderItem.id,
+            orderStatus: orderItem.status,
+            orderDate: orderItem.pickUpDate.toString(),
+            orderLength: orderItem.detailedOrders.length,
+            orderDetails: orderItem.detailedOrders,
+          );
+        },
+      );
+    }
+
+    return const Center(
+      child: CircularProgressIndicator(),
     );
   }
 }

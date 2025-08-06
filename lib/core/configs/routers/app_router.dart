@@ -17,6 +17,7 @@ import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.da
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
 import 'package:revive_flutter_project/features/order/bloc/add_order/order_bloc.dart';
+import 'package:revive_flutter_project/features/order/bloc/main_order/main_order_bloc.dart';
 import 'package:revive_flutter_project/features/order/presentation/confirmed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/create_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
@@ -83,7 +84,10 @@ final GoRouter routers = GoRouter(
           name: "order-page",
           path: '/order',
           builder: (context, state) {
-            return const OrderPage();
+            return BlocProvider(
+              create: (context) => MainOrderBloc()..add(const MainOrderEvent.started()),
+              child: const OrderPage(),
+            );
           },
         ),
         GoRoute(
@@ -228,7 +232,10 @@ final GoRouter routers = GoRouter(
             );
           },
         ),
-        GoRoute(name: 'success-order-page', path: 'success-order-page', builder: (context, state) => const SuccessOrderPage()),
+        GoRoute(
+            name: 'success-order-page',
+            path: 'success-order-page',
+            builder: (context, state) => const SuccessOrderPage()),
       ],
     ),
   ],

@@ -64,7 +64,12 @@ class _ExpandProductState extends State<ExpandProduct> {
                   _isExpanded = !_isExpanded;
                 });
               },
-              child: Text(_isExpanded ? 'Thu gọn' : 'Xem thêm'),
+              child: Text(
+                _isExpanded ? 'Thu gọn' : 'Xem thêm',
+                style: contentStyle.copyWith(
+                  color: primaryColor,
+                ),
+              ),
             ),
         ],
       ),

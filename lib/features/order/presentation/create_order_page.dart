@@ -605,6 +605,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                             productId: selectedProductId,
                                             amount: double.parse(
                                                 productAmountController.text),
+                                                
                                             image: state.imageFile?.path ?? "",
                                           );
                                           context
