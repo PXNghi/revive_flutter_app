@@ -18,8 +18,10 @@ import 'package:revive_flutter_project/features/home/presentation/branches_page.
 import 'package:revive_flutter_project/features/home/presentation/home_page.dart';
 import 'package:revive_flutter_project/features/order/bloc/add_order/order_bloc.dart';
 import 'package:revive_flutter_project/features/order/bloc/main_order/main_order_bloc.dart';
+import 'package:revive_flutter_project/features/order/models/order.dart';
 import 'package:revive_flutter_project/features/order/presentation/confirmed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/create_order_page.dart';
+import 'package:revive_flutter_project/features/order/presentation/detailed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/success_order_page.dart';
 import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
@@ -85,7 +87,8 @@ final GoRouter routers = GoRouter(
           path: '/order',
           builder: (context, state) {
             return BlocProvider(
-              create: (context) => MainOrderBloc()..add(const MainOrderEvent.started()),
+              create: (context) =>
+                  MainOrderBloc()..add(const MainOrderEvent.started()),
               child: const OrderPage(),
             );
           },
@@ -237,6 +240,14 @@ final GoRouter routers = GoRouter(
             path: 'success-order-page',
             builder: (context, state) => const SuccessOrderPage()),
       ],
+    ),
+    GoRoute(
+      name: 'detailed-order-page',
+      path: '/detailed-order-page',
+      builder: (context, state) {
+        final orderItem = state.extra as Order;
+        return DetailedOrderPage(order: orderItem);
+      },
     ),
   ],
 );

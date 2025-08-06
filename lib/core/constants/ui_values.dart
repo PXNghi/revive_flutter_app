@@ -8,7 +8,7 @@ const redColor = Color(0xffFD1111);
 const grayColor = Color(0xffF9FAFB);
 const grayBorderColor = Color(0xffC0C8BD);
 const grayContentColor = Color(0xff918C8C);
-const dartGrayColor = Color(0xff9C9CA0);
+const darkGrayColor = Color(0xff9C9CA0);
 
 // font sizes
 const headerFontSize = 25.0;

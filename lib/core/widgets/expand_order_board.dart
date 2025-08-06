@@ -61,14 +61,14 @@ class _ExpandOrderBoardState extends State<ExpandOrderBoard> {
                   children: [
                     Text(
                       item.product?.name ?? "",
-                      style: titleStyle.copyWith(fontSize: 18.0),
+                      style: titleStyle,
                     ),
                     const SizedBox(height: 4.0),
                     Text(
                       "${item.amount.toString()} kg",
                       style: contentStyle.copyWith(
                         fontSize: 10.0,
-                        color: dartGrayColor,
+                        color: darkGrayColor,
                       ),
                     ),
                   ],

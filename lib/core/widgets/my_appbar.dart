@@ -25,6 +25,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
       title: Text(title, style: titleStyle),
       centerTitle: isCenter,
       elevation: 0,
+      backgroundColor: Colors.white,
       actions: actions ?? [],
       leading: isLeadingImplied
           ? GestureDetector(

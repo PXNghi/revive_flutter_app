@@ -87,6 +87,7 @@ class _OrderPageState extends State<OrderPage> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           );
@@ -132,6 +133,9 @@ class _OrderPageState extends State<OrderPage> {
             orderDate: orderItem.pickUpDate.toString(),
             orderLength: orderItem.detailedOrders.length,
             orderDetails: orderItem.detailedOrders,
+            onOrderTap: () {
+              context.pushNamed('detailed-order-page', extra: orderItem);
+            },
           );
         },
       );
