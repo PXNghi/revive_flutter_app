@@ -137,11 +137,14 @@ class _OrderPageState extends State<OrderPage> {
             orderLength: orderItem.detailedOrders.length,
             orderDetails: orderItem.detailedOrders,
             adminNote: orderItem.adminNote,
-            onOrderTap: () {
-              context.pushNamed('detailed-order-page', extra: {
+            onOrderTap: () async {
+              final shouldRefresh = await context.pushNamed('detailed-order-page', extra: {
                 'order': orderItem,
                 'bloc': bloc,
               });
+              if (shouldRefresh == true) {
+                context.read<MainOrderBloc>().add(MainOrderEvent.changeTab(state.selectedIndex));
+              }
             },
             onAcceptTap: () {
               context.read<MainOrderBloc>().add(MainOrderEvent.acceptOrder(orderItem.id));

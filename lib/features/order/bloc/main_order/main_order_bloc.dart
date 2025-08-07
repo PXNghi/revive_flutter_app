@@ -31,6 +31,8 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     on<_ClearInformations>(_handleClearInformations);
     on<_ChooseAnotherDate>(_handleChooseAnotherDate);
     on<_UpdateNewInformation>(_handleUpdateNewInformation);
+    on<_GetStatuses>(_handleGetStatuses);
+    on<_ChooseAnotherStatus>(_handleChooseAnotherStatus);
   }
 
   FutureOr<void> _handleStarted(
@@ -164,6 +166,7 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
       emit(loadedState.copyWith(
         reasonError: null,
         selectedDate: null,
+        selectedStatus: null,
       ));
     }
   }
@@ -223,6 +226,41 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
       }
     } catch (e) {
       print("Error update new information: $e");
+    }
+  }
+
+  FutureOr<void> _handleGetStatuses(
+    _GetStatuses event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+        final List<String> statusList = [
+          OrderStatus.waiting.name,
+          OrderStatus.confirmed.name,
+          OrderStatus.delivering.name,
+          OrderStatus.completed.name,
+          OrderStatus.cancelled.name
+        ];
+        // final List<String> availableStatuses = statusList
+        //     .where((status) => status != event.currentStatus)
+        //     .toList();
+        // print("availableStatuses: $availableStatuses");
+        emit(loadedState.copyWith(availableStatus: statusList));
+      }
+    } catch (e) {
+      print("Error update status: $e");
+    }
+  }
+
+  FutureOr<void> _handleChooseAnotherStatus(
+    _ChooseAnotherStatus event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    if (state is Loaded) {
+      final loadedState = state as Loaded;
+      emit(loadedState.copyWith(selectedStatus: event.orderId));
     }
   }
 }

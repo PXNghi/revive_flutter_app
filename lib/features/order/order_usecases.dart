@@ -180,15 +180,19 @@ class OrderUsecases {
     try {
       final Map<String, dynamic> bodyRequest = {};
       if (status != null) {
-        print("come status: $status");
         bodyRequest['status'] = status;
       }
       if (adminNote != null) {
         bodyRequest['adminNote'] = adminNote;
       }
       if (pickUpDate != null) {
-        print("come pickUpDate: $pickUpDate");
         bodyRequest['pickupDate'] = pickUpDate.toIso8601String();
+      }
+      if (pickUpTimeStart != null) {
+        bodyRequest['deliveringStartTime'] = pickUpTimeStart;
+      }
+      if (pickUpTimeEnd != null) {
+        bodyRequest['orderFinishTime'] = pickUpTimeEnd;
       }
       print("bodyRequest: $bodyRequest");
       final Response response = await ApiService().put(
@@ -196,6 +200,7 @@ class OrderUsecases {
         bodyRequest,
       );
       final Map<String, dynamic> data = json.decode(response.body);
+      print("dtata: $data");
       return data['success'];
     } catch (e) {
       print("Error at update orders usecase: $e");

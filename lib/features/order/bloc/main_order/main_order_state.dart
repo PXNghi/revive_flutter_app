@@ -10,6 +10,8 @@ class MainOrderState with _$MainOrderState {
     String? reasonError,
     DateTime? selectedDate,
     Order? order,
+    List<String>? availableStatus,
+    String? selectedStatus,
   }) = Loaded;
   const factory MainOrderState.success() = Success;
   const factory MainOrderState.error(String message) = Error;
@@ -22,4 +24,8 @@ class MainOrderState with _$MainOrderState {
   String? get reasonError => mapOrNull(loaded: (state) => state.reasonError);
   DateTime? get selectedDate => mapOrNull(loaded: (state) => state.selectedDate);
   Order? get order => mapOrNull(loaded: (state) => state.order);
+  List<String>? get availableStatus =>
+      mapOrNull(loaded: (state) => state.availableStatus);
+  String? get selectedStatus =>
+      mapOrNull(loaded: (state) => state.selectedStatus);
 }

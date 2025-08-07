@@ -8,6 +8,8 @@ class MainOrderEvent with _$MainOrderEvent {
   const factory MainOrderEvent.cancelOrder(String orderId) = _CancelOrder;
   const factory MainOrderEvent.acceptOrder(String orderId) = _AcceptOrder;
   const factory MainOrderEvent.chooseAnotherDate(DateTime selectedDate) = _ChooseAnotherDate;
+  const factory MainOrderEvent.getStatuses(String currentStatus) = _GetStatuses;
+  const factory MainOrderEvent.chooseAnotherStatus(String orderId) = _ChooseAnotherStatus;
   const factory MainOrderEvent.updateNewInformation({
     @Default('') String orderId,
     DateTime? orderDate,

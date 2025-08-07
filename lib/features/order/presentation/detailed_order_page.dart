@@ -7,7 +7,6 @@ import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
-import 'package:revive_flutter_project/core/widgets/my_dialog.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_textfield.dart';
 import 'package:revive_flutter_project/core/widgets/my_timeline.dart';
@@ -42,17 +41,20 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
           title: "",
           isLeadingImplied: true,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTapDown: (details) {
-                  final Offset offset = details.globalPosition;
-                  _showEditMenu(context, offset);
-                },
-                child: Image.asset(
-                  editIcon,
-                  width: 24,
-                  height: 24,
+            Visibility(
+              visible: SessionData.mine?.role == "Admin",
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTapDown: (details) {
+                    final Offset offset = details.globalPosition;
+                    _showEditMenu(context, offset);
+                  },
+                  child: Image.asset(
+                    editIcon,
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ),
             ),
@@ -86,13 +88,13 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
                           style: contentStyle,
                         ),
                         const SizedBox(height: 8),
-                        Visibility(
-                          visible: state.order?.adminNote != null || widget.order.adminNote.isNotEmpty,
-                          child: Text(
+                        if ((state.order?.adminNote != null &&
+                                state.order?.adminNote != "") ||
+                            widget.order.adminNote != "")
+                          Text(
                             "Admin note: ${state.order?.adminNote ?? widget.order.adminNote}",
                             style: contentStyle.copyWith(color: alertColor),
                           ),
-                        ),
                       ],
                     );
                   },
@@ -348,15 +350,21 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
               ),
             ],
           ),
-          child: Center(
-            child: MyButton(
-              label: "Đổi trạng thái",
-              onTap: () {
-                _showChangeStatusDialog(context);
-              },
-              width: double.infinity,
-              height: 45,
-            ),
+          child: BlocBuilder<MainOrderBloc, MainOrderState>(
+            builder: (context, state) {
+              return Center(
+                child: MyButton(
+                  label: "Đổi trạng thái",
+                  onTap: () {
+                    bloc.add(MainOrderEvent.getStatuses(widget.order.status));
+                    _showChangeStatusDialog(
+                        context, state.order?.status ?? widget.order.status);
+                  },
+                  width: double.infinity,
+                  height: 45,
+                ),
+              );
+            },
           ),
         );
       } else {
@@ -551,8 +559,152 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
     context.read<MainOrderBloc>().add(const MainOrderEvent.clearInformations());
   }
 
-  void _showChangeStatusDialog(BuildContext context) {
+  void _showChangeStatusDialog(BuildContext context, String orderStatus) async {
     final bloc = context.read<MainOrderBloc>();
+    print("orderstatus is: $orderStatus");
+    String status = orderStatus;
+    const Map<String, String> statusLabels = {
+      'waiting': 'Chờ xử lý',
+      'confirmed': 'Đã xác nhận',
+      'completed': 'Đã hoàn thành',
+      'delivering': 'Đang đến lấy',
+      'cancelled': 'Đã hủy',
+    };
+    final TextEditingController _reasonController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return BlocProvider.value(
+          value: bloc,
+          child: Dialog(
+            insetPadding: pageHorizontalPadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              side: const BorderSide(
+                color: primaryColor,
+                width: 1.0,
+              ),
+            ),
+            child: Container(
+              padding: pageHorizontalPadding,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                color: Colors.white,
+              ),
+              child: BlocBuilder<MainOrderBloc, MainOrderState>(
+                builder: (context, state) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 24.0),
+                      Text(
+                        "THÔNG BÁO",
+                        style: titleStyle.copyWith(
+                          fontSize: 20.0,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      DropdownButtonFormField(
+                        dropdownColor: Colors.white,
+                        decoration: const InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: cardBorderRadius,
+                            borderSide: BorderSide(
+                              color: grayBorderColor,
+                              width: 1.0,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: cardBorderRadius,
+                            borderSide: BorderSide(
+                              color: primaryColor,
+                              width: 1.0,
+                            ),
+                          ),
+                        ),
+                        value: status,
+                        items: state.availableStatus != null
+                            ? state.availableStatus!
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(
+                                      statusLabels[e] ?? e,
+                                      style: contentStyle.copyWith(
+                                        color: status == e
+                                            ? primaryColor
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList()
+                            : [],
+                        onChanged: (value) {
+                          print("value: $value");
+                          status = value.toString();
+                          bloc.add(MainOrderEvent.chooseAnotherStatus(status));
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      if (state.selectedStatus == "cancelled")
+                        MyTextField(
+                          controller: _reasonController,
+                          label: "Nhập lý do hủy đơn hàng:",
+                          maxLines: 4,
+                        ),
+                      const SizedBox(height: 20.0),
+                      MyButton(
+                        onTap: () {
+                          if (status == "cancelled") {
+                            bloc.add(
+                              MainOrderEvent.rejectOrder(
+                                orderId: widget.order.id,
+                                rejectReason: _reasonController.text,
+                              ),
+                            );
+                          } else if (status == "completed") {
+                            bloc.add(
+                              MainOrderEvent.updateNewInformation(
+                                orderId: widget.order.id,
+                                status: status,
+                                orderTimeEnd:
+                                    DateFormat("HH:mm").format(DateTime.now()),
+                              ),
+                            );
+                          } else if (status == "delivering") {
+                            bloc.add(
+                              MainOrderEvent.updateNewInformation(
+                                orderId: widget.order.id,
+                                status: status,
+                                orderTimeEnd:
+                                    DateFormat("HH:mm").format(DateTime.now()),
+                              ),
+                            );
+                          } else {
+                            bloc.add(
+                              MainOrderEvent.updateNewInformation(
+                                orderId: widget.order.id,
+                                status: status,
+                              ),
+                            );
+                          }
+                          Navigator.of(context).pop();
+                        },
+                        label: "Xác nhận",
+                      ),
+                      const SizedBox(height: 20.0),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    context.read<MainOrderBloc>().add(const MainOrderEvent.clearInformations());
   }
 
   void _showEditMenu(BuildContext context, Offset offset) {
