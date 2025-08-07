@@ -3,12 +3,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
-import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
 import 'package:revive_flutter_project/features/order/models/order.dart';
 import 'package:revive_flutter_project/features/order/order_usecases.dart';
-import 'package:revive_flutter_project/features/product/model/category.dart';
-import 'package:revive_flutter_project/features/product/model/product.dart';
-import 'package:revive_flutter_project/features/product/product_usecases.dart';
 
 part 'main_order_event.dart';
 part 'main_order_state.dart';
@@ -24,13 +20,12 @@ enum OrderStatus {
 
 class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
   final OrderUsecases _orderUsecases = OrderUsecases();
-  final ProductUsecase _productUsecase = ProductUsecase();
   late String role;
-  List<Product> products = [];
-  List<Category> categories = [];
+
   MainOrderBloc() : super(const MainOrderState.initial()) {
     on<_Started>(_handleStarted);
     on<_ChangeTab>(_handleChangeTabs);
+    on<_CancelOrder>(_handleCancelOrder);
   }
 
   FutureOr<void> _handleStarted(
@@ -40,9 +35,8 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     try {
       emit(const MainOrderState.loading(selectedIndex: 0));
       role = SessionData.mine?.role ?? "User";
-      products = await _productUsecase.getAllProducts();
-      categories = await _productUsecase.getAllCategories();
-      List<Order> waitingOrders = await getAllOrdersByRole(role, OrderStatus.waiting.name);
+      List<Order> waitingOrders =
+          await getAllOrdersByRole(role, OrderStatus.waiting.name);
 
       emit(MainOrderState.loaded(orders: waitingOrders));
     } catch (e) {
@@ -99,5 +93,26 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
       orders = await _orderUsecases.getAllOrdersAdmin(status);
     }
     return orders;
+  }
+
+  FutureOr<void> _handleCancelOrder(
+    _CancelOrder event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      final isCancelSuccess = await _orderUsecases.cancelOrder(event.orderId);
+      if (isCancelSuccess) {
+        emit(const MainOrderState.success());
+        emit(const MainOrderState.loading(selectedIndex: 3));
+        final List<Order> cancelledOrders =
+            await getAllOrdersByRole(role, OrderStatus.cancelled.name);
+        emit(
+            MainOrderState.loaded(orders: cancelledOrders, selectedIndex: 3));
+      } else {
+        print("Failed to cancel order");
+      }
+    } catch (e) {
+      print("Error cancel order: $e");
+    }
   }
 }

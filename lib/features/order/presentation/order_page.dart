@@ -127,6 +127,7 @@ class _OrderPageState extends State<OrderPage> {
         itemCount: state.orders.length,
         itemBuilder: (context, index) {
           final orderItem = state.orders[index];
+          final bloc = context.read<MainOrderBloc>();
           return OrderItem(
             orderId: orderItem.id,
             orderStatus: orderItem.status,
@@ -134,7 +135,10 @@ class _OrderPageState extends State<OrderPage> {
             orderLength: orderItem.detailedOrders.length,
             orderDetails: orderItem.detailedOrders,
             onOrderTap: () {
-              context.pushNamed('detailed-order-page', extra: orderItem);
+              context.pushNamed('detailed-order-page', extra: {
+                'order': orderItem,
+                'bloc': bloc,
+              });
             },
           );
         },

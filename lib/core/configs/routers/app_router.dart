@@ -225,12 +225,14 @@ final GoRouter routers = GoRouter(
             final userName = state.uri.queryParameters['userName'] ?? "";
             final userPhone = state.uri.queryParameters['userPhone'] ?? "";
             final userAddress = state.uri.queryParameters['userAddress'] ?? "";
+            final userNote = state.uri.queryParameters['userNote'] ?? "";
             return BlocProvider.value(
               value: bloc,
               child: ConfirmedOrderPage(
                 userName: userName,
                 userPhone: userPhone,
                 userAddress: userAddress,
+                userNote: userNote,
               ),
             );
           },
@@ -245,8 +247,13 @@ final GoRouter routers = GoRouter(
       name: 'detailed-order-page',
       path: '/detailed-order-page',
       builder: (context, state) {
-        final orderItem = state.extra as Order;
-        return DetailedOrderPage(order: orderItem);
+        final extra = state.extra as Map<String,dynamic>;
+        final orderItem = extra['order'] as Order;
+        final bloc = extra['bloc'] as MainOrderBloc;
+        return BlocProvider.value(
+          value: bloc,
+          child: DetailedOrderPage(order: orderItem),
+        );
       },
     ),
   ],

@@ -63,6 +63,7 @@ class ApiUrls {
   Uri apiGetAllOrdersByStatus(String status) => Uri.parse('$baseUrl/api/order/get-all-orders-by-status/$status');
   Uri apiGetAllOrdersByStatusWithUserId(String status) => Uri.parse('$baseUrl/api/order/get-user-orders-by-status/$status');
   Uri apiGetDetailedOrderByOrderId(String orderId) => Uri.parse('$baseUrl/api/order/get-detailed-order-by-order-id/$orderId');
+  Uri apiCancelOrder(String orderId) => Uri.parse('$baseUrl/api/order/cancel-order/$orderId');
 
   // schedule
   Uri apiGetAvailableScheduleByDate(String date) => Uri.parse('$baseUrl/api/order/schedule/get-available-schedule-by-date?date=$date');

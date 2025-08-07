@@ -106,7 +106,7 @@ class OrderUsecases {
           .get(ApiUrls().apiGetAllOrdersByStatusWithUserId(status));
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
-      print("data: ${data["data"]}");
+        print("data: ${data["data"]}");
 
         return (data['data'] as List).map((e) => Order.fromJson(e)).toList();
       } else {
@@ -120,7 +120,8 @@ class OrderUsecases {
 
   Future<List<Order>> getAllOrdersAdmin(String status) async {
     try {
-      final Response response = await ApiService().get(ApiUrls().apiGetAllOrdersByStatus(status));
+      final Response response =
+          await ApiService().get(ApiUrls().apiGetAllOrdersByStatus(status));
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
         return (data['data'] as List).map((e) => Order.fromJson(e)).toList();
@@ -135,13 +136,33 @@ class OrderUsecases {
 
   Future<List<DetailedOrderResponse>> getOrderDetails(String orderId) async {
     try {
-      final Response response = await ApiService().get(ApiUrls().apiGetDetailedOrderByOrderId(orderId));
+      final Response response = await ApiService()
+          .get(ApiUrls().apiGetDetailedOrderByOrderId(orderId));
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
-        return (data['data'] as List).map((e) => DetailedOrderResponse.fromJson(e)).toList();
+        return (data['data'] as List)
+            .map((e) => DetailedOrderResponse.fromJson(e))
+            .toList();
       } else {
         return [];
       }
+    } catch (e) {
+      print("Error at get all my orders usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<bool> cancelOrder(String orderId) async {
+    final bodyRequest = {
+      "status": "cancelled",
+    };
+    try {
+      final Response response = await ApiService().put(
+        ApiUrls().apiCancelOrder(orderId),
+        bodyRequest,
+      );
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data['success'];
     } catch (e) {
       print("Error at get all my orders usecase: $e");
       rethrow;

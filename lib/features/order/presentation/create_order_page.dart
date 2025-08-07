@@ -76,6 +76,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 'userName': _nameController.text,
                 'userPhone': _phoneController.text,
                 'userAddress': _addressController.text,
+                'userNote': _orderNoteController.text
               });
         }
       },
@@ -145,6 +146,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                               .add(OrderEvent.deleteCartItem(value));
                         },
                       ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyTextField(
+                      controller: _orderNoteController,
+                      label: "Ghi chú cho đơn hàng",
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 20.0),
                     Text(
@@ -279,12 +286,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    MyTextField(
-                      controller: _orderNoteController,
-                      label: "Ghi chú cho đơn hàng",
-                      maxLines: 3,
                     ),
                     const SizedBox(height: 20.0),
                   ],
@@ -605,7 +606,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                             productId: selectedProductId,
                                             amount: double.parse(
                                                 productAmountController.text),
-                                                
                                             image: state.imageFile?.path ?? "",
                                           );
                                           context

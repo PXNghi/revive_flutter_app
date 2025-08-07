@@ -111,6 +111,22 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                         style: contentStyle,
                       ),
                     ),
+                    const SizedBox(height: 24.0),
+                    _buildHeader(title: "GHI CHÚ"),
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        border: Border.all(color: primaryColor),
+                        borderRadius: cardBorderRadius,
+                      ),
+                      child: Text(
+                        widget.userNote,
+                        style: contentStyle,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0,),
                   ],
                 ),
               ),
@@ -133,6 +149,7 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                 child: MyButton(
                   label: "Xác nhận",
                   onTap: () {
+                    print("userNote: ${widget.userNote}");
                     context.read<OrderBloc>().add(
                           OrderEvent.createOrder(
                             userName: widget.userName,

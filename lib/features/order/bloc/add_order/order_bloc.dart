@@ -76,7 +76,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (state is _Loaded) {
       final loadedState = state as _Loaded;
       emit(loadedState.copyWith(isLoading: true));
-      print("come to create order new");
       final updatedListProduct = await Future.wait(
         event.addedListProduct.map((e) async {
           if (e.detailedOrder.image != "") {
