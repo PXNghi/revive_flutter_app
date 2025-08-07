@@ -12,9 +12,12 @@ class OrderItem extends StatelessWidget {
   final String orderStatus;
   final int orderLength;
   final String orderDate;
+  final String? adminNote;
   final List<DetailedOrderResponse>? orderDetails;
   final VoidCallback? onChatTap;
   final VoidCallback? onOrderTap;
+  final VoidCallback? onAcceptTap;
+  final VoidCallback? onDeclineTap;
 
   const OrderItem({
     super.key,
@@ -25,6 +28,9 @@ class OrderItem extends StatelessWidget {
     required this.orderDetails,
     this.onChatTap,
     this.onOrderTap,
+    this.onAcceptTap,
+    this.onDeclineTap,
+    this.adminNote,
   });
 
   @override
@@ -75,6 +81,17 @@ class OrderItem extends StatelessWidget {
               "Mã đơn hàng: $orderId",
               style: contentStyle.copyWith(fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 8),
+            Visibility(
+              visible: adminNote != null && adminNote!.isNotEmpty,
+              child: Text(
+                "Admin ghi chú: $adminNote",
+                style: contentStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: alertColor,
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             ExpandOrderBoard(products: orderDetails ?? []),
             const SizedBox(height: 12),
@@ -105,12 +122,12 @@ class OrderItem extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Visibility(
-              visible: SessionData.mine?.role == "Admin",
+              visible: SessionData.mine?.role == "Admin" && orderStatus == "waiting",
               child: Row(
                 children: [
                   Expanded(
                     child: MyButton(
-                      onTap: () {},
+                      onTap: onDeclineTap ?? () {},
                       label: "Từ chối",
                       color: alertColor,
                     ),
@@ -118,7 +135,7 @@ class OrderItem extends StatelessWidget {
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: MyButton(
-                      onTap: () {},
+                      onTap: onAcceptTap ?? () {},
                       label: "Xác nhận",
                       color: primaryColor,
                     ),

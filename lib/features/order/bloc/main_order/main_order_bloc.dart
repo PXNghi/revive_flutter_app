@@ -26,6 +26,11 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     on<_Started>(_handleStarted);
     on<_ChangeTab>(_handleChangeTabs);
     on<_CancelOrder>(_handleCancelOrder);
+    on<_AcceptOrder>(_handleAcceptOrder);
+    on<_RejectOrder>(_handleRejectOrder);
+    on<_ClearInformations>(_handleClearInformations);
+    on<_ChooseAnotherDate>(_handleChooseAnotherDate);
+    on<_UpdateNewInformation>(_handleUpdateNewInformation);
   }
 
   FutureOr<void> _handleStarted(
@@ -106,13 +111,118 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
         emit(const MainOrderState.loading(selectedIndex: 3));
         final List<Order> cancelledOrders =
             await getAllOrdersByRole(role, OrderStatus.cancelled.name);
-        emit(
-            MainOrderState.loaded(orders: cancelledOrders, selectedIndex: 3));
+        emit(MainOrderState.loaded(orders: cancelledOrders, selectedIndex: 3));
       } else {
         print("Failed to cancel order");
       }
     } catch (e) {
       print("Error cancel order: $e");
+    }
+  }
+
+  FutureOr<void> _handleRejectOrder(
+    _RejectOrder event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      String? reasonError;
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+
+        if (event.rejectReason.isEmpty) {
+          reasonError = "Không được để trống";
+        }
+        if (reasonError == null) {
+          final isSuccess = await _orderUsecases.updateOrderAdmin(
+            event.orderId,
+            status: OrderStatus.cancelled.name,
+            adminNote: event.rejectReason,
+          );
+          if (isSuccess) {
+            emit(const MainOrderState.success());
+            emit(const MainOrderState.loading(selectedIndex: 3));
+            final List<Order> cancelledOrders =
+                await getAllOrdersByRole(role, OrderStatus.cancelled.name);
+            emit(MainOrderState.loaded(
+                orders: cancelledOrders, selectedIndex: 3));
+          }
+        } else {
+          emit(loadedState.copyWith(reasonError: reasonError));
+        }
+      }
+    } catch (e) {
+      print("Error reject order: $e");
+    }
+  }
+
+  FutureOr<void> _handleClearInformations(
+    _ClearInformations event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    if (state is Loaded) {
+      final loadedState = state as Loaded;
+      emit(loadedState.copyWith(
+        reasonError: null,
+        selectedDate: null,
+      ));
+    }
+  }
+
+  FutureOr<void> _handleAcceptOrder(
+    _AcceptOrder event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      final bool isSuccess = await _orderUsecases.updateOrderAdmin(
+        event.orderId,
+        status: OrderStatus.confirmed.name,
+      );
+      if (isSuccess) {
+        emit(const MainOrderState.success());
+        emit(const MainOrderState.loading(selectedIndex: 1));
+        final List<Order> confirmedOrders =
+            await getAllOrdersByRole(role, OrderStatus.confirmed.name);
+        emit(MainOrderState.loaded(orders: confirmedOrders, selectedIndex: 1));
+      }
+    } catch (e) {
+      print("Error accept order: $e");
+    }
+  }
+
+  FutureOr<void> _handleChooseAnotherDate(
+    _ChooseAnotherDate event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    if (state is Loaded) {
+      final loadedState = state as Loaded;
+      emit(loadedState.copyWith(selectedDate: event.selectedDate));
+    }
+  }
+
+  FutureOr<void> _handleUpdateNewInformation(
+    _UpdateNewInformation event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      final bool isSuccess = await _orderUsecases.updateOrderAdmin(
+        event.orderId,
+        status: event.status,
+        adminNote: event.adminNote,
+        pickUpDate: event.orderDate,
+        pickUpTimeStart: event.orderTimeStart,
+        pickUpTimeEnd: event.orderTimeEnd,
+      );
+      if (isSuccess) {
+        final Order? order = await _orderUsecases.getOrderById(event.orderId);
+        if (order != null) {
+          if (state is Loaded) {
+            final loadedState = state as Loaded;
+            emit(loadedState.copyWith(order: order));
+          }
+        }
+      }
+    } catch (e) {
+      print("Error update new information: $e");
     }
   }
 }

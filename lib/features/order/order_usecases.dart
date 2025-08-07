@@ -169,6 +169,59 @@ class OrderUsecases {
     }
   }
 
+  Future<bool> updateOrderAdmin(
+    String orderId, {
+    String? status,
+    String? adminNote,
+    DateTime? pickUpDate,
+    String? pickUpTimeStart,
+    String? pickUpTimeEnd,
+  }) async {
+    try {
+      final Map<String, dynamic> bodyRequest = {};
+      if (status != null) {
+        print("come status: $status");
+        bodyRequest['status'] = status;
+      }
+      if (adminNote != null) {
+        bodyRequest['adminNote'] = adminNote;
+      }
+      if (pickUpDate != null) {
+        print("come pickUpDate: $pickUpDate");
+        bodyRequest['pickupDate'] = pickUpDate.toIso8601String();
+      }
+      print("bodyRequest: $bodyRequest");
+      final Response response = await ApiService().put(
+        ApiUrls().apiUpdateOrderAdmin(orderId),
+        bodyRequest,
+      );
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data['success'];
+    } catch (e) {
+      print("Error at update orders usecase: $e");
+      rethrow;
+    }
+  }
+
+  Future<Order?> getOrderById(String orderId) async {
+    try {
+      final Response response = await ApiService().get(
+        ApiUrls().apiGetOrderById(orderId),
+      );
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+        final order = data['data'];
+        return Order.fromJson(order[0]);
+      } else {
+        print("Error at get order by id usecase: ${data['message']}");
+        return null;
+      }
+    } catch (e) {
+      print("Error at get order by id usecase: $e");
+      rethrow;
+    }
+  }
+
   DateTime combineDateAndTime(DateTime date, String timeString) {
     final parts = timeString.split(':');
     final hour = int.parse(parts[0]);
