@@ -52,4 +52,21 @@ class ApiUrls {
   Uri apiCreateNewProduct() => Uri.parse('$baseUrl/api/product/create-new-product');
   Uri apiUpdateProduct(String id) => Uri.parse('$baseUrl/api/product/update-product/$id');
   Uri apiDeleteProduct(String id) => Uri.parse('$baseUrl/api/product/delete-product/$id');
+  Uri apiUploadProductImage() => Uri.parse('$baseUrl/api/upload-product');
+  Uri apiDeleteProductImage() => Uri.parse('$baseUrl/api/delete-product-image');
+
+  // order
+  Uri apiGetAllOrders() => Uri.parse('$baseUrl/api/order/get-all-orders');
+  Uri apiGetOrderById(String id) => Uri.parse('$baseUrl/api/order/get-order-by-id/$id');
+  Uri apiCreateNewOrder() => Uri.parse('$baseUrl/api/order/create-new-order');
+  Uri apiUploadOrderImage() => Uri.parse('$baseUrl/api/upload-order-image');
+  Uri apiGetAllOrdersByStatus(String status) => Uri.parse('$baseUrl/api/order/get-all-orders-by-status/$status');
+  Uri apiGetAllOrdersByStatusWithUserId(String status) => Uri.parse('$baseUrl/api/order/get-user-orders-by-status/$status');
+  Uri apiGetDetailedOrderByOrderId(String orderId) => Uri.parse('$baseUrl/api/order/get-detailed-order-by-order-id/$orderId');
+  Uri apiCancelOrder(String orderId) => Uri.parse('$baseUrl/api/order/cancel-order/$orderId');
+  Uri apiUpdateOrderAdmin(String orderId) => Uri.parse('$baseUrl/api/order/update-order-admin/$orderId');
+
+  // schedule
+  Uri apiGetAvailableScheduleByDate(String date) => Uri.parse('$baseUrl/api/order/schedule/get-available-schedule-by-date?date=$date');
+  Uri apiGetDisabledDates(String month) => Uri.parse('$baseUrl/api/order/schedule/get-disabled-dates?month=$month');
 }

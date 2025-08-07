@@ -2,7 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:revive_flutter_project/core/constants/numbers.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/features/product/model/upload_image_response.dart';
+import 'package:mime/mime.dart';
 
 class ApiService {
   static final Map<String, String> _header = {
@@ -99,4 +103,42 @@ class ApiService {
       rethrow;
     }
   }
+
+  Future<UploadImageResponse> uploadImage(
+  Uri url,
+  List<String> paths,
+) async {
+  final request = http.MultipartRequest('POST', url);
+
+  for (String path in paths) {
+    final mimeType = lookupMimeType(path);
+    final mediaType = mimeType != null
+        ? MediaType.parse(mimeType)
+        : MediaType('application', 'octet-stream');
+
+    final file = await http.MultipartFile.fromPath(
+      'images',
+      path,
+      contentType: mediaType,
+    );
+
+    request.files.add(file);
+  }
+
+  request.headers.addAll({
+    'Authorization': 'Bearer ${SessionData.token()}',
+    'Accept': 'application/json',
+  });
+
+  final streamedResponse = await request.send();
+  final response = await http.Response.fromStream(streamedResponse);
+
+  if (response.statusCode == 200) {
+    print("Upload thành công: ${response.body}");
+    return UploadImageResponse.fromJson(jsonDecode(response.body));
+  } else {
+    print("Lỗi upload: ${response.statusCode} - ${response.body}");
+    throw Exception("Upload failed");
+  }
+}
 }

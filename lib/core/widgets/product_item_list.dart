@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 
@@ -30,15 +31,27 @@ class ProductItemList extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: cardBorderRadius,
-            child: productImage != ""
-                ? Image.network(productImage)
-                : const Image(
-                    image: AssetImage(logoApp),
-                  ),
+          Expanded(
+            flex:3,
+            child: ClipRRect(
+              borderRadius: cardBorderRadius,
+              child: productImage != ""
+                  ? Image.network(
+                      "${Enviroment.baseUrl}$productImage",
+                      fit: BoxFit.cover,
+                      width: double.infinity - 80,
+                      height: double.infinity,
+                    )
+                  : const Image(
+                      image: AssetImage(logoApp),
+                      fit: BoxFit.cover,
+                      width: double.infinity - 80,
+                      height: double.infinity,
+                    ),
+            ),
           ),
           Expanded(
+            flex: 4,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
