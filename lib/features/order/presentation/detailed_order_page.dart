@@ -561,7 +561,6 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
 
   void _showChangeStatusDialog(BuildContext context, String orderStatus) async {
     final bloc = context.read<MainOrderBloc>();
-    print("orderstatus is: $orderStatus");
     String status = orderStatus;
     const Map<String, String> statusLabels = {
       'waiting': 'Chờ xử lý',
