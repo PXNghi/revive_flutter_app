@@ -24,7 +24,7 @@ class CustomBottomNavBar extends StatelessWidget {
       _TabItem(label: 'Đơn hàng', iconPath: cartIcon, route: '/order'),
       _TabItem(label: 'Cá nhân', iconPath: personIcon, route: '/person'),
       if (role == "Admin")
-        _TabItem(label: 'Thống kê', iconPath: graphIcon, route: '/stat'),
+        _TabItem(label: 'Thống kê', iconPath: graphIcon, route: '/statistics'),
     ];
 
     final currentIndex =

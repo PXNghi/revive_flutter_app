@@ -69,4 +69,9 @@ class ApiUrls {
   // schedule
   Uri apiGetAvailableScheduleByDate(String date) => Uri.parse('$baseUrl/api/order/schedule/get-available-schedule-by-date?date=$date');
   Uri apiGetDisabledDates(String month) => Uri.parse('$baseUrl/api/order/schedule/get-disabled-dates?month=$month');
+
+  // statistics
+  Uri apiGetMonthlyRevenue(String year) => Uri.parse('$baseUrl/api/statistics/get-monthly-revenue/$year');
+  Uri apiGetAmountOfProduct(String categoryId) => Uri.parse('$baseUrl/api/statistics/get-amount-product-by-category/$categoryId');
+  Uri apiGetSaledProduct(int month, int year) => Uri.parse('$baseUrl/api/statistics/get-product-sales-in-year?month=$month&year=$year');
 }

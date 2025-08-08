@@ -12,6 +12,7 @@ class Product with _$Product {
     @JsonKey(name: 'description') @Default("") String description,
     @JsonKey(name: 'price') @Default(0.0) double price,
     @JsonKey(name: 'image') @Default("") String image,
+    @JsonKey(name: 'amount') @Default(0) int amount,
     @JsonKey(name: 'category') required Category category,
   }) = _Product;
 

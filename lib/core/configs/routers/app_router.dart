@@ -33,6 +33,8 @@ import 'package:revive_flutter_project/features/person/presentation/user/user_pr
 import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/product_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
+import 'package:revive_flutter_project/features/statistics/bloc/statistics_bloc.dart';
+import 'package:revive_flutter_project/features/statistics/statistics_page.dart';
 
 final GoRouter routers = GoRouter(
   routes: [
@@ -98,6 +100,16 @@ final GoRouter routers = GoRouter(
           path: '/person',
           builder: (context, state) {
             return const PersonPage();
+          },
+        ),
+        GoRoute(
+          name: 'statistics-page',
+          path: '/statistics',
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) => StatisticsBloc()..add(const StatisticsEvent.started()),
+              child: const StatisticsPage(),
+            );
           },
         ),
       ],
@@ -247,7 +259,7 @@ final GoRouter routers = GoRouter(
       name: 'detailed-order-page',
       path: '/detailed-order-page',
       builder: (context, state) {
-        final extra = state.extra as Map<String,dynamic>;
+        final extra = state.extra as Map<String, dynamic>;
         final orderItem = extra['order'] as Order;
         final bloc = extra['bloc'] as MainOrderBloc;
         return BlocProvider.value(
