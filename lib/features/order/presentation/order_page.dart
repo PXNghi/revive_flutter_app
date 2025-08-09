@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/my_appbar.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
 import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
@@ -29,9 +30,20 @@ class _OrderPageState extends State<OrderPage> {
       appBar: MyAppbar(
         title: "",
         isLeadingImplied: false,
+        customLeading: MyIconButton(
+          icon: chatIcon,
+          onTap: () {
+            if (SessionData.mine?.role == "Admin") {
+              context.pushNamed('chat-list-page');
+            } else {
+              context.pushNamed('chat-page');
+            }
+          },
+          size: 24,
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 24.0),
+            padding: const EdgeInsets.only(right: 16.0),
             child: MyIconButton(
               icon: addIcon,
               size: 30.0,
@@ -138,16 +150,21 @@ class _OrderPageState extends State<OrderPage> {
             orderDetails: orderItem.detailedOrders,
             adminNote: orderItem.adminNote,
             onOrderTap: () async {
-              final shouldRefresh = await context.pushNamed('detailed-order-page', extra: {
+              final shouldRefresh =
+                  await context.pushNamed('detailed-order-page', extra: {
                 'order': orderItem,
                 'bloc': bloc,
               });
               if (shouldRefresh == true) {
-                context.read<MainOrderBloc>().add(MainOrderEvent.changeTab(state.selectedIndex));
+                context
+                    .read<MainOrderBloc>()
+                    .add(MainOrderEvent.changeTab(state.selectedIndex));
               }
             },
             onAcceptTap: () {
-              context.read<MainOrderBloc>().add(MainOrderEvent.acceptOrder(orderItem.id));
+              context
+                  .read<MainOrderBloc>()
+                  .add(MainOrderEvent.acceptOrder(orderItem.id));
             },
             onDeclineTap: () {
               _showRejectReasonDialog(context, orderItem.id);

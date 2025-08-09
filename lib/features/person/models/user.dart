@@ -9,7 +9,7 @@ class User with _$User {
   const factory User({
     @JsonKey(name: '_id') required String id,
     @JsonKey(name: 'full_name') required String name,
-    @JsonKey(name: 'email') required String email,
+    @JsonKey(name: 'email') @Default('') String email,
     @JsonKey(name: 'role') @Default('User') String role,
     @JsonKey(name: 'phone') @Default('') String phone,
     @JsonKey(name: 'avatar') @Default('') String avatar,

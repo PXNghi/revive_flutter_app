@@ -9,6 +9,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
   final bool isCenter;
   final List<Widget>? actions;
   final bool isLeadingImplied;
+  final Widget? customLeading;
   const MyAppbar({
     super.key,
     required this.title,
@@ -16,6 +17,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
     this.actions,
     this.isLeadingImplied = true,
     this.titleStyle = headerStyle,
+    this.customLeading,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
@@ -27,19 +29,19 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
       elevation: 0,
       backgroundColor: Colors.white,
       actions: actions ?? [],
-      leading: isLeadingImplied
-          ? GestureDetector(
-              onTap: () => context.pop(true),
-              child: Image.asset(arrowLeftIcon),
-            )
-          : null,
+      leading: customLeading ?? (isLeadingImplied
+              ? GestureDetector(
+                  onTap: () => context.pop(true),
+                  child: Image.asset(arrowLeftIcon),
+                )
+              : null),
     );
   }
-  
+
   @override
   // TODO: implement child
   Widget get child => throw UnimplementedError();
-  
+
   @override
   final Size preferredSize;
 }
