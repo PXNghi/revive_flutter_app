@@ -96,7 +96,7 @@ class ChatListPage extends StatelessWidget {
                             : FontWeight.w700,
                       ),
                     ),
-                  ],
+                  ],  
                 ),
                 const Spacer(),
                 Visibility(

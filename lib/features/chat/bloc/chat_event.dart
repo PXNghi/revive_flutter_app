@@ -13,4 +13,8 @@ class ChatEvent with _$ChatEvent {
     @Default('text') String type,
     String? fileUrl,
   }) = _SendMessage;
+  const factory ChatEvent.updateConversation({
+    required String conversationId,
+    required LastMessage message,
+  }) = _UpdateConversation;
 }

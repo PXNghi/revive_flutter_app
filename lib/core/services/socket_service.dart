@@ -7,6 +7,7 @@ class SocketService {
   SocketService._internal();
 
   IO.Socket? socket;
+  Function(Map)? _onNewMessage;
 
   void connect(String userId) {
     socket = IO.io(
@@ -29,6 +30,7 @@ class SocketService {
     });
 
     socket!.on('receive-message', (data) {
+      if(_onNewMessage != null) _onNewMessage!(data);
       print('Receive message: $data');
     });
 
@@ -39,6 +41,10 @@ class SocketService {
 
   bool isConnected() {
     return socket?.connected ?? false;
+  }
+
+  set onNewMessage(Function(Map) value) {
+    _onNewMessage = value;
   }
 
   void sendMessage({

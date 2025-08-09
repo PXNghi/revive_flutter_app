@@ -12,5 +12,5 @@ class ChatState with _$ChatState {
 
   const ChatState._();
 
-  List<Conversation> get conversations => maybeWhen(loaded: (conversations) => conversations, orElse: () => []);
+  List<Conversation> get conversations => mapOrNull(loaded: (state) => state.conversations) ?? [];
 }
