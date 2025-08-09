@@ -22,6 +22,11 @@ class StatisticsPage extends StatelessWidget {
           padding: pageHorizontalPadding,
           child: BlocBuilder<StatisticsBloc, StatisticsState>(
             builder: (context, state) {
+              if (state is Loading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -405,7 +410,8 @@ class StatisticsPage extends StatelessWidget {
           height: 200,
           child: PieChart(
             PieChartData(
-              sections: productSales == null && productSales?.productTotalSale == null
+              sections: productSales == null &&
+                      productSales?.productTotalSale == null
                   ? []
                   : productSales!.productTotalSale!
                       .map(

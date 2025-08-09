@@ -3,7 +3,7 @@ part of 'statistics_bloc.dart';
 @freezed
 class StatisticsState with _$StatisticsState {
   const factory StatisticsState.initial() = _Initial;
-  const factory StatisticsState.loading() = _Loading;
+  const factory StatisticsState.loading() = Loading;
   const factory StatisticsState.loaded({
     @Default([]) List<Category> categories,
     @Default([]) List<MonthlyRevenue> monthlyRevenues,

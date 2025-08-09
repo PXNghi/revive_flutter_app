@@ -60,6 +60,7 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
         final loadedState = state as _Loaded;
         final List<MonthlyRevenue> monthlyRevenues = await _statisticsUsecases
             .getMonthlyRevenueByYear(event.year.toString());
+        emit(const StatisticsState.loading());
         emit(loadedState.copyWith(monthlyRevenues: monthlyRevenues));
       }
     } catch (e) {
@@ -76,6 +77,7 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
           await _statisticsUsecases.getAmountOfProduct(event.categoryId);
       if (state is _Loaded) {
         final loadedState = state as _Loaded;
+        emit(const StatisticsState.loading());
         emit(loadedState.copyWith(productAmount: product));
       }
     } catch (e) {
@@ -92,6 +94,7 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
           .getProductSalesInYear(event.month, event.year);
       if (state is _Loaded) {
         final loadedState = state as _Loaded;
+        emit(const StatisticsState.loading());
         emit(loadedState.copyWith(productSales: productSales));
       }
     } catch (e) {
