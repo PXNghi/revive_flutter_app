@@ -78,5 +78,5 @@ class ApiUrls {
   // message
   Uri apiUploadImage() => Uri.parse('$baseUrl/api/upload');
   Uri apiGetAllConversations() => Uri.parse('$baseUrl/api/message/conversations');
-  Uri apiGetMessagesFromConversation(String conversationId) => Uri.parse('$baseUrl/api/message/conversations/$conversationId');
+  Uri apiGetMessagesFromConversation(String conversationId) => Uri.parse('$baseUrl/api/message/conversation/$conversationId');
 }

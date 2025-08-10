@@ -6,7 +6,7 @@ class ChatEvent with _$ChatEvent {
   const factory ChatEvent.getAllConversations() = _GetAllConversations;
   const factory ChatEvent.getMessages(String conversationId) = _GetMessages;
   const factory ChatEvent.sendMessage({
-    required String conversationId,
+    String? conversationId,
     required String senderId,
     required String receiverId,
     required String content,
@@ -17,4 +17,6 @@ class ChatEvent with _$ChatEvent {
     required String conversationId,
     required LastMessage message,
   }) = _UpdateConversation;
+  const factory ChatEvent.choosePicture({String? picturePath}) = _ChoosePicture;
+  const factory ChatEvent.chooseCamera() = _ChooseCamera;
 }

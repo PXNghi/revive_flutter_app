@@ -273,13 +273,21 @@ final GoRouter routers = GoRouter(
       },
     ),
     GoRoute(
-      name: 'chat-page',
-      path: '/chat',
-      builder: (context, state) => BlocProvider(
-        create: (context) => ChatBloc(),
-        child: const ChatPage(),
-      ),
-    ),
+        name: 'chat-page',
+        path: '/chat',
+        builder: (context, state) {
+          final String? conversationId =
+              state.uri.queryParameters['conversationId'];
+          return BlocProvider(
+            create: (context) => ChatBloc()
+              ..add(conversationId != null
+                  ? ChatEvent.getMessages(conversationId)
+                  : const ChatEvent.started()),
+            child: ChatPage(
+              conversationId: conversationId,
+            ),
+          );
+        }),
     GoRoute(
       name: 'chat-list-page',
       path: '/chat-list',

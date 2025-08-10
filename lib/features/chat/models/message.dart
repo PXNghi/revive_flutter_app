@@ -16,6 +16,8 @@ class Message with _$Message {
     @JsonKey(name: 'readAt') DateTime? readAt,
     @JsonKey(name: 'type') @Default('text') String type,
     @JsonKey(name: 'fileUrl') String? fileUrl,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);

@@ -11,6 +11,7 @@ const arrowDownIcon = "assets/images/arrow_down_icon.png";
 const arrowLeftIcon = "assets/images/arrow_left_icon.png";
 const arrowRightIcon = "assets/images/arrow_right_icon.png";
 const bellIcon = "assets/images/bell_icon.png";
+const cameraIcon = "assets/images/camera_icon.png";
 const cartIcon = "assets/images/cart_icon.svg";
 const chatIcon = "assets/images/chat_icon.png";
 const checkMarkIcon = "assets/images/checkmark_icon.png";
@@ -23,8 +24,10 @@ const linkIcon = "assets/images/link_icon.png";
 const locationIcon = "assets/images/location.png";
 const orderIcon = "assets/images/order_icon.svg";
 const personIcon = "assets/images/person_icon.svg";
+const photoIcon = "assets/images/photo_icon.png";
 const redLocationIcon = "assets/images/red_location_icon.png";
 const searchIcon = "assets/images/search_icon.png";
+const sendIcon = "assets/images/send_icon.png";
 
 // image strings
 const bannerImage = "assets/images/banner_app_1.jpg";

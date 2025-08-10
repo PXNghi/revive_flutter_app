@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
@@ -62,55 +63,62 @@ class ChatListPage extends StatelessWidget {
                 }
               }
             }
-            return Row(
-              children: [
-                Image.asset(userDefaultImage, width: 50, height: 50),
-                const SizedBox(width: 14),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      sender.user.name,
-                      style: contentStyle.copyWith(
-                        fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                            ? FontWeight.normal
-                            : FontWeight.w700,
+            return GestureDetector(
+              onTap: () {
+                context.pushNamed('chat-page', queryParameters: {
+                  "conversationId": conversation.id,
+                });
+              },
+              child: Row(
+                children: [
+                  Image.asset(userDefaultImage, width: 50, height: 50),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        sender.user.name,
+                        style: contentStyle.copyWith(
+                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                              ? FontWeight.normal
+                              : FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "ID: ${sender.user.id}",
-                      style: contentStyle.copyWith(
-                        fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                            ? FontWeight.normal
-                            : FontWeight.w700,
+                      const SizedBox(height: 6),
+                      Text(
+                        "ID: ${sender.user.id}",
+                        style: contentStyle.copyWith(
+                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                              ? FontWeight.normal
+                              : FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "${isMe ? "Bạn:" : ""} $lastMessage",
-                      style: contentStyle.copyWith(
-                        color: grayContentColor,
-                        fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                            ? FontWeight.normal
-                            : FontWeight.w700,
+                      const SizedBox(height: 6),
+                      Text(
+                        "${isMe ? "Bạn:" : ""} $lastMessage",
+                        style: contentStyle.copyWith(
+                          color: grayContentColor,
+                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                              ? FontWeight.normal
+                              : FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],  
-                ),
-                const Spacer(),
-                Visibility(
-                  visible: conversation.lastMessage?.isRead == false && isMe == false,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: alertColor,
+                    ],  
+                  ),
+                  const Spacer(),
+                  Visibility(
+                    visible: conversation.lastMessage?.isRead == false && isMe == false,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: alertColor,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );

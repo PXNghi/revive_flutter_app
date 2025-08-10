@@ -7,7 +7,8 @@ class SocketService {
   SocketService._internal();
 
   IO.Socket? socket;
-  Function(Map)? _onNewMessage;
+  Function(Map)? _onNewMessageCome;
+  Function(Map)? _onMessageSent;
 
   void connect(String userId) {
     socket = IO.io(
@@ -30,11 +31,12 @@ class SocketService {
     });
 
     socket!.on('receive-message', (data) {
-      if(_onNewMessage != null) _onNewMessage!(data);
+      if(_onNewMessageCome != null) _onNewMessageCome!(data);
       print('Receive message: $data');
     });
 
     socket!.on('message-sent', (data) {
+      if(_onMessageSent != null) _onMessageSent!(data);
       print('Message sent confirm: $data');
     });
   }
@@ -43,22 +45,24 @@ class SocketService {
     return socket?.connected ?? false;
   }
 
-  set onNewMessage(Function(Map) value) {
-    _onNewMessage = value;
+  set onNewMessageReceived(Function(Map) value) {
+    _onNewMessageCome = value;
+  }
+
+  set onMessageSent(Function(Map) value) {
+    _onMessageSent = value;
   }
 
   void sendMessage({
-    required String conversationId,
+    String? conversationId,
     required String senderId,
-    required String receiverId,
     required String content,
     String type = 'text',
     String? fileUrl,
   }) {
     socket?.emit('send_message', {
-      'conversionId': conversationId,
+      'conversionId': conversationId ?? "",
       'senderId': senderId,
-      'receiverId': receiverId,
       'content': content,
       'type': type,
       'fileUrl': fileUrl

@@ -11,6 +11,6 @@ class Enviroment {
     if (isDev) {
       return 'http://10.0.2.2:8080'; // virtual machine
     }
-    return 'http://192.168.3.108:8080'; // physical machine
+    return 'http://192.168.1.175:8080'; // physical machine
   }
 }
