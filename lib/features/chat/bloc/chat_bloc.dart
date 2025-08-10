@@ -23,9 +23,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _socketService.connect(SessionData.mine!.id);
     _socketService.onNewMessageReceived = (data) {
       add(const _GetAllConversations());
-      if (conversationId != null) {
-        add(_GetMessages(conversationId!));
-      }
+      add(_GetMessages(data["message"]["conversationId"]));
     };
     on<_Started>(_handleStarted);
     on<_GetAllConversations>(_handleGetAllConversations);
@@ -115,6 +113,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
+      if (state is Initial) {
+        emit(const ChatState.loaded());
+      }
       if (state is Loaded) {
         final loadedState = state as Loaded;
         final User user = await _userUsecases.getUserById(event.senderId);

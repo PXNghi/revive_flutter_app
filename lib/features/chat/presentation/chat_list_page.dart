@@ -64,10 +64,13 @@ class ChatListPage extends StatelessWidget {
               }
             }
             return GestureDetector(
-              onTap: () {
-                context.pushNamed('chat-page', queryParameters: {
+              onTap: () async {
+                final shouldRefresh = await context.pushNamed('chat-page', queryParameters: {
                   "conversationId": conversation.id,
                 });
+                if (shouldRefresh == true) {
+                  context.read<ChatBloc>().add(const ChatEvent.getAllConversations());
+                }
               },
               child: Row(
                 children: [
