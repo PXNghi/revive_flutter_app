@@ -50,6 +50,8 @@ class _ChatPageState extends State<ChatPage> {
                           final message = state.messages[index];
                           final isMe =
                               message.sender.id == SessionData.mine?.id;
+                          final vietnamTime =
+                              (message.createdAt ?? DateTime.now()).toLocal();
 
                           return Align(
                             alignment: isMe
@@ -97,9 +99,7 @@ class _ChatPageState extends State<ChatPage> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  DateFormat('HH:mm').format(
-                                    message.createdAt ?? DateTime.now(),
-                                  ),
+                                  DateFormat('hh:mm a').format(vietnamTime),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,

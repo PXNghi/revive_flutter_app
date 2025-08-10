@@ -7,6 +7,8 @@ import 'package:revive_flutter_project/core/services/socket_service.dart';
 import 'package:revive_flutter_project/features/chat/chat_usecases.dart';
 import 'package:revive_flutter_project/features/chat/models/conversation.dart';
 import 'package:revive_flutter_project/features/chat/models/message.dart';
+import 'package:revive_flutter_project/features/person/models/user.dart';
+import 'package:revive_flutter_project/features/person/user_usecases.dart';
 
 part 'chat_event.dart';
 part 'chat_state.dart';
@@ -15,6 +17,7 @@ part 'chat_bloc.freezed.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatUsecases _chatUsecases = ChatUsecases();
   final SocketService _socketService = SocketService();
+  final UserUsecases _userUsecases = UserUsecases();
   String? conversationId = "";
   ChatBloc() : super(const ChatState.initial()) {
     _socketService.connect(SessionData.mine!.id);
@@ -98,7 +101,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      emit(const ChatState.loading());
       final List<Message> messages =
           await _chatUsecases.getMessages(event.conversationId);
       conversationId = event.conversationId;
@@ -113,6 +115,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+        final User user = await _userUsecases.getUserById(event.senderId);
+        final Message message = Message(
+          sender: user,
+          content: event.content,
+          type: event.type,
+          fileUrl: event.fileUrl,
+          createdAt: DateTime.now(),
+        );
+        final messages = [message, ...loadedState.messages];
+        emit(loadedState.copyWith(messages: messages));
+      }
       if (conversationId == null) {
         _socketService.sendMessage(
           senderId: event.senderId,
