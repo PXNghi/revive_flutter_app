@@ -24,6 +24,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: MyAppbar(
         title: "ĐỔI MẬT KHẨU",
         titleStyle: headerStyle.copyWith(color: Colors.black),

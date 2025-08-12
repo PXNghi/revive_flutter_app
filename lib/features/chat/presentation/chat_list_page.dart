@@ -48,7 +48,7 @@ class ChatListPage extends StatelessWidget {
           itemCount: state.conversations.length,
           itemBuilder: (context, index) {
             final conversation = state.conversations[index];
-            final Participant sender = conversation.participants[1];
+            final Participant sender = conversation.participants.firstWhere((p) => p.user.id != SessionData.mine!.id);
             String lastMessage = "";
             bool isMe = false;
             if (conversation.lastMessage != null) {

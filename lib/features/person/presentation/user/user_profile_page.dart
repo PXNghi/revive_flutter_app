@@ -27,6 +27,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: const MyAppbar(
         title: "",
         isLeadingImplied: true,

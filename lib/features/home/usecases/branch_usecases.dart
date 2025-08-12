@@ -19,6 +19,7 @@ class BranchUsecases {
   }
 
   Future<List<Branch>> getBranchesNearby(double lat, double lon) async {
+    print("lat: $lat, lon: $lon");
     final Response response = await ApiService().get(ApiUrls().apiGetAllBranchesNearby(lat, lon));
     final Map<String, dynamic> data = json.decode(response.body);
     return (data['data'] as List).map((e) => Branch.fromJson(e)).toList();

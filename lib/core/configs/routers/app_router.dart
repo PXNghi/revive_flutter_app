@@ -131,8 +131,8 @@ final GoRouter routers = GoRouter(
                   : (address.location.coordinates.isEmpty)
                       ? const BranchEvent.getBranches()
                       : (BranchEvent.getBranchesNearby(
-                          address.location.coordinates[1],
                           address.location.coordinates[0],
+                          address.location.coordinates[1],
                         )),
             ),
           child: const BranchesPage(),
