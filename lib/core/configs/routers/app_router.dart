@@ -12,6 +12,9 @@ import 'package:revive_flutter_project/features/authentication/login/login_page.
 import 'package:revive_flutter_project/features/authentication/register/bloc/register_bloc.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_otp_page.dart';
 import 'package:revive_flutter_project/features/authentication/register/presentations/register_page.dart';
+import 'package:revive_flutter_project/features/chat/bloc/chat_bloc.dart';
+import 'package:revive_flutter_project/features/chat/presentation/chat_list_page.dart';
+import 'package:revive_flutter_project/features/chat/presentation/chat_page.dart';
 import 'package:revive_flutter_project/features/home/bloc/branch_bloc/branch_bloc.dart';
 import 'package:revive_flutter_project/features/home/bloc/home_bloc/home_bloc.dart';
 import 'package:revive_flutter_project/features/home/presentation/branches_page.dart';
@@ -107,7 +110,8 @@ final GoRouter routers = GoRouter(
           path: '/statistics',
           builder: (context, state) {
             return BlocProvider(
-              create: (context) => StatisticsBloc()..add(const StatisticsEvent.started()),
+              create: (context) =>
+                  StatisticsBloc()..add(const StatisticsEvent.started()),
               child: const StatisticsPage(),
             );
           },
@@ -127,8 +131,8 @@ final GoRouter routers = GoRouter(
                   : (address.location.coordinates.isEmpty)
                       ? const BranchEvent.getBranches()
                       : (BranchEvent.getBranchesNearby(
-                          address.location.coordinates[1],
                           address.location.coordinates[0],
+                          address.location.coordinates[1],
                         )),
             ),
           child: const BranchesPage(),
@@ -267,6 +271,31 @@ final GoRouter routers = GoRouter(
           child: DetailedOrderPage(order: orderItem),
         );
       },
+    ),
+    GoRoute(
+        name: 'chat-page',
+        path: '/chat',
+        builder: (context, state) {
+          final String? conversationId =
+              state.uri.queryParameters['conversationId'];
+          return BlocProvider(
+            create: (context) => ChatBloc()
+              ..add(conversationId != null
+                  ? ChatEvent.getMessages(conversationId)
+                  : const ChatEvent.started()),
+            child: ChatPage(
+              conversationId: conversationId,
+            ),
+          );
+        }),
+    GoRoute(
+      name: 'chat-list-page',
+      path: '/chat-list',
+      builder: (context, state) => BlocProvider(
+        create: (context) =>
+            ChatBloc()..add(const ChatEvent.getAllConversations()),
+        child: const ChatListPage(),
+      ),
     ),
   ],
 );

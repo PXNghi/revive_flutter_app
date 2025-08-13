@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: MyAppbar(
         title: "ĐĂNG NHẬP",
         titleStyle: headerStyle.copyWith(color: Colors.black),

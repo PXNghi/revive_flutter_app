@@ -17,6 +17,7 @@ class ChangePasswordPage extends StatelessWidget {
         TextEditingController();
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: const MyAppbar(
         title: "",
         isLeadingImplied: true,

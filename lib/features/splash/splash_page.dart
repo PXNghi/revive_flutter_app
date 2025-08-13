@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/core/services/socket_service.dart';
 import 'package:revive_flutter_project/features/person/user_usecases.dart';
 
 class SplashPage extends StatefulWidget {
@@ -15,6 +18,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   final UserUsecases _userUsecases = UserUsecases();
+  final SocketService _socketService = SocketService();
 
   @override
   void initState() {
@@ -33,6 +37,7 @@ class _SplashPageState extends State<SplashPage> {
       final response  = await _userUsecases.getUserProfileByToken(token);
       if (response['success'] == true) {
         SessionData.login(token, response["data"]);
+        _socketService.connect(SessionData.mine!.id);
         context.goNamed('home-page');
       } else {
         SessionData.logout();

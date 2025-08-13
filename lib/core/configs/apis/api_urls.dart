@@ -74,4 +74,9 @@ class ApiUrls {
   Uri apiGetMonthlyRevenue(String year) => Uri.parse('$baseUrl/api/statistics/get-monthly-revenue/$year');
   Uri apiGetAmountOfProduct(String categoryId) => Uri.parse('$baseUrl/api/statistics/get-amount-product-by-category/$categoryId');
   Uri apiGetSaledProduct(int month, int year) => Uri.parse('$baseUrl/api/statistics/get-product-sales-in-year?month=$month&year=$year');
+
+  // message
+  Uri apiUploadImage() => Uri.parse('$baseUrl/api/upload');
+  Uri apiGetAllConversations() => Uri.parse('$baseUrl/api/message/conversations');
+  Uri apiGetMessagesFromConversation(String conversationId) => Uri.parse('$baseUrl/api/message/conversation/$conversationId');
 }

@@ -30,7 +30,6 @@ class SessionData {
   }
 
   static Future<void> login(String token, Map<String, dynamic> data) async {
-    print("data: $data");
     final User myInformation = User.fromJson(data);
     _mine = myInformation;
     print("my profile: $myInformation");

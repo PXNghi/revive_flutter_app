@@ -83,6 +83,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       child: BlocBuilder<OrderBloc, OrderState>(
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.white,
             resizeToAvoidBottomInset: false,
             appBar: const MyAppbar(
               title: "",

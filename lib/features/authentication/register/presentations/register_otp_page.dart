@@ -23,6 +23,7 @@ class _RegisterOTPPageState extends State<RegisterOTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: MyAppbar(
         title: "XÁC NHẬN ĐĂNG KÝ",
         titleStyle: headerStyle.copyWith(color: Colors.black),

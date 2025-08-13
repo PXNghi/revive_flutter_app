@@ -9,6 +9,8 @@ const grayColor = Color(0xffF9FAFB);
 const grayBorderColor = Color(0xffC0C8BD);
 const grayContentColor = Color(0xff918C8C);
 const darkGrayColor = Color(0xff9C9CA0);
+const chatGreenBoxColor = Color(0xff246B06);
+const chatGrayBoxColor = Color(0xffF5F5F5);
 
 // font sizes
 const headerFontSize = 25.0;

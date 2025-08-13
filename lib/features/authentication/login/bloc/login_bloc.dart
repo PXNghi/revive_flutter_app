@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
+import 'package:revive_flutter_project/core/services/session_data.dart';
+import 'package:revive_flutter_project/core/services/socket_service.dart';
 import 'package:revive_flutter_project/features/authentication/auth_usecases.dart';
 
 part 'login_event.dart';
@@ -11,6 +13,7 @@ part 'login_bloc.freezed.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthUsecases _authUsecase = AuthUsecases();
+  final SocketService _socketService = SocketService();
 
   LoginBloc() : super(const LoginState.loginLoaded()) {
     on<_Login>(_handleLogin);
@@ -28,6 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (response.success) {
       emit(const LoginState.loginSuccess());
       emit(const LoginState.loginLoaded());
+      _socketService.connect(SessionData.mine!.id);
     } else {
       emit(LoginState.loginError(response.message));
       emit(const LoginState.loginLoaded());

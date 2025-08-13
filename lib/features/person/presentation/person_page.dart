@@ -16,6 +16,7 @@ class _PersonPageState extends State<PersonPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: pageHorizontalPadding,
         child: SafeArea(
@@ -67,7 +68,9 @@ class _PersonPageState extends State<PersonPage> {
         ),
         const SizedBox(height: 16.0),
         MyOptionBar(
-          onTap: () {},
+          onTap: () {
+            context.pushNamed('chat-list-page');
+          },
           label: "Danh sách chat",
         ),
         const SizedBox(height: 16.0),
