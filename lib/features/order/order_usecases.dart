@@ -176,6 +176,7 @@ class OrderUsecases {
     DateTime? pickUpDate,
     String? pickUpTimeStart,
     String? pickUpTimeEnd,
+    int? totalPrice,
   }) async {
     try {
       final Map<String, dynamic> bodyRequest = {};
@@ -194,13 +195,15 @@ class OrderUsecases {
       if (pickUpTimeEnd != null) {
         bodyRequest['orderFinishTime'] = pickUpTimeEnd;
       }
-      print("bodyRequest: $bodyRequest");
+      if (totalPrice != null) {
+        bodyRequest['totalPrice'] = totalPrice;
+      }
       final Response response = await ApiService().put(
         ApiUrls().apiUpdateOrderAdmin(orderId),
         bodyRequest,
       );
       final Map<String, dynamic> data = json.decode(response.body);
-      print("dtata: $data");
+      print("data: $data");
       return data['success'];
     } catch (e) {
       print("Error at update orders usecase: $e");

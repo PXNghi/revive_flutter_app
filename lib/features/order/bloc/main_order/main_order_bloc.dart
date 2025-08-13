@@ -214,6 +214,7 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
         pickUpDate: event.orderDate,
         pickUpTimeStart: event.orderTimeStart,
         pickUpTimeEnd: event.orderTimeEnd,
+        totalPrice: event.totalPrice,
       );
       if (isSuccess) {
         final Order? order = await _orderUsecases.getOrderById(event.orderId);

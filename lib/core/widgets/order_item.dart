@@ -5,6 +5,7 @@ import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/core/widgets/expand_order_board.dart';
 import 'package:revive_flutter_project/core/widgets/my_button.dart';
+import 'package:revive_flutter_project/core/widgets/my_icon_button.dart';
 import 'package:revive_flutter_project/features/order/models/detailed_order_response.dart';
 
 class OrderItem extends StatelessWidget {
@@ -13,8 +14,9 @@ class OrderItem extends StatelessWidget {
   final int orderLength;
   final String orderDate;
   final String? adminNote;
+  final int? totalPrice;
   final List<DetailedOrderResponse>? orderDetails;
-  final VoidCallback? onChatTap;
+  final VoidCallback? onCopyTap;
   final VoidCallback? onOrderTap;
   final VoidCallback? onAcceptTap;
   final VoidCallback? onDeclineTap;
@@ -26,7 +28,8 @@ class OrderItem extends StatelessWidget {
     required this.orderLength,
     required this.orderDate,
     required this.orderDetails,
-    this.onChatTap,
+    this.totalPrice,
+    this.onCopyTap,
     this.onOrderTap,
     this.onAcceptTap,
     this.onDeclineTap,
@@ -65,21 +68,23 @@ class OrderItem extends StatelessWidget {
                     style: contentStyle.copyWith(color: primaryColor),
                   ),
                 ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: onChatTap ?? () {},
-                  child: Image.asset(
-                    chatIcon,
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              "Mã đơn hàng: $orderId",
-              style: contentStyle.copyWith(fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Mã đơn hàng: $orderId",
+                    style: contentStyle.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                MyIconButton(
+                  icon: copyIcon,
+                  size: 22,
+                  onTap: onCopyTap,
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             Visibility(
@@ -103,6 +108,19 @@ class OrderItem extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            Visibility(
+              visible: totalPrice != null,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "ĐÃ THANH TOÁN: ${NumberFormat("###,###").format(totalPrice)} đ",
+                  style: headerStyle.copyWith(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               decoration: BoxDecoration(
@@ -122,7 +140,8 @@ class OrderItem extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Visibility(
-              visible: SessionData.mine?.role == "Admin" && orderStatus == "waiting",
+              visible:
+                  SessionData.mine?.role == "Admin" && orderStatus == "waiting",
               child: Row(
                 children: [
                   Expanded(

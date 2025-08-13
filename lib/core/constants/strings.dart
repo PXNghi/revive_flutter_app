@@ -15,6 +15,7 @@ const cameraIcon = "assets/images/camera_icon.png";
 const cartIcon = "assets/images/cart_icon.svg";
 const chatIcon = "assets/images/chat_icon.png";
 const checkMarkIcon = "assets/images/checkmark_icon.png";
+const copyIcon = "assets/images/copy_icon.png";
 const deleteIcon = "assets/images/delete_icon.png";
 const editIcon = "assets/images/edit_icon.png";
 const graphIcon = 'assets/images/graph_icon.svg';

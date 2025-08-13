@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
@@ -149,6 +150,15 @@ class _OrderPageState extends State<OrderPage> {
             orderLength: orderItem.detailedOrders.length,
             orderDetails: orderItem.detailedOrders,
             adminNote: orderItem.adminNote,
+            totalPrice: orderItem.totalPrice,
+            onCopyTap: () {
+              Clipboard.setData(ClipboardData(text: orderItem.id));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Đã sao chép mã đơn hàng"),
+                ),
+              );
+            },
             onOrderTap: () async {
               final shouldRefresh =
                   await context.pushNamed('detailed-order-page', extra: {

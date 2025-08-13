@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
+import 'package:revive_flutter_project/core/configs/routers/app_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
@@ -61,7 +63,9 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: MyIconButton(
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed("chat-page");
+                },
                 icon: chatIcon,
                 size: 24,
               ),
@@ -333,7 +337,7 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
       }
     } else if (widget.order.status == "confirmed" ||
         widget.order.status == "delivering" ||
-        widget.order.status == "finished") {
+        widget.order.status == "completed") {
       if (SessionData.mine?.role == "Admin") {
         return Container(
           padding: pageHorizontalPadding,
@@ -570,6 +574,7 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
       'cancelled': 'Đã hủy',
     };
     final TextEditingController _reasonController = TextEditingController();
+    final TextEditingController _totalPriceController = TextEditingController();
     await showDialog(
       context: context,
       builder: (context) {
@@ -653,6 +658,12 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
                           label: "Nhập lý do hủy đơn hàng:",
                           maxLines: 4,
                         ),
+                      if (state.selectedStatus == "completed")
+                        MyTextField(
+                          controller: _totalPriceController,
+                          label: "Nhập tổng giá:",
+                          keyBoardType: TextInputType.number,
+                        ),
                       const SizedBox(height: 20.0),
                       MyButton(
                         onTap: () {
@@ -668,6 +679,10 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
                               MainOrderEvent.updateNewInformation(
                                 orderId: widget.order.id,
                                 status: status,
+                                totalPrice:
+                                    _totalPriceController.text.isNotEmpty
+                                        ? int.parse(_totalPriceController.text)
+                                        : null,
                                 orderTimeEnd:
                                     DateFormat("HH:mm").format(DateTime.now()),
                               ),

@@ -17,6 +17,7 @@ class MainOrderEvent with _$MainOrderEvent {
     String? orderTimeEnd,
     String? adminNote,
     String? status,
+    int? totalPrice,
   }) = _UpdateNewInformation;
   const factory MainOrderEvent.rejectOrder({
     @Default('') String orderId,
