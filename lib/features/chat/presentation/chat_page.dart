@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
@@ -35,6 +38,11 @@ class _ChatPageState extends State<ChatPage> {
           padding: pageHorizontalPadding,
           child: BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
+              if (state is Initial) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -43,7 +51,9 @@ class _ChatPageState extends State<ChatPage> {
                   Expanded(
                     child: Visibility(
                       visible: state.messages.isNotEmpty,
-                      child: ListView.builder(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 16),
                         reverse: true,
                         itemCount: state.messages.length,
                         itemBuilder: (context, index) {
@@ -71,35 +81,58 @@ class _ChatPageState extends State<ChatPage> {
                                   const SizedBox(width: 6),
                                 ],
                                 Flexible(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 4, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                        color: isMe
-                                            ? chatGreenBoxColor
-                                            : chatGrayBoxColor,
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft:
-                                              Radius.circular(isMe ? 16 : 3),
-                                          bottomRight:
-                                              Radius.circular(isMe ? 3 : 16),
-                                          topLeft: const Radius.circular(16),
-                                          topRight: const Radius.circular(16),
-                                        )),
-                                    child: Text(
-                                      message.content,
-                                      style: TextStyle(
-                                        color: isMe
-                                            ? Colors.white
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
+                                  child: message.fileUrl != null
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            _showFullImageDialog(context,
+                                                networkImageUrl:
+                                                    "${Enviroment.baseUrl}${message.fileUrl}");
+                                          },
+                                          child: ClipRRect(
+                                            borderRadius: cardBorderRadius,
+                                            child: Image.network(
+                                              "${Enviroment.baseUrl}${message.fileUrl}",
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  const Icon(Icons.error),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          padding: const EdgeInsets.all(12),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 4, horizontal: 8),
+                                          decoration: BoxDecoration(
+                                              color: isMe
+                                                  ? chatGreenBoxColor
+                                                  : chatGrayBoxColor,
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft: Radius.circular(
+                                                    isMe ? 16 : 3),
+                                                bottomRight: Radius.circular(
+                                                    isMe ? 3 : 16),
+                                                topLeft:
+                                                    const Radius.circular(16),
+                                                topRight:
+                                                    const Radius.circular(16),
+                                              )),
+                                          child: Text(
+                                            message.content,
+                                            style: TextStyle(
+                                              color: isMe
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                        ),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  DateFormat('hh:mm a').format(vietnamTime),
+                                  DateFormat('hh:mm a', 'vi')
+                                      .format(vietnamTime),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -115,6 +148,16 @@ class _ChatPageState extends State<ChatPage> {
                   const SizedBox(height: 24),
                   ChatInput(
                     messageController: _messageController,
+                    onCameraTap: () {
+                      context
+                          .read<ChatBloc>()
+                          .add(const ChatEvent.chooseCamera());
+                    },
+                    onPhotoTap: () {
+                      context
+                          .read<ChatBloc>()
+                          .add(const ChatEvent.choosePicture());
+                    },
                     onSendTap: () {
                       context.read<ChatBloc>().add(
                             ChatEvent.sendMessage(
@@ -131,6 +174,27 @@ class _ChatPageState extends State<ChatPage> {
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFullImageDialog(
+    BuildContext context, {
+    File? localImage,
+    String? networkImageUrl,
+  }) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: InteractiveViewer(
+            child: localImage != null
+                ? Image.file(localImage, fit: BoxFit.cover)
+                : Image.network(networkImageUrl!, fit: BoxFit.cover),
           ),
         ),
       ),
