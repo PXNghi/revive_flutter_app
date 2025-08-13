@@ -46,9 +46,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           await _chatUsecases.getAllConversations();
       List<Message> messages = [];
       if (SessionData.mine?.role == "User") {
-        conversationId = conversations.first.id;
+        if (conversations.isNotEmpty) {
+          conversationId = conversations[0].id;
+        }
         messages = await _chatUsecases.getMessages(conversationId ?? "");
       }
+
       emit(ChatState.loaded(
         conversations: conversations,
         conversationId: conversationId,
