@@ -29,4 +29,5 @@ class MainOrderEvent with _$MainOrderEvent {
     @Default('') String status,
   }) = _UpdateOrderStatus;
   const factory MainOrderEvent.clearInformations() = _ClearInformations;
+  const factory MainOrderEvent.searchOrder(String search) = _SearchOrder;
 }

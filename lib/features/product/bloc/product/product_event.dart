@@ -49,4 +49,5 @@ class ProductEvent with _$ProductEvent {
       _EditImage;
   const factory ProductEvent.deleteImage() = _DeleteImage;
   const factory ProductEvent.toggleSearchMode() = _ToggleSearchMode;
+  const factory ProductEvent.refreshPage() = _RefreshPage;
 }

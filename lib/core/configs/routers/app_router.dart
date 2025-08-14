@@ -26,6 +26,7 @@ import 'package:revive_flutter_project/features/order/presentation/confirmed_ord
 import 'package:revive_flutter_project/features/order/presentation/create_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/detailed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
+import 'package:revive_flutter_project/features/order/presentation/search_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/success_order_page.dart';
 import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
 import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
@@ -35,7 +36,6 @@ import 'package:revive_flutter_project/features/person/presentation/user/change_
 import 'package:revive_flutter_project/features/person/presentation/user/user_profile_page.dart';
 import 'package:revive_flutter_project/features/product/bloc/product/product_bloc.dart';
 import 'package:revive_flutter_project/features/product/product_page.dart';
-import 'package:revive_flutter_project/features/product/product_search_page.dart';
 import 'package:revive_flutter_project/features/splash/splash_page.dart';
 import 'package:revive_flutter_project/features/statistics/bloc/statistics_bloc.dart';
 import 'package:revive_flutter_project/features/statistics/statistics_page.dart';
@@ -87,18 +87,6 @@ final GoRouter routers = GoRouter(
               ..add(const ProductEvent.fetchAllCategoriesAndProducts()),
             child: const ProductPage(),
           ),
-          routes: [
-            GoRoute(
-                name: 'product-search-page',
-                path: 'product-search',
-                builder: (context, state) {
-                  final bloc = state.extra as ProductBloc;
-                  return BlocProvider.value(
-                    value: bloc,
-                    child: const ProductSearchPage(),
-                  );
-                }),
-          ],
         ),
         GoRoute(
           name: "order-page",
@@ -282,6 +270,16 @@ final GoRouter routers = GoRouter(
         return BlocProvider.value(
           value: bloc,
           child: DetailedOrderPage(order: orderItem),
+        );
+      },
+    ),
+    GoRoute(
+      name: "search-order-page",
+      path: "/search-order",
+      builder: (context, state) {
+        return BlocProvider(
+          create: (context) => MainOrderBloc(),
+          child: const SearchOrderPage(),
         );
       },
     ),

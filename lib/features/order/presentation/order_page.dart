@@ -53,6 +53,16 @@ class _OrderPageState extends State<OrderPage> {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: MyIconButton(
+              icon: searchIcon,
+              size: 30.0,
+              onTap: () {
+                context.pushNamed('search-order-page');
+              },
+            ),
+          ),
         ],
       ),
       body: BlocConsumer<MainOrderBloc, MainOrderState>(

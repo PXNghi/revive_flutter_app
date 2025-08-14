@@ -17,6 +17,24 @@ class OrderUsecases {
 
   OrderUsecases._internal();
 
+  Future<List<Order>> getAllOrders({String? search}) async {
+    try {
+      final Response response = await ApiService().get(
+        ApiUrls().apiGetAllOrders(search: search),
+      );
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success'] == true) {
+        return (data['data'] as List).map((e) => Order.fromJson(e)).toList();
+      } else {
+        print("Error at get all my orders usecase: ${data['message']}");
+        return [];
+      }
+    } catch (e) {
+      print("Error at get all my orders usecase: $e");
+      rethrow;
+    }
+  }
+
   Future<SlotResponse> getAvailableSlots(String date) async {
     try {
       final Response response =
