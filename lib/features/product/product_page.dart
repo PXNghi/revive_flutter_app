@@ -20,6 +20,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,12 +80,6 @@ class _ProductPageState extends State<ProductPage> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 16.0),
-                      MyIconButton(
-                        icon: searchIcon,
-                        size: 30,
-                        onTap: () {},
-                      ),
                     ],
                   );
                 },
@@ -111,6 +106,38 @@ class _ProductPageState extends State<ProductPage> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 50,
+                        child: TextField(
+                          controller: _searchController,
+                          textInputAction: TextInputAction.search,
+                          decoration: InputDecoration(
+                            suffixIcon: Image.asset(
+                              searchIcon,
+                              width: 16,
+                              height: 16,
+                            ),
+                            hintText: 'Tìm kiếm sản phẩm',
+                            isDense: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: const BorderSide(
+                                  color: grayBorderColor, width: 1.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: const BorderSide(
+                                  color: primaryColor, width: 1.0),
+                            ),
+                          ),
+                          onSubmitted: (value) {
+                            context.read<ProductBloc>().add(
+                                  ProductEvent.getAllProducts(search: value),
+                                );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
                       SizedBox(
                         height: 85,
                         width: double.infinity,

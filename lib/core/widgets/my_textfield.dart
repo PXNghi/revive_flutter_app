@@ -11,7 +11,8 @@ class MyTextField extends StatefulWidget {
   final String? initialValue;
   final bool isReadOnly;
   final TextInputType? keyBoardType;
-  
+  final String? prefixIcon;
+
   const MyTextField({
     super.key,
     this.label = "",
@@ -23,6 +24,7 @@ class MyTextField extends StatefulWidget {
     this.initialValue,
     this.isReadOnly = false,
     this.keyBoardType,
+    this.prefixIcon,
   });
 
   @override
@@ -64,6 +66,9 @@ class _MyTextFieldState extends State<MyTextField> {
               borderSide: const BorderSide(color: alertColor, width: 1.0),
             ),
             errorText: widget.errorText,
+            prefixIcon: widget.prefixIcon != null
+                ? Image.asset(widget.prefixIcon!)
+                : null,
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(

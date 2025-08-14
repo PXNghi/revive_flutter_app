@@ -33,6 +33,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<_UploadImage>(_handleUploadImage);
     on<_DeleteImage>(_handleDeleteImage);
     on<_EditImage>(_handleEditImage);
+    on<_ToggleSearchMode>(_handleToggleSearchMode);
   }
 
   FutureOr<void> _handleFetchAllCategoriesAndProducts(
@@ -41,7 +42,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(const ProductState.loading());
     final List<Category> categories = await _productUsecase.getAllCategories();
-    final List<Product> products = await _productUsecase.getAllProducts();
+    final List<Product> products = await _productUsecase.getAllProducts("");
     emit(ProductState.loaded(categories: categories, products: products));
   }
 
@@ -148,7 +149,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       if (state is Loaded) {
         final currentState = state as Loaded;
         emit(const ProductState.loading());
-        final List<Product> products = await _productUsecase.getAllProducts();
+        final List<Product> products = await _productUsecase.getAllProducts(event.search);
         emit(currentState.copyWith(products: products));
       }
     } catch (e) {
@@ -335,6 +336,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       add(const ProductEvent.uploadImage());
     } catch (e) {
       print("Error editing image: $e");
+    }
+  }
+
+  FutureOr<void> _handleToggleSearchMode(
+    _ToggleSearchMode event,
+    Emitter<ProductState> emit,
+  ) async {
+    if (state is Loaded) {
+      final currentState = state as Loaded;
+      emit(currentState.copyWith(isSearchMode: !currentState.isSearchMode));
     }
   }
 }

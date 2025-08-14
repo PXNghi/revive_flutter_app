@@ -24,7 +24,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(const HomeState.loading());
     final List<Branch> branches = await branchUsecases.getAllBranches();
-    final List<Product> products = await _productUsecase.getAllProducts();
+    final List<Product> products = await _productUsecase.getAllProducts("");
     emit(HomeState.loaded(branches: branches, products: products));
   }
 }

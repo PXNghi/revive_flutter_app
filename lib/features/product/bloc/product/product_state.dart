@@ -16,6 +16,7 @@ class ProductState with _$ProductState {
     @Default("") String warningDeleteCategoryId,
     File? image,
     String? currentImage,
+    @Default(false) bool isSearchMode,
   }) = Loaded;
   const factory ProductState.error(String message) = Error;
   const factory ProductState.productCreated() = ProductCreated;
@@ -43,5 +44,7 @@ class ProductState with _$ProductState {
   File? get image => mapOrNull(loaded: (state) => state.image);
 
   String? get currentImage => mapOrNull(loaded: (state) => state.currentImage);
+
+  bool get isSearchMode => mapOrNull(loaded: (state) => state.isSearchMode) ?? false;
 
 }

@@ -28,7 +28,7 @@ class MyAppbar extends StatelessWidget implements PreferredSize {
       centerTitle: isCenter,
       elevation: 0,
       backgroundColor: Colors.white,
-      actions: actions ?? [],
+      actions: actions,
       leading: customLeading ?? (isLeadingImplied
               ? GestureDetector(
                   onTap: () => context.pop(true),
