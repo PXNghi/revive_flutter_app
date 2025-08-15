@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
@@ -137,9 +136,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    Visibility(
-                      visible: state.cart?.isNotEmpty ?? false,
-                      child: ExpandProduct(
+                    if (state.addedListProduct != null && state.addedListProduct!.isNotEmpty)
+                      ExpandProduct(
                         cart: state.addedListProduct,
                         onDelete: (value) {
                           context
@@ -147,7 +145,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                               .add(OrderEvent.deleteCartItem(value));
                         },
                       ),
-                    ),
                     const SizedBox(height: 20.0),
                     MyTextField(
                       controller: _orderNoteController,

@@ -113,7 +113,7 @@ class OrderItem extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  "ĐÃ THANH TOÁN: ${NumberFormat("###,###").format(totalPrice)} đ",
+                  "${orderStatus == "completed" ? "ĐÃ THANH TOÁN" : "TẠM TÍNH"}: ${NumberFormat("###,###").format(totalPrice)} đ",
                   style: headerStyle.copyWith(
                     fontSize: 16,
                   ),

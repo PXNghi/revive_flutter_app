@@ -34,6 +34,7 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     on<_GetStatuses>(_handleGetStatuses);
     on<_ChooseAnotherStatus>(_handleChooseAnotherStatus);
     on<_SearchOrder>(_handleSearchOrder);
+    on<_RefreshPage>(_handleRefreshPage);
   }
 
   FutureOr<void> _handleStarted(
@@ -271,10 +272,22 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     Emitter<MainOrderState> emit,
   ) async {
     try {
-      final List<Order> searchedOrders = await _orderUsecases.getAllOrders(search: event.search);
+      final List<Order> searchedOrders =
+          await _orderUsecases.getAllOrders(search: event.search);
       emit(MainOrderState.loaded(orders: searchedOrders));
     } catch (e) {
       print("Error search order: $e");
+    }
+  }
+
+  FutureOr<void> _handleRefreshPage(
+    _RefreshPage event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      add(MainOrderEvent.changeTab(event.tabIndex));
+    } catch (e) {
+      print("Error refresh page: $e");
     }
   }
 }

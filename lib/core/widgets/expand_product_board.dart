@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/widgets/order_product_item.dart';
 import 'package:revive_flutter_project/features/order/models/added_list_product.dart';
-import 'package:revive_flutter_project/features/order/models/detailed_order_model.dart';
 
 class ExpandProduct extends StatefulWidget {
   final List<AddedListProduct>? cart;
-  final Function(DetailedOrder)? onDelete;
+  final Function(int)? onDelete;
   final bool isHasIcon;
 
   const ExpandProduct({
@@ -51,7 +50,7 @@ class _ExpandProductState extends State<ExpandProduct> {
                     imagePath: cart[i].detailedOrder.image,
                     amount: cart[i].detailedOrder.amount,
                     onDeleteTap: widget.onDelete != null
-                        ? () => widget.onDelete!(cart[i].detailedOrder)
+                        ? () => widget.onDelete!(i)
                         : null,
                   ),
                 );
