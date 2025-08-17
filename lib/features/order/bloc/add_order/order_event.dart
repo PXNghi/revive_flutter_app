@@ -29,7 +29,7 @@ class OrderEvent with _$OrderEvent {
   }) = _ValidateInformations;
   const factory OrderEvent.addProductToCart(DetailedOrder detailedOrder) =
       _AddProductToCart;
-  const factory OrderEvent.deleteCartItem(DetailedOrder detailedOrder) = _DeleteCartItem;
+  const factory OrderEvent.deleteCartItem(int index) = _DeleteCartItem;
   const factory OrderEvent.createOrder({
     required String userName,
     required String userPhone,

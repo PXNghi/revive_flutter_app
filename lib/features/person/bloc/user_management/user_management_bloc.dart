@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:revive_flutter_project/core/services/session_data.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 import 'package:revive_flutter_project/features/person/user_usecases.dart';
 
@@ -19,6 +18,7 @@ class UserManagementBloc
     on<_DeactivateUser>(_handleDeactivateUser);
     on<_GetUserById>(_handleGetUserById);
     on<_UpdateUserProfileById>(_handleUpdateUserProfileById);
+    on<_ToggleAddressField>(_handleToggleAddressField);
   }
 
   FutureOr<void> _handleGetAllUsers(
@@ -91,17 +91,33 @@ class UserManagementBloc
     try {
       emit(const UserManagementState.loading());
       final User? user = await _userUsecases.updateUserProfileById(
-        event.userId,
-        event.userName,
-        event.userPhone,
+        userId:  event.userId,
+        userName: event.userName,
+        userPhone: event.userPhone,
+        userAddress: event.address,
       );
       if (user != null) {
-        emit(UserManagementState.loaded(user: user, message: "Cập nhật thành công"));
+        emit(UserManagementState.loaded(
+            user: user, message: "Cập nhật thành công"));
       } else {
         emit(const UserManagementState.error("Error updating user profile"));
       }
     } catch (e) {
       print("Error updating user profile by id: $e");
+    }
+  }
+
+  FutureOr<void> _handleToggleAddressField(
+    _ToggleAddressField event,
+    Emitter<UserManagementState> emit,
+  ) async {
+    try {
+      if (state is Loaded) {
+        final loadedState = state as Loaded;
+        emit(loadedState.copyWith(isToggleAddress: !event.isToggleAddress));
+      }
+    } catch (e) {
+      print("Error toggling address field: $e");
     }
   }
 }

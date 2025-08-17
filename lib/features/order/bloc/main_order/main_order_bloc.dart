@@ -33,6 +33,8 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     on<_UpdateNewInformation>(_handleUpdateNewInformation);
     on<_GetStatuses>(_handleGetStatuses);
     on<_ChooseAnotherStatus>(_handleChooseAnotherStatus);
+    on<_SearchOrder>(_handleSearchOrder);
+    on<_RefreshPage>(_handleRefreshPage);
   }
 
   FutureOr<void> _handleStarted(
@@ -214,6 +216,7 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
         pickUpDate: event.orderDate,
         pickUpTimeStart: event.orderTimeStart,
         pickUpTimeEnd: event.orderTimeEnd,
+        totalPrice: event.totalPrice,
       );
       if (isSuccess) {
         final Order? order = await _orderUsecases.getOrderById(event.orderId);
@@ -261,6 +264,30 @@ class MainOrderBloc extends Bloc<MainOrderEvent, MainOrderState> {
     if (state is Loaded) {
       final loadedState = state as Loaded;
       emit(loadedState.copyWith(selectedStatus: event.orderId));
+    }
+  }
+
+  FutureOr<void> _handleSearchOrder(
+    _SearchOrder event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      final List<Order> searchedOrders =
+          await _orderUsecases.getAllOrders(search: event.search);
+      emit(MainOrderState.loaded(orders: searchedOrders));
+    } catch (e) {
+      print("Error search order: $e");
+    }
+  }
+
+  FutureOr<void> _handleRefreshPage(
+    _RefreshPage event,
+    Emitter<MainOrderState> emit,
+  ) async {
+    try {
+      add(MainOrderEvent.changeTab(event.tabIndex));
+    } catch (e) {
+      print("Error refresh page: $e");
     }
   }
 }

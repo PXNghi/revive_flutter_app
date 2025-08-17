@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
@@ -49,6 +50,22 @@ class _OrderPageState extends State<OrderPage> {
               size: 30.0,
               onTap: () {
                 context.pushNamed('create-order');
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: MyIconButton(
+              icon: searchIcon,
+              size: 30.0,
+              onTap: () async {
+                final shouldRefresh =
+                    await context.pushNamed('search-order-page');
+                if (shouldRefresh == true) {
+                  context
+                      .read<MainOrderBloc>()
+                      .add(const MainOrderEvent.started());
+                }
               },
             ),
           ),
@@ -136,41 +153,57 @@ class _OrderPageState extends State<OrderPage> {
 
   _buildOrderSection(MainOrderState state) {
     if (state is Loaded) {
-      return ListView.separated(
-        separatorBuilder: (context, index) => const SizedBox(height: 32.0),
-        itemCount: state.orders.length,
-        itemBuilder: (context, index) {
-          final orderItem = state.orders[index];
-          final bloc = context.read<MainOrderBloc>();
-          return OrderItem(
-            orderId: orderItem.id,
-            orderStatus: orderItem.status,
-            orderDate: orderItem.pickUpDate.toString(),
-            orderLength: orderItem.detailedOrders.length,
-            orderDetails: orderItem.detailedOrders,
-            adminNote: orderItem.adminNote,
-            onOrderTap: () async {
-              final shouldRefresh =
-                  await context.pushNamed('detailed-order-page', extra: {
-                'order': orderItem,
-                'bloc': bloc,
-              });
-              if (shouldRefresh == true) {
+      return RefreshIndicator(
+        onRefresh: () async {
+          context
+              .read<MainOrderBloc>()
+              .add(MainOrderEvent.changeTab(state.selectedIndex));
+        },
+        child: ListView.separated(
+          separatorBuilder: (context, index) => const SizedBox(height: 32.0),
+          itemCount: state.orders.length,
+          itemBuilder: (context, index) {
+            final orderItem = state.orders[index];
+            final bloc = context.read<MainOrderBloc>();
+            return OrderItem(
+              orderId: orderItem.id,
+              orderStatus: orderItem.status,
+              orderDate: orderItem.pickUpDate.toString(),
+              orderLength: orderItem.detailedOrders.length,
+              orderDetails: orderItem.detailedOrders,
+              adminNote: orderItem.adminNote,
+              totalPrice: orderItem.totalPrice,
+              onCopyTap: () {
+                Clipboard.setData(ClipboardData(text: orderItem.id));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Đã sao chép mã đơn hàng"),
+                  ),
+                );
+              },
+              onOrderTap: () async {
+                final shouldRefresh =
+                    await context.pushNamed('detailed-order-page', extra: {
+                  'order': orderItem,
+                  'bloc': bloc,
+                });
+                if (shouldRefresh == true) {
+                  context
+                      .read<MainOrderBloc>()
+                      .add(MainOrderEvent.changeTab(state.selectedIndex));
+                }
+              },
+              onAcceptTap: () {
                 context
                     .read<MainOrderBloc>()
-                    .add(MainOrderEvent.changeTab(state.selectedIndex));
-              }
-            },
-            onAcceptTap: () {
-              context
-                  .read<MainOrderBloc>()
-                  .add(MainOrderEvent.acceptOrder(orderItem.id));
-            },
-            onDeclineTap: () {
-              _showRejectReasonDialog(context, orderItem.id);
-            },
-          );
-        },
+                    .add(MainOrderEvent.acceptOrder(orderItem.id));
+              },
+              onDeclineTap: () {
+                _showRejectReasonDialog(context, orderItem.id);
+              },
+            );
+          },
+        ),
       );
     }
 

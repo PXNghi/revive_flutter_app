@@ -101,10 +101,10 @@ class ProductUsecase {
     }
   }
 
-  Future<List<Product>> getAllProducts() async {
+  Future<List<Product>> getAllProducts(String? search) async {
     try {
       final Response response =
-          await ApiService().get(ApiUrls().apiGetAllProducts());
+          await ApiService().get(ApiUrls().apiGetAllProducts(search: search));
       final Map<String, dynamic> responseData = json.decode(response.body);
       final List<dynamic> data = responseData['data'];
       if (data.isEmpty) {

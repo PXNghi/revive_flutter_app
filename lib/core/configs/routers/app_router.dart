@@ -26,6 +26,7 @@ import 'package:revive_flutter_project/features/order/presentation/confirmed_ord
 import 'package:revive_flutter_project/features/order/presentation/create_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/detailed_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/order_page.dart';
+import 'package:revive_flutter_project/features/order/presentation/search_order_page.dart';
 import 'package:revive_flutter_project/features/order/presentation/success_order_page.dart';
 import 'package:revive_flutter_project/features/person/bloc/change_password/change_password_bloc.dart';
 import 'package:revive_flutter_project/features/person/bloc/user_management/user_management_bloc.dart';
@@ -128,11 +129,11 @@ final GoRouter routers = GoRouter(
             ..add(
               address == null
                   ? const BranchEvent.getBranches()
-                  : (address.location.coordinates.isEmpty)
+                  : (address.location!.coordinates.isEmpty || address.location == null)
                       ? const BranchEvent.getBranches()
                       : (BranchEvent.getBranchesNearby(
-                          address.location.coordinates[0],
-                          address.location.coordinates[1],
+                          address.location!.coordinates[0],
+                          address.location!.coordinates[1],
                         )),
             ),
           child: const BranchesPage(),
@@ -269,6 +270,16 @@ final GoRouter routers = GoRouter(
         return BlocProvider.value(
           value: bloc,
           child: DetailedOrderPage(order: orderItem),
+        );
+      },
+    ),
+    GoRoute(
+      name: "search-order-page",
+      path: "/search-order",
+      builder: (context, state) {
+        return BlocProvider(
+          create: (context) => MainOrderBloc(),
+          child: const SearchOrderPage(),
         );
       },
     ),

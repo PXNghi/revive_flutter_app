@@ -42,6 +42,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_AddProductToCart>(_handleAddProductToCart);
     on<_DeleteCartItem>(_handleDeleteCartItem);
     on<_CreateOrder>(_handleCreateOrder);
+    
   }
 
   FutureOr<void> _handleFetchAllCategory(
@@ -215,9 +216,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       if (state is _Loaded) {
         final loadedState = state as _Loaded;
 
-        final updatedCart = List<DetailedOrder>.from(loadedState.cart)
-          ..add(event.detailedOrder);
-
         final product = loadedState.products.firstWhereOrNull(
           (p) => p.id == event.detailedOrder.productId,
         );
@@ -236,10 +234,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             List<AddedListProduct>.from(loadedState.addedListProduct)
               ..add(addedProduct);
 
-        cartChosen.addAll(updatedAddedList);
+        cartChosen.add(addedProduct);
+
+        print("cartChosen added: ${cartChosen.length}");
 
         emit(loadedState.copyWith(
-          cart: updatedCart,
           addedListProduct: updatedAddedList,
         ));
       }
@@ -314,11 +313,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       if (state is _Loaded) {
         final loadedState = state as _Loaded;
-        final updatedCart = List<DetailedOrder>.from(loadedState.cart)
-          ..remove(event.detailedOrder);
-        cartChosen.removeWhere((element) =>
-            element.detailedOrder.productId == event.detailedOrder.productId);
-        emit(loadedState.copyWith(cart: updatedCart));
+        final updatedList = List<AddedListProduct>.from(loadedState.addedListProduct);
+        cartChosen.removeAt(event.index);
+        updatedList.removeAt(event.index);
+        emit(loadedState.copyWith(addedListProduct: updatedList));
       }
     } catch (e) {
       print("Error deleting product from cart: $e");

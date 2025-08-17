@@ -20,6 +20,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,12 +80,6 @@ class _ProductPageState extends State<ProductPage> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 16.0),
-                      MyIconButton(
-                        icon: searchIcon,
-                        size: 30,
-                        onTap: () {},
-                      ),
                     ],
                   );
                 },
@@ -95,211 +90,250 @@ class _ProductPageState extends State<ProductPage> {
       ),
       body: Padding(
         padding: pageHorizontalPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16.0),
-            const Text(
-              "BẢNG GIÁ",
-              style: headerStyle,
-            ),
-            const SizedBox(height: 20.0),
-            BlocBuilder<ProductBloc, ProductState>(
-              builder: (context, state) {
-                if (state is Loaded) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 85,
-                        width: double.infinity,
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(width: 20.0),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.categories.length,
-                          itemBuilder: (context, index) {
-                            return Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                CategoryItemList(
-                                  category: state.categories[index],
-                                  isSelected:
-                                      state.selectedCategoryIndex == index,
-                                  onTap: () {
-                                    context.read<ProductBloc>().add(
-                                          ProductEvent.selectCategory(index),
-                                        );
-                                    context.read<ProductBloc>().add(
-                                          ProductEvent.getAllProductsByCategory(
-                                            state.categories[index].id,
-                                          ),
-                                        );
-                                  },
-                                ),
-                                Visibility(
-                                  child: state.isEditingMode
-                                      ? Positioned(
-                                          right: -5,
-                                          top: -3,
-                                          child: MyIconButton(
-                                            icon: deleteIcon,
-                                            size: 24,
-                                            isCircleIcon: false,
-                                            onTap: () {
-                                              context.read<ProductBloc>().add(
-                                                    ProductEvent.warningDelete(
-                                                      state.categories[index]
-                                                          .name,
-                                                      false,
-                                                      "",
-                                                      state
-                                                          .categories[index].id,
-                                                    ),
-                                                  );
-                                            },
-                                          ),
-                                        )
-                                      : const SizedBox.shrink(),
-                                ),
-                                Visibility(
-                                  child: state.isEditingMode
-                                      ? Positioned(
-                                          left: -5,
-                                          top: -3,
-                                          child: MyIconButton(
-                                            icon: editIcon,
-                                            size: 24,
-                                            isCircleIcon: false,
-                                            onTap: () {
-                                              _showCategoryDialog(
-                                                context,
-                                                categoryId:
-                                                    state.categories[index].id,
-                                                categoryName: state
-                                                    .categories[index].name,
-                                                categoryImage: state
-                                                    .categories[index].image,
-                                                isEdit: true,
-                                              );
-                                            },
-                                          ),
-                                        )
-                                      : const SizedBox.shrink(),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20.0),
-                      state.selectedCategoryIndex != -1
-                          ? Text(
-                              "Các loại ${state.categories[state.selectedCategoryIndex].name}",
-                              style: titleStyle.copyWith(fontSize: 22),
-                            )
-                          : Text(
-                              "Tất cả sản phẩm",
-                              style: titleStyle.copyWith(fontSize: 22),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<ProductBloc>().add(
+                  const ProductEvent.refreshPage(),
+                );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16.0),
+              const Text(
+                "BẢNG GIÁ",
+                style: headerStyle,
+              ),
+              const SizedBox(height: 20.0),
+              BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state is Loaded) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          child: TextField(
+                            controller: _searchController,
+                            textInputAction: TextInputAction.search,
+                            decoration: InputDecoration(
+                              suffixIcon: Image.asset(
+                                searchIcon,
+                                width: 16,
+                                height: 16,
+                              ),
+                              hintText: 'Tìm kiếm sản phẩm',
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: const BorderSide(
+                                    color: grayBorderColor, width: 1.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: const BorderSide(
+                                    color: primaryColor, width: 1.0),
+                              ),
                             ),
-                    ],
-                  );
-                }
-                return const CircularProgressIndicator();
-              },
-            ),
-            const SizedBox(height: 20.0),
-            BlocBuilder<ProductBloc, ProductState>(
-              builder: (context, state) {
-                if (state is Loaded) {
-                  if (state.products.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "Không có sản phẩm nào trong danh mục này",
-                        style: contentStyle,
+                            onSubmitted: (value) {
+                              context.read<ProductBloc>().add(
+                                    ProductEvent.getAllProducts(search: value),
+                                  );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          height: 85,
+                          width: double.infinity,
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 20.0),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.categories.length,
+                            itemBuilder: (context, index) {
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  CategoryItemList(
+                                    category: state.categories[index],
+                                    isSelected:
+                                        state.selectedCategoryIndex == index,
+                                    onTap: () {
+                                      context.read<ProductBloc>().add(
+                                            ProductEvent.selectCategory(index),
+                                          );
+                                      context.read<ProductBloc>().add(
+                                            ProductEvent.getAllProductsByCategory(
+                                              state.categories[index].id,
+                                            ),
+                                          );
+                                    },
+                                  ),
+                                  Visibility(
+                                    child: state.isEditingMode
+                                        ? Positioned(
+                                            right: -5,
+                                            top: -3,
+                                            child: MyIconButton(
+                                              icon: deleteIcon,
+                                              size: 24,
+                                              isCircleIcon: false,
+                                              onTap: () {
+                                                context.read<ProductBloc>().add(
+                                                      ProductEvent.warningDelete(
+                                                        state.categories[index]
+                                                            .name,
+                                                        false,
+                                                        "",
+                                                        state
+                                                            .categories[index].id,
+                                                      ),
+                                                    );
+                                              },
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ),
+                                  Visibility(
+                                    child: state.isEditingMode
+                                        ? Positioned(
+                                            left: -5,
+                                            top: -3,
+                                            child: MyIconButton(
+                                              icon: editIcon,
+                                              size: 24,
+                                              isCircleIcon: false,
+                                              onTap: () {
+                                                _showCategoryDialog(
+                                                  context,
+                                                  categoryId:
+                                                      state.categories[index].id,
+                                                  categoryName: state
+                                                      .categories[index].name,
+                                                  categoryImage: state
+                                                      .categories[index].image,
+                                                  isEdit: true,
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        state.selectedCategoryIndex != -1
+                            ? Text(
+                                "Các loại ${state.categories[state.selectedCategoryIndex].name}",
+                                style: titleStyle.copyWith(fontSize: 22),
+                              )
+                            : Text(
+                                "Tất cả sản phẩm",
+                                style: titleStyle.copyWith(fontSize: 22),
+                              ),
+                      ],
+                    );
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
+              const SizedBox(height: 20.0),
+              BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state is Loaded) {
+                    if (state.products.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "Không có sản phẩm nào trong danh mục này",
+                          style: contentStyle,
+                        ),
+                      );
+                    }
+                    return Expanded(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 16.0),
+                        itemCount: state.products.length,
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              ProductItemList(
+                                productName: state.products[index].name,
+                                productCategory:
+                                    state.products[index].category.name,
+                                productPrice: state.products[index].price,
+                                productImage: state.products[index].image,
+                              ),
+                              Visibility(
+                                child: state.isEditingMode
+                                    ? Positioned(
+                                        right: 10,
+                                        top: 10,
+                                        child: MyIconButton(
+                                          icon: deleteIcon,
+                                          size: 24,
+                                          isCircleIcon: false,
+                                          onTap: () {
+                                            context.read<ProductBloc>().add(
+                                                  ProductEvent.warningDelete(
+                                                    state.products[index].name,
+                                                    true,
+                                                    state.products[index].id,
+                                                    "",
+                                                  ),
+                                                );
+                                          },
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+                              Visibility(
+                                child: state.isEditingMode
+                                    ? Positioned(
+                                        right: 40,
+                                        top: 10,
+                                        child: MyIconButton(
+                                          icon: editIcon,
+                                          size: 24,
+                                          isCircleIcon: false,
+                                          onTap: () {
+                                            _showProductDialog(
+                                              isEdit: true,
+                                              context,
+                                              productId: state.products[index].id,
+                                              productName:
+                                                  state.products[index].name,
+                                              productPrice: state
+                                                  .products[index].price
+                                                  .toString(),
+                                              productDetails: state
+                                                  .products[index].description,
+                                              categoryId: state
+                                                  .products[index].category.id,
+                                              productImage:
+                                                  state.products[index].image,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     );
                   }
-                  return Expanded(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 16.0),
-                      itemCount: state.products.length,
-                      itemBuilder: (context, index) {
-                        return Stack(
-                          children: [
-                            ProductItemList(
-                              productName: state.products[index].name,
-                              productCategory:
-                                  state.products[index].category.name,
-                              productPrice: state.products[index].price,
-                              productImage: state.products[index].image,
-                            ),
-                            Visibility(
-                              child: state.isEditingMode
-                                  ? Positioned(
-                                      right: 10,
-                                      top: 10,
-                                      child: MyIconButton(
-                                        icon: deleteIcon,
-                                        size: 24,
-                                        isCircleIcon: false,
-                                        onTap: () {
-                                          context.read<ProductBloc>().add(
-                                                ProductEvent.warningDelete(
-                                                  state.products[index].name,
-                                                  true,
-                                                  state.products[index].id,
-                                                  "",
-                                                ),
-                                              );
-                                        },
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-                            Visibility(
-                              child: state.isEditingMode
-                                  ? Positioned(
-                                      right: 40,
-                                      top: 10,
-                                      child: MyIconButton(
-                                        icon: editIcon,
-                                        size: 24,
-                                        isCircleIcon: false,
-                                        onTap: () {
-                                          _showProductDialog(
-                                            isEdit: true,
-                                            context,
-                                            productId: state.products[index].id,
-                                            productName:
-                                                state.products[index].name,
-                                            productPrice: state
-                                                .products[index].price
-                                                .toString(),
-                                            productDetails: state
-                                                .products[index].description,
-                                            categoryId: state
-                                                .products[index].category.id,
-                                            productImage:
-                                                state.products[index].image,
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
-          ],
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

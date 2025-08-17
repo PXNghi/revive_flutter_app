@@ -25,7 +25,7 @@ class Address with _$Address {
   const factory Address({
     @JsonKey(name: '_id') required String id,
     @JsonKey(name: 'address') required String address,
-    @JsonKey(name: 'location') required CustomLocation location,
+    @JsonKey(name: 'location') CustomLocation? location,
   }) = _Address;
 
   factory Address.fromJson(Map<String, Object?> json) => _$AddressFromJson(json);

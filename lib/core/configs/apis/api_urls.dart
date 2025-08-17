@@ -46,7 +46,7 @@ class ApiUrls {
   Uri apiDeleteCategory(String id) => Uri.parse('$baseUrl/api/category/delete-category/$id');
 
   // product
-  Uri apiGetAllProducts() => Uri.parse('$baseUrl/api/product/get-all-products');
+  Uri apiGetAllProducts({String? search}) => Uri.parse('$baseUrl/api/product/get-all-products?search=$search');
   Uri apiGetAllProductsByCategory(String categoryId) => Uri.parse('$baseUrl/api/product/get-product-by-category/$categoryId');
   Uri apiGetProductById(String id) => Uri.parse('$baseUrl/api/product/get-product-by-id/$id');
   Uri apiCreateNewProduct() => Uri.parse('$baseUrl/api/product/create-new-product');
@@ -56,7 +56,7 @@ class ApiUrls {
   Uri apiDeleteProductImage() => Uri.parse('$baseUrl/api/delete-product-image');
 
   // order
-  Uri apiGetAllOrders() => Uri.parse('$baseUrl/api/order/get-all-orders');
+  Uri apiGetAllOrders({String? search}) => Uri.parse('$baseUrl/api/order/get-all-orders?search=$search');
   Uri apiGetOrderById(String id) => Uri.parse('$baseUrl/api/order/get-order-by-id/$id');
   Uri apiCreateNewOrder() => Uri.parse('$baseUrl/api/order/create-new-order');
   Uri apiUploadOrderImage() => Uri.parse('$baseUrl/api/upload-order-image');

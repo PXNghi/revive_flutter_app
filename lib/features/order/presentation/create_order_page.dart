@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
@@ -117,10 +116,49 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       errorText: state.userPhoneError,
                     ),
                     const SizedBox(height: 16),
-                    MyTextField(
-                      label: "Địa chỉ",
+                    Row(
+                      children: [
+                        Text(
+                          "Địa chỉ",
+                          style: contentStyle.copyWith(
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 8.0),
+                        MyIconButton(
+                          icon: arrowDownIcon,
+                          onTap: () {
+                            _showAddressBottomSheet(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    TextField(
                       controller: _addressController,
-                      errorText: state.userAddressError,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(
+                              color: grayBorderColor, width: 1.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              const BorderSide(color: primaryColor, width: 1.0),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              const BorderSide(color: alertColor, width: 1.0),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              const BorderSide(color: alertColor, width: 1.0),
+                        ),
+                        errorText: state.userAddressError,
+                      ),
+                      maxLines: 2,
                     ),
                     const SizedBox(height: 30),
                     Text(
@@ -137,9 +175,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    Visibility(
-                      visible: state.cart?.isNotEmpty ?? false,
-                      child: ExpandProduct(
+                    if (state.addedListProduct != null &&
+                        state.addedListProduct!.isNotEmpty)
+                      ExpandProduct(
                         cart: state.addedListProduct,
                         onDelete: (value) {
                           context
@@ -147,7 +185,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                               .add(OrderEvent.deleteCartItem(value));
                         },
                       ),
-                    ),
                     const SizedBox(height: 20.0),
                     MyTextField(
                       controller: _orderNoteController,
@@ -666,6 +703,36 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 ),
         ),
       ],
+    );
+  }
+
+  void _showAddressBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+          child: ListView.separated(
+            separatorBuilder: (context, index) => const Divider(color: primaryColor,),
+            itemCount: SessionData.mine!.addresses.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    _addressController.text = SessionData.mine!.addresses[index].address.toString();
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    SessionData.mine!.addresses[index].address.toString(),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

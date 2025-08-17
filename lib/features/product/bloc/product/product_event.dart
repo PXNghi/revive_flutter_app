@@ -17,7 +17,7 @@ class ProductEvent with _$ProductEvent {
   const factory ProductEvent.deleteCategory(String categoryId) =
       _DeleteCategory;
 
-  const factory ProductEvent.getAllProducts() = _GetAllProducts;
+  const factory ProductEvent.getAllProducts({String? search}) = _GetAllProducts;
   const factory ProductEvent.getAllProductsByCategory(String categoryId) =
       _GetAllProductsByCategory;
   const factory ProductEvent.getProductById(String id) = _GetProductById;
@@ -48,4 +48,6 @@ class ProductEvent with _$ProductEvent {
   const factory ProductEvent.editImage(String path, String type) =
       _EditImage;
   const factory ProductEvent.deleteImage() = _DeleteImage;
+  const factory ProductEvent.toggleSearchMode() = _ToggleSearchMode;
+  const factory ProductEvent.refreshPage() = _RefreshPage;
 }
