@@ -12,5 +12,7 @@ class UserManagementEvent with _$UserManagementEvent {
     String userId,
     String userName,
     String userPhone,
+    String address,
   ) = _UpdateUserProfileById;
+  const factory UserManagementEvent.toggleAddressField(bool isToggleAddress) = _ToggleAddressField;
 }

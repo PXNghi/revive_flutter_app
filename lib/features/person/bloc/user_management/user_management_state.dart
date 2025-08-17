@@ -8,6 +8,7 @@ class UserManagementState with _$UserManagementState {
     @Default([]) List<User> users,
     User? user,
     String? message,
+    bool? isToggleAddress,
   }) = Loaded;
   const factory UserManagementState.error(String message) = Error;
 
@@ -18,4 +19,6 @@ class UserManagementState with _$UserManagementState {
   User? get user => mapOrNull(loaded: (state) => state.user);
 
   String? get message => mapOrNull(loaded: (state) => state.message);
+
+  bool? get isToggleAddress => mapOrNull(loaded: (state) => state.isToggleAddress);
 }

@@ -129,11 +129,11 @@ final GoRouter routers = GoRouter(
             ..add(
               address == null
                   ? const BranchEvent.getBranches()
-                  : (address.location.coordinates.isEmpty)
+                  : (address.location!.coordinates.isEmpty || address.location == null)
                       ? const BranchEvent.getBranches()
                       : (BranchEvent.getBranchesNearby(
-                          address.location.coordinates[0],
-                          address.location.coordinates[1],
+                          address.location!.coordinates[0],
+                          address.location!.coordinates[1],
                         )),
             ),
           child: const BranchesPage(),

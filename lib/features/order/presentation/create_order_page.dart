@@ -709,6 +709,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   void _showAddressBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
+      backgroundColor: Colors.white,
       builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),

@@ -24,6 +24,7 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,6 +92,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   const SizedBox(height: 16.0),
                   const Text("Địa chỉ", style: contentStyle),
                   const SizedBox(height: 8.0),
+                  GestureDetector(
+                    onTap: () {
+                      context.read<UserManagementBloc>().add(
+                          UserManagementEvent.toggleAddressField(
+                              state.isToggleAddress ?? false));
+                    },
+                    child: Row(
+                      children: [
+                        Image.asset(addCircleIcon, width: 20, height: 20),
+                        const SizedBox(width: 4.0),
+                        Text(
+                          "Thêm địa chỉ",
+                          style: contentStyle.copyWith(
+                            color: primaryColor,
+                            decoration: TextDecoration.underline,
+                            decorationColor: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: state.isToggleAddress ?? false,
+                    child: MyTextField(
+                      controller: addressController,
+                      label: "",
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
                   state.user != null && state.user!.addresses.isNotEmpty
                       ? ListView.separated(
                           shrinkWrap: true,
@@ -152,11 +182,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 phoneController.text.isEmpty
                                     ? state.user!.phone
                                     : phoneController.text,
+                                addressController.text.isEmpty
+                                    ? ""
+                                    : addressController.text,
                               ),
                             );
                       },
                     ),
                   ),
+                  const SizedBox(height: 50.0),
                 ],
               );
             }

@@ -26,23 +26,26 @@ class UserInformationBar extends StatelessWidget {
       children: [
         Image.asset(userDefaultImage, width: 50, height: 50),
         const SizedBox(width: 16.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              userName,
-              style: contentStyle.copyWith(
-                color: !isActive ? grayContentColor : Colors.black,
+        Expanded(
+          flex: 5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                userName,
+                style: contentStyle.copyWith(
+                  color: !isActive ? grayContentColor : Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 4.0),
-            Text(
-              "ID: $userId",
-              style: contentStyle.copyWith(
-                color: !isActive ? grayContentColor : Colors.black,
+              const SizedBox(height: 4.0),
+              Text(
+                "ID: $userId",
+                style: contentStyle.copyWith(
+                  color: !isActive ? grayContentColor : Colors.black,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const Spacer(),
         Visibility(

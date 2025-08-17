@@ -5,6 +5,7 @@ final phoneRegex = RegExp(r'^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-
 
 
 // icon image strings
+const addCircleIcon = "assets/images/add_circle_icon.png";
 const addIcon = "assets/images/add_icon.png";
 const alertIcon = "assets/images/alert_icon.png";
 const arrowDownIcon = "assets/images/arrow_down_icon.png";

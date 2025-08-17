@@ -92,15 +92,22 @@ class UserUsecases {
     }
   }
 
-  Future<User?> updateUserProfileById(
-    String userId,
-    String userName,
-    String userPhone,
-  ) async {
-    final Map<String, String> bodyRequest = {
-      "full_name": userName,
-      "phone": userPhone,
-    };
+  Future<User?> updateUserProfileById({
+    required String userId,
+    String? userName,
+    String? userPhone,
+    String? userAddress,
+  }) async {
+    final Map<String, String> bodyRequest = {};
+    if (userName != null && userName.isNotEmpty) {
+      bodyRequest['name'] = userName;
+    }
+    if (userPhone != null && userPhone.isNotEmpty) {
+      bodyRequest['phone'] = userPhone;
+    }
+    if (userAddress != null && userAddress.isNotEmpty) {
+      bodyRequest['address'] = userAddress;
+    }
     try {
       final Response response = await ApiService().put(
         ApiUrls().apiUpdateUserProfileById(userId),
@@ -120,21 +127,22 @@ class UserUsecases {
     }
   }
 
-  Future<String?> changePassword(String oldPassword, String newPassword, String confirmedPassword) async {
+  Future<String?> changePassword(
+      String oldPassword, String newPassword, String confirmedPassword) async {
     final Map<String, String> bodyRequest = {
       "old_password": oldPassword,
       "new_password": newPassword,
       "confirmed_password": confirmedPassword,
     };
     try {
-      final Response response = await ApiService().patch(ApiUrls().apiChangePassword(), bodyRequest);
+      final Response response =
+          await ApiService().patch(ApiUrls().apiChangePassword(), bodyRequest);
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['success'] == true) {
         return null;
       } else {
         return data['message'];
       }
-      
     } catch (e) {
       print("Error at change password usecase: $e");
       rethrow;
