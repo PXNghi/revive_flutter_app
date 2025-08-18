@@ -19,4 +19,5 @@ class ChatEvent with _$ChatEvent {
   }) = _UpdateConversation;
   const factory ChatEvent.choosePicture({String? picturePath}) = _ChoosePicture;
   const factory ChatEvent.chooseCamera() = _ChooseCamera;
+  const factory ChatEvent.loadMore(String conversationId, {int? page, int? limit}) = _LoadMore;
 }

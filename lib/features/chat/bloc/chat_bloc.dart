@@ -10,6 +10,7 @@ import 'package:revive_flutter_project/core/services/socket_service.dart';
 import 'package:revive_flutter_project/features/chat/chat_usecases.dart';
 import 'package:revive_flutter_project/features/chat/models/conversation.dart';
 import 'package:revive_flutter_project/features/chat/models/message.dart';
+import 'package:revive_flutter_project/features/chat/models/messages_response.dart';
 import 'package:revive_flutter_project/features/person/models/user.dart';
 import 'package:revive_flutter_project/features/person/user_usecases.dart';
 
@@ -22,6 +23,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final SocketService _socketService = SocketService();
   final UserUsecases _userUsecases = UserUsecases();
   String? conversationId = "";
+  int currentPage = 1;
+  int totalPages = 1;
   ChatBloc() : super(const ChatState.initial()) {
     _socketService.connect(SessionData.mine!.id);
     _socketService.onNewMessageReceived = (data) {
@@ -35,6 +38,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<_SendMessage>(_handleSendMessage);
     on<_ChoosePicture>(_handleChoosePicture);
     on<_ChooseCamera>(_handleChooseCamera);
+    on<_LoadMore>(_handleLoadMore);
   }
 
   FutureOr<void> _handleStarted(
@@ -49,14 +53,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         if (conversations.isNotEmpty) {
           conversationId = conversations[0].id;
         }
-        messages = await _chatUsecases.getMessages(conversationId ?? "");
+        final MessagesResponse? result =
+            await _chatUsecases.getMessages(conversationId ?? "", page: 1, limit: 10);
+        messages = result?.messages ?? [];
+        totalPages = result?.totalPages ?? 1;
       }
 
       emit(ChatState.loaded(
-        conversations: conversations,
-        conversationId: conversationId,
-        messages: messages,
-      ));
+          conversations: conversations,
+          conversationId: conversationId,
+          messages: messages,
+          totalPages: totalPages));
     } catch (e) {
       print("Error started event at chat bloc: $e");
     }
@@ -107,10 +114,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      final List<Message> messages =
+      final MessagesResponse? result =
           await _chatUsecases.getMessages(event.conversationId);
+      final List<Message> messages = result?.messages ?? [];
+      totalPages = result?.totalPages ?? 1;
       conversationId = event.conversationId;
-      emit(ChatState.loaded(messages: messages));
+      emit(ChatState.loaded(messages: messages, totalPages: totalPages));
     } catch (e) {
       print("Error get messages: $e");
     }
@@ -203,6 +212,35 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     } catch (e) {
       print("Error choose camera: $e");
+    }
+  }
+
+  FutureOr<void> _handleLoadMore(
+    _LoadMore event,
+    Emitter<ChatState> emit,
+  ) async {
+    if (state is Loaded) {
+      final loadedState = state as Loaded;
+      if (loadedState.currentPage >= (loadedState.totalPages ?? 1) ||
+          loadedState.isLoadingMore) return;
+      emit(loadedState.copyWith(isLoadingMore: true));
+      try {
+        final nextPage = loadedState.currentPage + 1;
+        final result = await _chatUsecases.getMessages(event.conversationId,
+            page: nextPage);
+        final newMessages = result?.messages ?? [];
+        emit(loadedState.copyWith(
+          isLoadingMore: false,
+          currentPage: nextPage,
+          totalPages: result?.totalPages ?? loadedState.totalPages,
+          messages: [
+            ...loadedState.messages,
+            ...newMessages
+          ],
+        ));
+      } catch (e) {
+        print("Error at load more: $e");
+      }
     }
   }
 }

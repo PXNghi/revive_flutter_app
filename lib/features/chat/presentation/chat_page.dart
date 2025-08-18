@@ -21,6 +21,30 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(() {
+      _onScroll();
+    });
+    super.initState();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 50) {
+
+      final chatBloc = context.read<ChatBloc>();
+      if (widget.conversationId != null) {
+        if (!chatBloc.state.isLoadingMore &&
+            (chatBloc.state.currentPage) < (chatBloc.state.totalPages ?? 0)) {
+          chatBloc.add(ChatEvent.loadMore(widget.conversationId!));
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,7 +62,7 @@ class _ChatPageState extends State<ChatPage> {
           padding: pageHorizontalPadding,
           child: BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
-              if (state is Initial) {
+              if (state is Initial || state is Loading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
@@ -48,10 +72,17 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   const Text("CHAT", style: headerStyle),
                   const SizedBox(height: 40),
+                  Visibility(
+                    visible: state.isLoadingMore,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
                   Expanded(
                     child: Visibility(
                       visible: state.messages.isNotEmpty,
                       child: ListView.separated(
+                        controller: _scrollController,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 16),
                         reverse: true,

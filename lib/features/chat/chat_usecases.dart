@@ -5,6 +5,7 @@ import 'package:revive_flutter_project/core/configs/apis/api_urls.dart';
 import 'package:revive_flutter_project/core/services/api_services.dart';
 import 'package:revive_flutter_project/features/chat/models/conversation.dart';
 import 'package:revive_flutter_project/features/chat/models/message.dart';
+import 'package:revive_flutter_project/features/chat/models/messages_response.dart';
 
 class ChatUsecases {
   static final ChatUsecases _singleton = ChatUsecases._internal();
@@ -32,22 +33,27 @@ class ChatUsecases {
     }
   }
 
-  Future<List<Message>> getMessages(String conversationId) async {
+  Future<MessagesResponse?> getMessages(
+    String conversationId, {
+    int? page,
+    int? limit,
+  }) async {
     try {
       if (conversationId.isNotEmpty) {
         final Response response = await ApiService()
-            .get(ApiUrls().apiGetMessagesFromConversation(conversationId));
+            .get(ApiUrls().apiGetMessagesFromConversation(conversationId, page: page, limit: limit));
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['success'] == true) {
-          return (data['messages'] as List)
-              .map((e) => Message.fromJson(e))
-              .toList();
+          // return (data['messages'] as List)
+          //     .map((e) => Message.fromJson(e))
+          //     .toList();
+          return MessagesResponse.fromJson(data);
         } else {
           print("Error at get messages");
-          return [];
+          return null;
         }
       } else {
-        return [];
+        return null;
       }
     } catch (e) {
       print("Error at get messages usecase: $e");
