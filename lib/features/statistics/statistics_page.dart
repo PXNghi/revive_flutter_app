@@ -258,7 +258,7 @@ class StatisticsPage extends StatelessWidget {
             ),
             const SizedBox(width: 8.0),
             SizedBox(
-              width: 130,
+              width: 100,
               child: DropdownButtonFormField<int>(
                 dropdownColor: Colors.white,
                 decoration: const InputDecoration(
@@ -297,14 +297,14 @@ class StatisticsPage extends StatelessWidget {
                 },
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 10),
             const Text(
               "Năm: ",
               style: contentStyle,
             ),
             const SizedBox(width: 10.0),
             SizedBox(
-              width: 130,
+              width: 100,
               child: DropdownButtonFormField<int>(
                 dropdownColor: Colors.white,
                 decoration: const InputDecoration(
@@ -417,8 +417,8 @@ class StatisticsPage extends StatelessWidget {
                       .map(
                         (product) => PieChartSectionData(
                           color: getRandomLightColor(),
-                          value: product.percent,
-                          title: "${product.productName}\n${product.percent}%",
+                          value: double.parse(product.percent.toStringAsFixed(2)),
+                          title: "${product.productName}\n${product.percent.toStringAsFixed(2)}%",
                           radius: 100,
                         ),
                       )

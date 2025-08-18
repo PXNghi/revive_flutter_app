@@ -523,6 +523,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                   MyTextField(
                                     controller: productAmountController,
                                     label: "Nhập số lượng",
+                                    keyBoardType: TextInputType.number,
                                   ),
                                   const SizedBox(height: 10.0),
                                   Row(

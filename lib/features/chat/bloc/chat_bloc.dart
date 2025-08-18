@@ -28,8 +28,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(const ChatState.initial()) {
     _socketService.connect(SessionData.mine!.id);
     _socketService.onNewMessageReceived = (data) {
-      add(const _GetAllConversations());
-      add(_GetMessages(data["message"]["conversationId"]));
+      // add(const _GetAllConversations());
+      // add(_GetMessages(data["message"]["conversationId"]));
+      final LastMessage lastestMessage = LastMessage.fromJson(data["message"]);
+      add(_UpdateConversation(
+          conversationId: data["message"]["conversationId"],
+          message: lastestMessage));
     };
     on<_Started>(_handleStarted);
     on<_GetAllConversations>(_handleGetAllConversations);
@@ -53,8 +57,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         if (conversations.isNotEmpty) {
           conversationId = conversations[0].id;
         }
-        final MessagesResponse? result =
-            await _chatUsecases.getMessages(conversationId ?? "", page: 1, limit: 10);
+        final MessagesResponse? result = await _chatUsecases
+            .getMessages(conversationId ?? "", page: 1, limit: 10);
         messages = result?.messages ?? [];
         totalPages = result?.totalPages ?? 1;
       }
@@ -100,9 +104,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           return c;
         }).toList();
 
-        updatedList.sort((a, b) => b.updatedAt!.compareTo(a.updatedAt!));
+        final sender = await _userUsecases.getUserById(event.message.senderId);
 
-        emit(loadedState.copyWith(conversations: updatedList));
+        updatedList.sort((a, b) => b.updatedAt!.compareTo(a.updatedAt!));
+        final Message latestMessages = Message(
+          sender: sender,
+          content: event.message.content,
+          createdAt: DateTime.now(),
+          updatedAt: event.message.updatedAt,
+          id: event.message.id,
+        );
+
+        emit(
+          loadedState.copyWith(
+            conversations: updatedList,
+            messages: [
+              latestMessages,
+              ...loadedState.messages,
+            ],
+          ),
+        );
       }
     } catch (e) {
       print("Error update conversation: $e");
@@ -233,10 +254,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           isLoadingMore: false,
           currentPage: nextPage,
           totalPages: result?.totalPages ?? loadedState.totalPages,
-          messages: [
-            ...loadedState.messages,
-            ...newMessages
-          ],
+          messages: [...loadedState.messages, ...newMessages],
         ));
       } catch (e) {
         print("Error at load more: $e");

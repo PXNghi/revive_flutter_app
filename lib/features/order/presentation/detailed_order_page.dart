@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:revive_flutter_project/core/configs/apis/my_enviroment.dart';
-import 'package:revive_flutter_project/core/configs/routers/app_router.dart';
 import 'package:revive_flutter_project/core/constants/strings.dart';
 import 'package:revive_flutter_project/core/constants/ui_values.dart';
 import 'package:revive_flutter_project/core/services/session_data.dart';
@@ -60,14 +59,17 @@ class _DetailedOrderPageState extends State<DetailedOrderPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: MyIconButton(
-                onTap: () {
-                  context.pushNamed("chat-page");
-                },
-                icon: chatIcon,
-                size: 24,
+            Visibility(
+              visible: false,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: MyIconButton(
+                  onTap: () {
+                    context.pushNamed("chat-page");
+                  },
+                  icon: chatIcon,
+                  size: 24,
+                ),
               ),
             ),
           ],

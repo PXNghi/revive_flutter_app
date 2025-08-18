@@ -49,6 +49,7 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
       child: BlocBuilder<OrderBloc, OrderState>(
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.white,
             appBar: const MyAppbar(
               title: "",
               isLeadingImplied: true,
@@ -117,7 +118,7 @@ class _ConfirmedOrderPageState extends State<ConfirmedOrderPage> {
                       padding: const EdgeInsets.all(16.0),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: primaryColor.withOpacity(0.1),
+                        color: Colors.white,
                         border: Border.all(color: primaryColor),
                         borderRadius: cardBorderRadius,
                       ),
