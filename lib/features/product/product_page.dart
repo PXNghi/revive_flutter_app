@@ -268,6 +268,7 @@ class _ProductPageState extends State<ProductPage> {
                                     state.products[index].category.name,
                                 productPrice: state.products[index].price,
                                 productImage: state.products[index].image,
+                                productDescription: state.products[index].description,
                               ),
                               Visibility(
                                 child: state.isEditingMode
@@ -795,6 +796,7 @@ class _ProductPageState extends State<ProductPage> {
                                     controller: productPriceController,
                                     label: "Nhập giá",
                                     initialValue: productPrice,
+                                    keyBoardType: TextInputType.number,
                                   ),
                                   const SizedBox(height: 10.0),
                                   MyTextField(

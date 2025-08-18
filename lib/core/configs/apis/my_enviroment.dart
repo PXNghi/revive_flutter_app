@@ -2,7 +2,7 @@ class Enviroment {
   static const String PHYSICAL_MACHINE = 'physicalMachine';
   static const String VIRTUAL_MACHINE = 'virtualMachine';
 
-  static const String env = VIRTUAL_MACHINE;
+  static const String env = PHYSICAL_MACHINE;
 
   static bool get isDev => env == VIRTUAL_MACHINE;
   static bool get isProd => env == PHYSICAL_MACHINE;

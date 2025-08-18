@@ -8,6 +8,9 @@ class ChatState with _$ChatState {
     @Default([]) List<Conversation> conversations,
     @Default([]) List<Message> messages,
     String? conversationId,
+    @Default(1) int currentPage,
+    @Default(false) bool isLoadingMore,
+    int? totalPages,
   }) = Loaded;
   const factory ChatState.success() = Success;
   const factory ChatState.error(String message) = Error;
@@ -17,4 +20,7 @@ class ChatState with _$ChatState {
   List<Conversation> get conversations => mapOrNull(loaded: (state) => state.conversations) ?? [];
   List<Message> get messages => mapOrNull(loaded: (state) => state.messages) ?? [];
   String? get conversationId => mapOrNull(loaded: (state) => state.conversationId);
+  int get currentPage => mapOrNull(loaded: (state) => state.currentPage) ?? 1;
+  int? get totalPages => mapOrNull(loaded: (state) => state.totalPages);
+  bool get isLoadingMore => mapOrNull(loaded: (state) => state.isLoadingMore) ?? false;
 }

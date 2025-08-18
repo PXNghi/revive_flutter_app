@@ -76,37 +76,42 @@ class ChatListPage extends StatelessWidget {
                 children: [
                   Image.asset(userDefaultImage, width: 50, height: 50),
                   const SizedBox(width: 14),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        sender.user.name,
-                        style: contentStyle.copyWith(
-                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                              ? FontWeight.normal
-                              : FontWeight.w700,
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sender.user.name,
+                          style: contentStyle.copyWith(
+                            fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                                ? FontWeight.normal
+                                : FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "ID: ${sender.user.id}",
-                        style: contentStyle.copyWith(
-                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                              ? FontWeight.normal
-                              : FontWeight.w700,
+                        const SizedBox(height: 6),
+                        Text(
+                          "ID: ${sender.user.id}",
+                          style: contentStyle.copyWith(
+                            fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                                ? FontWeight.normal
+                                : FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "${isMe ? "Bạn:" : ""} $lastMessage",
-                        style: contentStyle.copyWith(
-                          color: grayContentColor,
-                          fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
-                              ? FontWeight.normal
-                              : FontWeight.w700,
+                        const SizedBox(height: 6),
+                        Text(
+                          "${isMe ? "Bạn:" : ""} $lastMessage",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: contentStyle.copyWith(
+                            color: grayContentColor,
+                            fontWeight: (conversation.lastMessage?.isRead == true || isMe == true)
+                                ? FontWeight.normal
+                                : FontWeight.w700,
+                          ),
                         ),
-                      ),
-                    ],  
+                      ],  
+                    ),
                   ),
                   const Spacer(),
                   Visibility(

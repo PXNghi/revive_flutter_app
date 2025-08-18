@@ -73,9 +73,9 @@ class _MyTextFieldState extends State<MyTextField> {
                 ? IconButton(
                     icon: Icon(
                       isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: grayColor,
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: primaryColor,
                     ),
                     onPressed: () {
                       setState(() {

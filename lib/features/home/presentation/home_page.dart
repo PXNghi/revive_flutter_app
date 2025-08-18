@@ -76,9 +76,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(width: 8.0),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Image.asset(bellIcon, height: 30, width: 30),
+                      Visibility(
+                        visible: false,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Image.asset(bellIcon, height: 30, width: 30),
+                        ),
                       ),
                     ],
                   );

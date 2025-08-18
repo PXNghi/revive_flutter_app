@@ -72,7 +72,7 @@ class ProductItemList extends StatelessWidget {
                     height: 8.0,
                   ),
                   Visibility(
-                    visible: false,
+                    visible: productDescription != "",
                     child: Text(
                       productDescription,
                       maxLines: 2,
